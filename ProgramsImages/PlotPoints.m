@@ -24,9 +24,9 @@ tick = 0:0.25:1;
 xIID = rand(n,d);
 figure
 plot(xIID(:,1),xIID(:,2),'.','color',MATLABBlue)
-xlabel('\(x_{i1}\)')
-ylabel('\(x_{i2}\)')
-title('IID Nodes')
+xlabel('\(T_{i1}\)')
+ylabel('\(T_{i2}\)')
+%title('IID Points')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
 print -depsc IIDPoints.eps
@@ -46,8 +46,8 @@ print -depsc USobolPoints.eps
 xSSobol = net(scramble(sobolset(d),'MatousekAffineOwen'),n);
 figure
 plot(xSSobol(:,1),xSSobol(:,2),'.','color',MATLABPurple)
-xlabel('\(x_{i1}\)')
-ylabel('\(x_{i2}\)')
+xlabel('\(X_{i1}\)')
+ylabel('\(X_{i2}\)')
 %title('Scrambled Sobol'' Nodes')
 axis square
 set(gca,'xtick',tick,'ytick',tick)
