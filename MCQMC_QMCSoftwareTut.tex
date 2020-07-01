@@ -140,16 +140,37 @@ The promise of Bayesian cubature is that with reasonable prior information (or a
 \end{frame}
 
 \begin{frame}{Quasi-Monte Carlo (QMC) Uses Low Discrepancy (LD) Sequences}
+\vspace{-3ex}
 \begin{tabular}{>{\centering}p{0.47\textwidth}@{\quad}>{\centering}p{0.47\textwidth}}
-Independent \& Identically Distributed (IID) &
-Low Discrepancy (LD) \tabularnewline
+%Independent \& Identically Distributed (IID) &
+%Low Discrepancy (LD) \tabularnewline
 \includegraphics[height=5cm]{ProgramsImages/IIDPoints.eps} &
 \includegraphics[height=5cm]{ProgramsImages/SSobolPoints.eps}
 \tabularnewline
-$\vT_1, \vT_2 \cdots \IIDsim F $ &
-$\vX_1, \vX_2 \cdots \LDsim F $
+$\vT_i$ are random &
+$\vX_i$ may be deterministic or random 
+\tabularnewline
+$\vT_1, \vT_2 \cdots \alert{\IIDsim} F$ &
+$\vX_1, \vX_2 \cdots \alert{\LDsim} F$ 
+\tabularnewline
+$F_{n}(\vt_1, \ldots, \vt_n) = F(\vt_1) \cdots F(\vt_n)$ &
+$F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
+\tabularnewline
+$\vT_i$ do not know about each other &
+$\vX_i$ represent $F$ well
 \end{tabular}
 \end{frame}
+
+\begin{frame}{Where Is the Software?}
+    
+\end{frame}
+
+\begin{frame}{Why Is LD Better than IID?}
+    
+\end{frame}
+
+\section{Generating LD Points}
+
 
 \end{document}
 
