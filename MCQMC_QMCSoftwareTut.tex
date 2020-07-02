@@ -154,7 +154,7 @@ $\vT_1, \vT_2 \cdots \alert{\IIDsim} F$ &
 $\vX_1, \vX_2 \cdots \alert{\LDsim} F$ 
 \tabularnewline
 $\vT_i$ do not know about each other &
-$\vX_i$ represent $F$ well
+$\{\vX_i\}_{i=1}^n$ represent $F$ well
 \tabularnewline
 $F_{n}(\vt_1, \ldots, \vt_n) = F(\vt_1) \cdots F(\vt_n)$ &
 $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
@@ -166,6 +166,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \end{frame}
 
 \begin{frame}{Why Is LD Better than IID?}
+	\vspace{-4ex}
 	\begin{description}[<+->]
 		\setlength{\itemsep}{0.5cm}
 		\item[Integration]  Arising in finance, uncertainty quantification, Bayesian inference, \ldots
@@ -174,9 +175,9 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\end{equation*}
 		LD points give faster convergence than IID
 		
-		\item[Design of Computer Experiments] LD can be more space filling (even than Latin hypercube sampling)
+		\item[Design of Computer Experiments] LD can be more space filling (even than Latin hypercube sampling) for use in constructing surrogate models
 
-		\item[Global Optimization]  LD points can be more space filling
+		\item[Global Optimization]  LD points can be more space filling and find good starting points for other methods.
 		
 		\end{description}
     
