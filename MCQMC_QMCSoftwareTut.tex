@@ -166,6 +166,19 @@ $\vX_i$ represent $F$ well
 \end{frame}
 
 \begin{frame}{Why Is LD Better than IID?}
+	\begin{description}[<+->]
+		\setlength{\itemsep}{0.5cm}
+		\item[Integration]  Arising in finance, uncertainty quantification, Bayesian inference, \ldots
+		\begin{equation*}
+		\mu = \Ex[f(\vX)] = \int_\Omega f(\vx) \, \varrho(\vx) \, \dif \vx \approx \hmu = \frac 1n \sum_{i=1}^n f(\vx_i)
+		\end{equation*}
+		LD points give faster convergence than IID
+		
+		\item[Design of Computer Experiments] LD can be more space filling (even than Latin hypercube sampling)
+
+		\item[Global Optimization]  LD points can be more space filling
+		
+		\end{description}
     
 \end{frame}
 
