@@ -78,8 +78,19 @@ fprintf(['The price of the Asian geometric mean call option using Sobol'' ' ...
    AMeanCallSobolPrice,AMeanCallSobol.priceParam.absTol,AoutSobol.nPaths, ...
    AoutSobol.time,AoutSobol.time/out.time)
 
-return
-lts nicely
+%% 
+% Another option is to use lattice sampling.
+
+AMeanCallLattice = optPrice(AMeanCallSobol); %make a copy of the IID optPrice object
+AMeanCallLattice.priceParam.cubMethod = 'lattice' %change to lattice sampling
+[AMeanCallLatticePrice,AoutLattice] = genOptPrice(AMeanCallLattice);
+fprintf(['The price of the Asian geometric mean call option using lattice ' ...
+   'sampling is\n   $%3.3f +/- $%2.3f and this took %10.0f paths and %3.6f seconds,\n' ...
+   'which is only %1.5f the time required by IID sampling\n'], ...
+   AMeanCallLatticePrice,AMeanCallLattice.priceParam.absTol,AoutLattice.nPaths, ...
+   AoutLattice.time,AoutLattice.time/out.time)
+
+
 
 %%
 % _Author: Fred J. Hickernell_
