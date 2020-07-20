@@ -71,8 +71,8 @@ The promise of Bayesian cubature is that with reasonable prior information (or a
 \setlength{\FJHThankYouMessageOffset}{-8ex}
 \title{Quasi-Monte Carlo Software}
 \author[]{Fred J. Hickernell}
-\institute{Department of Applied Mathematics \\
-	Center for Interdisciplinary Scientific Computation \\  Illinois Institute of Technology \\
+\institute{Department of Applied Mathematics \&
+	Center for Interdisciplinary Scientific Computation \\  Illinois Institute of Technology \quad
 	\href{mailto:hickernell@iit.edu}{\url{hickernell@iit.edu}} \quad
 	\href{http://mypages.iit.edu/~hickernell}{\url{mypages.iit.edu/~hickernell}}}
 
@@ -80,7 +80,9 @@ The promise of Bayesian cubature is that with reasonable prior information (or a
 and the rest of the GAIL an QMCPy teams \\
 	partially supported by SigOpt and NSF-DMS-1522687 \\[2ex]
 	Thanks to the organizers, especially during these unusual times \\
-	Slides at  \href{https://speakerdeck.com/fjhickernell/quasi-monte-carlo-software}{\nolinkurl{speakerdeck.com/fjhickernell/quasi-monte-carlo-software}}
+	Slides at  \href{https://speakerdeck.com/fjhickernell/quasi-monte-carlo-software}{\nolinkurl{speakerdeck.com/fjhickernell/quasi-monte-carlo-software}}\\
+	Google Colaboratory notebook at \href{https://tinyurl.com/QMCPyTutorial}{\nolinkurl{tinyurl.com/QMCPyTutorial}}\\
+	Blog at \href{https://qmcpy.wordpress.com/}{\nolinkurl{qmcpy.wordpress.com/}}
 	
 }
 \event{MCQMC 2020}
@@ -174,18 +176,22 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\tabularnewline \toprule
 		\uncover<1>{\href{https://www.mathworks.com}{\alert{MATLAB Statistics Toolbox}}---\\ Sobol' and Halton} &
 		\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
-		\tabularnewline[2ex]
+		\tabularnewline[1.4ex]
 		\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} \uncover<1>{R package,} Sobol' and Halton &
-			\href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{MATLAB}
-		\tabularnewline[2ex]
+	  \href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{MATLAB}
+		\tabularnewline[1.4ex]
 		\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton\uncover<1>{ in R}&
-		\tabularnewline[2ex]
+		\tabularnewline[1.4ex]
+		\uncover<1>{\href{https://github.com/PieterjanRobbe/QMC.jl}{\alert{Pieterjan Robbe}---LD sequences in Julia}}
+		\tabularnewline[1.4ex]
+		\href{https://pytorch.org/}{\alert{PyTorch}---Sobol'}
+		\tabularnewline[1.4ex]
 		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{\alert{Pierre L'Ecuyer}---Lattice Builder \uncover<1>{and  Stochastic Simulation in C/C++ and Java}}}
-		\tabularnewline[2ex]
+		\tabularnewline[1.4ex]
 		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{\alert{Dirk Nuyens}}---Magic Point Shop \uncover<1>{and QMC4PDE in MATLAB, Python, and C++}}
-\tabularnewline[2ex]
+\tabularnewline[1.4ex]
 		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\uncover<1>{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}}
-\tabularnewline[2ex]
+\tabularnewline[1.4ex]
 		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{drawing on and connecting} the work of different groups}
 \tabularnewline
 	\end{tabular}
