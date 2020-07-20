@@ -126,18 +126,21 @@ and the rest of the GAIL an QMCPy teams \\
 \section{Background}
 
 \begin{frame}{You have heard about QMC.  How do you try it?}
+	
+	\vspace{-5ex}
 \begin{itemize}
-\setlength{\itemsep}{0.5cm}
+\setlength{\itemsep}{0cm}
     \item<1-> \emph{QMC will give you 100 times the accuracy in the same amount of time as simple MC} \\
-    \uncover<2->{\alert{Often}}
     
     \item<1-> \emph{Just replace your IID random numbers with low discrepancy points}\\
-    \uncover<2->{\alert{Sometimes}}
+    \uncover<2->{\alert{Often, Sometimes}}
     
-    \vspace{5ex}
+    \vspace{4ex}
     
     \item<3-> \emph{Where can I get accurate, efficient, easy to use QMC software to try for my problem?}\\
+     \item<3-> \emph{How can I make my great software available for others?}\\
     \uncover<4->{\alert{Let's try to help}}
+    
 \end{itemize}
 \end{frame}
 
@@ -169,21 +172,21 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	\begin{tabular}{>{\centering}m{0.47\textwidth}@{\qquad}>{\centering}m{0.47\textwidth}}
 		\alert{LD Sequence Generators} & \alert{Multi-Level, Stopping Criteria, Applications}
 		\tabularnewline \toprule
-		\href{https://www.mathworks.com}{\alert{MATLAB Statistics Toolbox}}---\\ Sobol' and Halton &
-		\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  in C++, MATLAB, Python, and R
+		\uncover<1>{\href{https://www.mathworks.com}{\alert{MATLAB Statistics Toolbox}}---\\ Sobol' and Halton} &
+		\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
 		\tabularnewline[2ex]
-		\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} R package, Sobol' and Halton &
-			\href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  MATLAB
+		\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} \uncover<1>{R package,} Sobol' and Halton &
+			\href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{MATLAB}
 		\tabularnewline[2ex]
-		\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton in R&
+		\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton\uncover<1>{ in R}&
 		\tabularnewline[2ex]
-		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{\alert{Pierre L'Ecuyer}---Lattice Builder, Stochastic Simulation in C/C++ and Java}}
+		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{\alert{Pierre L'Ecuyer}---Lattice Builder \uncover<1>{and  Stochastic Simulation in C/C++ and Java}}}
 		\tabularnewline[2ex]
-		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{\alert{Dirk Nuyens}}---Magic Point Shop and QMC4PDE in MATLAB, Python, and C++}
+		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{\alert{Dirk Nuyens}}---Magic Point Shop \uncover<1>{and QMC4PDE in MATLAB, Python, and C++}}
 \tabularnewline[2ex]
-		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}
+		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\uncover<1>{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}}
 \tabularnewline[2ex]
-		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package drawing on the work of different groups}
+		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{drawing on and connecting} the work of different groups}
 \tabularnewline
 	\end{tabular}
     
