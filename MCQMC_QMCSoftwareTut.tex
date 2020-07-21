@@ -198,17 +198,6 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
     
 \end{frame}
 
-\iffalse
-QMC software at MCQMC 2020 this summer.  Besides my own team’s libraries, I am aware of and will try to mention
-ALSVID-UQ http://www.sam.math.ethz.ch/alsvid-uq/ 
-Mike Giles’s team’s MLMC software, https://people.maths.ox.ac.uk/gilesm/mlmc/
-Stephen Joe and Frances Kuo’s Sobol’ direction numbers https://web.maths.unsw.edu.au/~fkuo/sobol/index.html 
-The R package qrng from Christiane Lemieux’s team, https://cran.r-project.org/web/packages/qrng/qrng.pdf
-Pierre L’Ecuyer’s team’s LatNet Builder and other software https://github.com/umontreal-simul/
-Dirk Nuyen's Magic Point Shop https://people.cs.kuleuven.be/~dirk.nuyens/qmc-generators/
-
-https://github.com/PieterjanRobbe/QMC.jl
-\fi
 
 \begin{frame}{Why Is LD Better than IID?}
 	\vspace{-4ex}
@@ -234,7 +223,7 @@ https://github.com/PieterjanRobbe/QMC.jl
 	\vspace{-6ex}
 	
 	\[
-	 \uncover<2->{\mu =  \int_{\ct} g(\vt) \, \lambda(\vt) \, \dif \vt = \cdots = } 	\Ex[f(\vX)] = \int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx \approx  \frac 1n \sum_{i=1}^n f(\vx_i) =: \hmu
+	 \uncover<2->{\mu =  \int_{\ct} g(\vt) \, \lambda(\vt) \, \dif \vt = \cdots = } 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^n f(\vx_i) =: \hmu
 	\]
 	
 		\vspace{-3ex}
@@ -252,8 +241,22 @@ https://github.com/PieterjanRobbe/QMC.jl
 	\end{description}
 \end{frame}
 
-\section{Generating LD Points}
-\begin{frame}{Jupyter Notebooks on Colab}
+\section{QMCPy on Google Colaboratory}
+\begin{frame}{QMCPy in a Jupyter Notebooks on Google Colaboratory}
+	
+	\alert{Prerequisites}---No Python, Jupyter, or QMC knowledge assumed
+	
+	\alert{Goals}
+	
+		\vspace{-3ex}
+		\begin{itemize}
+		\item Show you how QMC software works
+		\item Interest you in using/contributing
+	\end{itemize}
+	
+	\alert{Directions}
+	
+	\vspace{-3ex}
 	\begin{itemize}
 		\item Point your browser to \href{https://tinyurl.com/QMCPyTutorial}{\nolinkurl{https://tinyurl.com/QMCPyTutorial}}
 		\item Open the file in Google Colaboratory
