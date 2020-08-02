@@ -208,7 +208,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\setlength{\itemsep}{0.5cm}
 		\item[Integration]  Arising in finance, uncertainty quantification, Bayesian inference, \ldots
 		\begin{equation*}
-		\mu = \Ex[f(\vX)] = \int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx \approx \hmu = \frac 1n \sum_{i=1}^n f(\vx_i)
+		\mu = \Ex[f(\vX)] = \int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx \approx \hmu = \frac 1n \sum_{i=1}^n f(\vX_i)
 		\end{equation*}
 		LD points give faster convergence than IID
 		
@@ -226,7 +226,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	\vspace{-6ex}
 	
 	\[
-	 \uncover<2->{\mu =  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vx_i}) =: \hmu
+	 \uncover<2->{\mu =  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vX_i}) =: \hmu
 	\]
 	
 		\vspace{-3ex}
@@ -234,7 +234,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	\begin{description}[<+->]
 				\setlength{\itemsep}{0.5cm}
 		
-		\item[LD Generator] producing $\{\vx_1, \vx_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
+		\item[LD Generator] producing $\{\vX_1, \vX_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
 		
 		\item[True Measure] that defines the original integral, e.g., Lebesgue
 		
