@@ -76,7 +76,7 @@ The promise of Bayesian cubature is that with reasonable prior information (or a
 	\href{mailto:hickernell@iit.edu}{\url{hickernell@iit.edu}} \quad
 	\href{http://mypages.iit.edu/~hickernell}{\url{mypages.iit.edu/~hickernell}}}
 
-\thanksnote{with Sou-Cheng Choi, Mike McCourt, Aleksei Sorokin \\ 
+\thanksnote{with Sou-Cheng Choi, Mike McCourt, Jagadeeswaran Rathinavel, Aleksei Sorokin \\ 
 and the rest of the GAIL an QMCPy teams \\
 	partially supported by SigOpt and NSF-DMS-1522687 \\[2ex]
 	Thanks to the organizers, especially during these unusual times \\
@@ -155,7 +155,7 @@ and the rest of the GAIL an QMCPy teams \\
 \includegraphics[height=5cm]{ProgramsImages/SSobolPoints.eps}
 \tabularnewline
 $\vT_i$ are random &
-$\vX_i$ may be deterministic or random 
+$\vX_i$ may be deterministic \alert{or} random 
 \tabularnewline
 $\vT_1, \vT_2 \cdots \alert{\IIDsim} F$ &
 $\vX_1, \vX_2 \cdots \alert{\LDsim} F$ 
@@ -246,6 +246,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 
 \section{QMCPy on Google Colaboratory}
 \begin{frame}{QMCPy in a Jupyter Notebooks on Google Colaboratory}
+	\vspace{-4ex}
 	
 	\alert{Prerequisites}---No Python, Jupyter, or QMC knowledge assumed
 	
@@ -262,10 +263,11 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	\vspace{-3ex}
 	\begin{itemize}
 		\item Point your browser to \href{https://tinyurl.com/QMCPyTutorial}{\nolinkurl{https://tinyurl.com/QMCPyTutorial}}
-		\item Open the file in Google Colaboratory
+		\item Open the file in Google Colaboratory (may need to push a button at the top of your browser)
 		\item Make a copy of this file onto your own Google drive account \\
 		\texttt{File} $\rightarrow$ \texttt{Save a copy in Drive}
 	\end{itemize}
+\alert{Pause for questions}
 \end{frame}
 
 \section{Why Collaborate?}
@@ -277,6 +279,8 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\item Coded primarily by Aleksei Sorokin 
 		
 		\item Folded in code from several groups (see above)
+		
+		\item Documentation and testing by Sou-Cheng Choi and Jagadeeswaran R.
 		
 		\item Funded and encouraged by Mike McCourt at SigOpt
 	\end{itemize}
@@ -359,7 +363,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 			\item Interesting use cases
 		\end{itemize}
 	
-		A community library let's us take advantage of the best.
+		A community library lets us take advantage of the best.
 
 	\item<2-> We provide a consistent interface for the different pieces.
 	
