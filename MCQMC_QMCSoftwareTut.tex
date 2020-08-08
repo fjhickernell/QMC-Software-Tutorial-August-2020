@@ -11,6 +11,7 @@
 	array,
 	booktabs,
 	xspace,
+	multirow,
 	calc,
 	colortbl,
 	siunitx,
@@ -134,19 +135,19 @@ and the rest of the GAIL an QMCPy teams \\
 \setlength{\itemsep}{0cm}
     \item<1-> \emph{QMC will give you 100 times the accuracy in the same amount of time as simple MC} \\
     
-    \item<1-> \emph{Just replace your IID random numbers with low discrepancy points}\\
+    \item<1-> \emph{Just replace your IID random points with low discrepancy (LD) points}\\
     \uncover<2->{\alert{Often, Sometimes}}
     
     \vspace{4ex}
     
     \item<3-> \emph{Where can I get accurate, efficient, easy to use QMC software to try for my problem?}\\
-     \item<3-> \emph{How can I make my great software available for others?}\\
+     \item<3-> \emph{How can I make my great QMC software available for others?}\\
     \uncover<4->{\alert{Let's try to help}}
     
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Quasi-Monte Carlo (QMC) Uses Low Discrepancy (LD) Sequences}
+\begin{frame}{Quasi-Monte Carlo (QMC) uses low discrepancy (LD) sequences}
 \vspace{-3ex}
 \begin{tabular}{>{\centering}p{0.47\textwidth}@{\quad}>{\centering}p{0.47\textwidth}}
 %Independent \& Identically Distributed (IID) &
@@ -168,10 +169,10 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \end{tabular}
 \end{frame}
 
-\begin{frame}{Where Is the Software?}
+\begin{frame}{Where is the software?  (apologies to those I missed)}
 			\vspace{-3ex}
 	
-	\renewcommand{\arraystretch}{1.35}
+	\renewcommand{\arraystretch}{1.15}
 	\begin{tabular}{>{\centering}m{0.47\textwidth}@{\qquad}>{\centering}m{0.47\textwidth}}
 		\alert{LD Sequence Generators} & \alert{Multi-Level, Stopping Criteria, Applications}
 		\tabularnewline \toprule
@@ -179,9 +180,13 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
 		\tabularnewline
 		\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} \uncover<1>{R package,} Sobol' and Halton &
-	  \href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{MATLAB}
+	  \href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{in MATLAB}
+		\tabularnewline
+		\uncover<1>{\href{http://www.broda.co.uk}{\alert{BRODA, Sergei Kucherenko}}---Sobol' in C, MATLAB, and Excel}& 
+		\uncover<1>{\href{https://www.uqlab.com}{\alert{UQLab}}---Framework for Uncertainty Quantification in MATLAB}
 		\tabularnewline
 		\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton\uncover<1>{ in R}&
+		\multirow{3}{0.47\textwidth}{\uncover<1>{\centering \href{http://www.openturns.org}{\alert{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}}}
 		\tabularnewline
 		\uncover<1>{\href{https://github.com/PieterjanRobbe/QMC.jl}{\alert{Pieterjan Robbe}---LD sequences in Julia}}
 		\tabularnewline
@@ -193,7 +198,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \tabularnewline
 		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\uncover<1>{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}}
 \tabularnewline
-		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{drawing on and connecting} the work of different groups}
+		\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{incorporating and connecting} the work of different groups}
 \tabularnewline
 	\end{tabular}
 
@@ -202,7 +207,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \end{frame}
 
 
-\begin{frame}{Why Is LD Better than IID?}
+\begin{frame}{Why is LD better than IID?}
 	\vspace{-4ex}
 	\begin{description}
 		\setlength{\itemsep}{0.5cm}
@@ -221,12 +226,12 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
     
 \end{frame}
 
-\begin{frame}{What Software Components Do We Need?}
+\begin{frame}{What software components do we need?}
 	
 	\vspace{-6ex}
 	
 	\[
-	 \uncover<2->{\mu =  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vX_i}) =: \hmu
+	 \uncover<2->{\mu =  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } \only<1>{\mu =}	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vX_i}) =: \hmu
 	\]
 	
 		\vspace{-3ex}
@@ -240,7 +245,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		
 		\item[Integrand] $g$, which defines the original integral, plus the transformed version, $f$, to fit the LD generator
 		
-		\item[Stopping Criterion] that determines how large $n$ needs to be, e.g., to ensure that $\abs{\mu - \hmu} \le \varepsilon$
+		\item[Stopping Criterion] that determines how large $n$ needs to be to ensure that $\abs{\mu - \hmu} \le \varepsilon$
 	\end{description}
 \end{frame}
 
@@ -277,13 +282,13 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \alert{Pause for questions}
 \end{frame}
 
-\section{Why Collaborate?}
+\section{Why collaborate?}
 
 \begin{frame}
 	\frametitle{Acknowledgments for QMCPy}
 	
 	\begin{itemize}
-		\item Coded primarily by Aleksei Sorokin 
+		\item Coded almost entirely by Aleksei Sorokin (BS/MS '21)
 		
 		\item Relies on code from several groups (see above)
 		
@@ -295,7 +300,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 
 
 \begin{frame}
-	{The Guaranteed Automatic Integration Library (GAIL) and QMCPy Teams}
+	{The Guaranteed Automatic Integration Library (GAIL) and QMCPy teams}
 	
 	\vspace{-2ex}
 	\includegraphics[angle = 180, origin = c, width = 0.32\textwidth]{ProgramsImages/GAIL2014RE.jpeg} \
@@ -318,7 +323,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 			
 			\item Llu\'is Antoni Jim\'enez Rugama (IIT PhD '17, UBS)
 			
-			\item Mike McCourt (IIT BS ''07, Cornell PhD '12, \\ Head of Research, SigOpt)
+			\item Mike McCourt (IIT BS '07, Cornell PhD '12, \\ Head of Research, SigOpt)
 			
 			\item Jagadeeswaran Rathinavel (IIT PhD '19, Wi-Tronix)
 			
@@ -354,12 +359,12 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 
 \end{frame}
 
-\begin{frame}{The Argument for Community Software}
+\begin{frame}{The argument for community software}
 	
 	\vspace{-4ex}
 	
 	\begin{itemize}
-	\item<1-> Our research groups are typically expert at only part of the whole picture:
+	\item<+-> Our research groups are typically expert at only part of the whole picture:
 			\begin{itemize}
 			\item LD sequence generators
 			
@@ -370,13 +375,15 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 			\item Interesting use cases
 		\end{itemize}
 	
-		A community library lets us all take advantage of the best.
+		A community library lets us all take advantage of the best
 
-	\item<2-> We provide a consistent interface for  different pieces from different places.
+	\item<+-> Provides a consistent interface for  different pieces from different places
 	
-	\item<3-> Tedious stuff only needs to be done once.
+	\item<+-> Enables reproducible computational research
+	
+	\item<+-> Tedious stuff only needs to be done once
 
-		\item<4-> Many eyes help find and correct errors
+		\item<+-> Many eyes find and correct errors
 		\begin{itemize}
 			\item MATLAB's Sobol' generator's incorrect scrambling corrected in MATLAB 2017a after Tony Jim\'enez Rugama noticed discrepancies.
 			
@@ -387,7 +394,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{How You Can Contribute}
+\begin{frame}{How you can contribute}
 	
 		\vspace{-3ex}
 	Try out  QMCPy and then
@@ -411,7 +418,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	
 			\vspace{-1ex}
 	
-	\uncover<2>{And if you are wedded to another language, think of designing your software so that others can add to it easily.}
+	\uncover<2>{If you are wedded to another language, think of designing your software so that others can add to it easily.}
 
 \end{frame}
 
