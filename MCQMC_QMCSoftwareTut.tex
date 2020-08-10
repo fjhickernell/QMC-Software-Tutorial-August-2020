@@ -134,9 +134,9 @@ and the rest of the GAIL an QMCPy teams \\
 \begin{itemize}
 \setlength{\itemsep}{0cm}
     \item<1-> \emph{QMC will give you 100 times the accuracy in the same amount of time as simple MC} \\
-    
+     \uncover<2->{\alert{Often}}
     \item<1-> \emph{Just replace your IID random points with low discrepancy (LD) points}\\
-    \uncover<2->{\alert{Often, Sometimes}}
+    \uncover<2->{\alert{Sometimes}}
     
     \vspace{4ex}
     
@@ -213,7 +213,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		\setlength{\itemsep}{0.5cm}
 		\item[Integration/Expectation]  Arising in finance, uncertainty quantification, Bayesian inference, \ldots
 		\begin{equation*}
-		\mu := \Ex[f(\vX)] = \int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx \approx \frac 1n \sum_{i=1}^n f(\vX_i) =:  \hmu
+		\mu := \Ex[f(\vX)] = \int_\cx f(\vx) \, \varrho(\vx) \, \dif \vx \approx \frac 1n \sum_{i=1}^n f(\vX_i) =:  \hmu_n
 		\end{equation*}
 		LD points give faster convergence than IID
 		
@@ -231,7 +231,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 	\vspace{-6ex}
 	
 	\[
-	 \uncover<2->{\mu :=  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } \only<1>{\mu :=} 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1n \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vX_i}) =: \hmu
+	 \uncover<2->{\mu :=  \int_{\ct} \alert<3>{g(\vt)} \, \alert<2>{\lambda(\vt) \, \dif \vt} = \cdots = } \only<1>{\mu :=} 	\underbrace{\Ex[f(\vX)]}_{\text{expectation}} = \underbrace{\int_\cx \alert<3>{f(\vx)} \, \varrho(\vx) \, \dif \vx}_{\text{integration}} \approx  \frac 1{\alert<4>{n}} \sum_{i=1}^{\alert<4>{n}} f(\alert<1>{\vX_i}) =: \hmu_{\alert<4>{n}}
 	\]
 	
 		\vspace{-3ex}
@@ -245,7 +245,7 @@ $F_{\{\vX_i\}_{i=1}^n}(\vx) \approx F(\vx)$
 		
 		\item[Integrand] $g$, which defines the original integral, plus the transformed version, $f$, to fit the LD generator
 		
-		\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu} \le \varepsilon$
+		\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$
 	\end{description}
 \end{frame}
 
