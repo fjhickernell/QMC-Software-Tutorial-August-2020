@@ -117,18 +117,27 @@ This tutorial points to some of the best QMC software available.  Moreover, we d
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in the following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC}
+QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
+
+Software that concentrates on generating high quality LD sequences includes
+\begin{itemize}
+	\item BRODA \url{http://www.broda.co.uk} by Sergei Kucherenko---Sobol' in C, MATLAB, and Excel; 
+	\item Magic Point Shop \url{https://bitbucket.org/dnuyens/qmc-generators/src/master/} by Dirk Nuyens---in MATLAB, Python, and C++;
+	\item MATLAB's Statistics Toolbox \url{https://www.mathworks.com}---randomized Sobol' and Halton generators;
+	\item \texttt{qrng} by 	Marius Hofert \& Christiane Lemieux \url{https://cran.r-project.org/web/packages/qrng/qrng.pdf}--- Sobol' and Halton  in R package
+	
+	
+\end{itemize}
 
 	\renewcommand{\arraystretch}{1.15}
 \begin{tabular}{>{\centering}m{0.47\textwidth}@{\qquad}>{\centering}m{0.47\textwidth}}
 	LD Sequence Generators & Multi-Level, Stopping Criteria, Applications
 	\tabularnewline \toprule
-	\href{https://www.mathworks.com}{MATLAB Statistics Toolbox}--\newline Sobol' and Halton &
 	\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{Mike Giles}---Multi-Level (Quasi-)Monte Carlo  in C++, MATLAB, Python, and R
 	\tabularnewline
 	\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{Marius Hofert \& Christiane Lemieux }---\texttt{qrng} R package, Sobol' and Halton &
 	\href{http://gailgithub.github.io/GAIL_Dev/}{Guaranteed Automatic Integration Library (GAIL)}---Stopping criteria  in MATLAB
 	\tabularnewline
-	\href{http://www.broda.co.uk}{BRODA, Sergei Kucherenko}---Sobol' in C, MATLAB, and Excel& 
 	\href{https://www.uqlab.com}{UQLab}---Framework for Uncertainty Quantification in MATLAB
 	\tabularnewline
 	\href{http://statweb.stanford.edu/~owen/code/}{Art Owen}---randomized Halton in R&
