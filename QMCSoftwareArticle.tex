@@ -108,13 +108,45 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 
 \section{Introduction}
-Quasi-Monte Carlo (QMC) methods promise great efficiency gains over simple or independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error in the same amount of time as IID MC. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that drives QMC. 
+Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error as IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that is at the heart of QMC. 
 
-If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases.  
+If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases to demonstrate their practical value.  
 
-This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to be community owned Python library that combines the latest QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
+This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to bedome a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
+
+In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in the following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC}
+
+	\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{>{\centering}m{0.47\textwidth}@{\qquad}>{\centering}m{0.47\textwidth}}
+	LD Sequence Generators & Multi-Level, Stopping Criteria, Applications
+	\tabularnewline \toprule
+	\href{https://www.mathworks.com}{MATLAB Statistics Toolbox}--\newline Sobol' and Halton &
+	\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{Mike Giles}---Multi-Level (Quasi-)Monte Carlo  in C++, MATLAB, Python, and R
+	\tabularnewline
+	\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{Marius Hofert \& Christiane Lemieux }---\texttt{qrng} R package, Sobol' and Halton &
+	\href{http://gailgithub.github.io/GAIL_Dev/}{Guaranteed Automatic Integration Library (GAIL)}---Stopping criteria  in MATLAB
+	\tabularnewline
+	\href{http://www.broda.co.uk}{BRODA, Sergei Kucherenko}---Sobol' in C, MATLAB, and Excel& 
+	\href{https://www.uqlab.com}{UQLab}---Framework for Uncertainty Quantification in MATLAB
+	\tabularnewline
+	\href{http://statweb.stanford.edu/~owen/code/}{Art Owen}---randomized Halton in R&
+	\multirow{3}{0.47\textwidth}{\centering \href{http://www.openturns.org}{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}
+	\tabularnewline
+	\href{https://github.com/PieterjanRobbe/QMC.jl}{Pieterjan Robbe}---LD sequences in Julia}
+	\tabularnewline
+	\href{https://pytorch.org/}{PyTorch}---Sobol' in Python}
+	\tabularnewline
+	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{Pierre L'Ecuyer}---Lattice Builder and  Stochastic Simulation in C/C++ and Java}
+	\tabularnewline
+	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{Dirk Nuyens}---Magic Point Shop and QMC4PDE in MATLAB, Python, and C++}
+	\tabularnewline
+	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://people.sc.fsu.edu/~jburkardt/}{John Burkhardt}---variety in C++, Fortran, MATLAB, \& Python}}
+	\tabularnewline
+	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{QMCPy}---Python package incorporating and connecting} the work of different groups
+	\tabularnewline
+\end{tabular}
 
 \section{Components of QMC Software}
 
