@@ -119,12 +119,16 @@ In the sections that follow we first overview available QMC software.  We next d
 \section{Available Software for QMC}
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
 
-Software that concentrates on generating high quality LD sequences includes
+Software that concentrates on generating high quality LD sequences  or their generators includes
 \begin{itemize}
-	\item BRODA \url{http://www.broda.co.uk} by Sergei Kucherenko---Sobol' in C, MATLAB, and Excel; 
-	\item Magic Point Shop \url{https://bitbucket.org/dnuyens/qmc-generators/src/master/} by Dirk Nuyens---in MATLAB, Python, and C++;
-	\item MATLAB's Statistics Toolbox \url{https://www.mathworks.com}---randomized Sobol' and Halton generators;
-	\item \texttt{qrng} by 	Marius Hofert \& Christiane Lemieux \url{https://cran.r-project.org/web/packages/qrng/qrng.pdf}--- Sobol' and Halton  in R package
+	\item BRODA \cite{BRODA20a}---Sobol' in C, MATLAB, and Excel; 
+	\item LatNet builder
+	\item Magic Point Shop \cite{Nuy17a}---in MATLAB, Python, and C++;
+	\item MATLAB's Statistics Toolbox \cite{MAT9.9}---randomized Sobol' and Halton generators;
+	\item PyTorch \cite{PyTorch}---Sobol' in Python;
+	\item \texttt{QMC.jl} \cite{Rob20a}---LD sequences in Julia'
+	\item \texttt{qrng} \cite{QRNG2020}--- Sobol' and Halton  in R package
+	
 	
 	
 \end{itemize}
@@ -135,7 +139,6 @@ Software that concentrates on generating high quality LD sequences includes
 	\tabularnewline \toprule
 	\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{Mike Giles}---Multi-Level (Quasi-)Monte Carlo  in C++, MATLAB, Python, and R
 	\tabularnewline
-	\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{Marius Hofert \& Christiane Lemieux }---\texttt{qrng} R package, Sobol' and Halton &
 	\href{http://gailgithub.github.io/GAIL_Dev/}{Guaranteed Automatic Integration Library (GAIL)}---Stopping criteria  in MATLAB
 	\tabularnewline
 	\href{https://www.uqlab.com}{UQLab}---Framework for Uncertainty Quantification in MATLAB
@@ -143,14 +146,8 @@ Software that concentrates on generating high quality LD sequences includes
 	\href{http://statweb.stanford.edu/~owen/code/}{Art Owen}---randomized Halton in R&
 	\multirow{3}{0.47\textwidth}{\centering \href{http://www.openturns.org}{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}
 	\tabularnewline
-	\href{https://github.com/PieterjanRobbe/QMC.jl}{Pieterjan Robbe}---LD sequences in Julia}
-	\tabularnewline
-	\href{https://pytorch.org/}{PyTorch}---Sobol' in Python}
-	\tabularnewline
+
 	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{Pierre L'Ecuyer}---Lattice Builder and  Stochastic Simulation in C/C++ and Java}
-	\tabularnewline
-	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{Dirk Nuyens}---Magic Point Shop and QMC4PDE in MATLAB, Python, and C++}
-	\tabularnewline
 	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://people.sc.fsu.edu/~jburkardt/}{John Burkhardt}---variety in C++, Fortran, MATLAB, \& Python}}
 	\tabularnewline
 	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{QMCPy}---Python package incorporating and connecting} the work of different groups
