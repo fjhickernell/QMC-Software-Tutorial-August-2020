@@ -63,7 +63,7 @@
 
 
 
-\usepackage{bbm,mathtools,array,longtable,booktabs,graphicx,color}
+\usepackage{bbm,mathtools,array,longtable,booktabs,graphicx,color,enumitem}
 %\input FJHDef.tex
 
 
@@ -89,6 +89,8 @@
 
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
+
+\newcommand{\hmu}{\widehat{\mu}}
 
 \begin{document}
 
@@ -117,45 +119,44 @@ If you are a practitioner, you would like to test whether QMC would speed your c
 
 This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to bedome a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
 
+The model problem for QMC is to approximate an integral:
+\begin{equation} \label{eq:integral}
+	\mu = \int_\Omega g(\bst) \lambda(\bst) \, \D \bst,
+\end{equation}
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, $\mu = \bbE[f(\bsX)]$. A good choice can make computation more efficient.
+
+ QMC approximates this population mean by a sample mean
+\begin{equation} \label{eq:integral}
+	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), 
+\end{equation}
+where $\bsX_1, \bsX_2, \ldots$ is a carefully chosen sequence.  The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in the following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC}
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
+Software focusing on generating high quality LD sequences  or their generators includes
+\begin{description}[format=\textup,format=\textbf]
+	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
+	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
+	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
+	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
+	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
+	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
+	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
+	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}, and
+	\item[Robbe] LD Sequences in Julia \cite{Rob20a}.
+\end{description}
+Software focusing on QMC algorithms and applications includes
+\begin{description}[format=\textup,format=\textbf]
+	\item[GAIL] Automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal20a},
+	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
+	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
+	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
+	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}, and
+	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
+\end{description}
 
-Software that concentrates on generating high quality LD sequences  or their generators includes
-\begin{itemize}
-	\item BRODA \cite{BRODA20a}---Sobol' in C, MATLAB, and Excel; 
-	\item LatNet builder
-	\item Magic Point Shop \cite{Nuy17a}---in MATLAB, Python, and C++;
-	\item MATLAB's Statistics Toolbox \cite{MAT9.9}---randomized Sobol' and Halton generators;
-	\item PyTorch \cite{PyTorch}---Sobol' in Python;
-	\item \texttt{QMC.jl} \cite{Rob20a}---LD sequences in Julia'
-	\item \texttt{qrng} \cite{QRNG2020}--- Sobol' and Halton  in R package
-	
-	
-	
-\end{itemize}
-
-	\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{>{\centering}m{0.47\textwidth}@{\qquad}>{\centering}m{0.47\textwidth}}
-	LD Sequence Generators & Multi-Level, Stopping Criteria, Applications
-	\tabularnewline \toprule
-	\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{Mike Giles}---Multi-Level (Quasi-)Monte Carlo  in C++, MATLAB, Python, and R
-	\tabularnewline
-	\href{http://gailgithub.github.io/GAIL_Dev/}{Guaranteed Automatic Integration Library (GAIL)}---Stopping criteria  in MATLAB
-	\tabularnewline
-	\href{https://www.uqlab.com}{UQLab}---Framework for Uncertainty Quantification in MATLAB
-	\tabularnewline
-	\href{http://statweb.stanford.edu/~owen/code/}{Art Owen}---randomized Halton in R&
-	\multirow{3}{0.47\textwidth}{\centering \href{http://www.openturns.org}{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}
-	\tabularnewline
-
-	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{Pierre L'Ecuyer}---Lattice Builder and  Stochastic Simulation in C/C++ and Java}
-	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://people.sc.fsu.edu/~jburkardt/}{John Burkhardt}---variety in C++, Fortran, MATLAB, \& Python}}
-	\tabularnewline
-	\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{QMCPy}---Python package incorporating and connecting} the work of different groups
-	\tabularnewline
-\end{tabular}
 
 \section{Components of QMC Software}
 
