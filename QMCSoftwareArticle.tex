@@ -123,9 +123,9 @@ This tutorial points to some of the best QMC software available.  Moreover, we d
 
 The model problem for QMC is to approximate an integral:
 \begin{equation} \label{eq:integral}
-	\mu = \int_\Omega g(\bst) \lambda(\bst) \, \D \bst,
+	\mu = \int_\Omega g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, $\mu = \bbE[f(\bsX)]$. A good choice can make computation more efficient.
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, $\mu = \bbE[f(\bsX)]$. A good choice of $f$ can make computation more efficient.
 
  QMC approximates this population mean by a sample mean
 \begin{equation} \label{eq:integral}
@@ -133,7 +133,7 @@ where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu
 \end{equation}
 where $\bsX_1, \bsX_2, \ldots$ is a carefully chosen sequence.  The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
 
-In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in the following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
+In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC}
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
@@ -146,8 +146,8 @@ Software focusing on generating high quality LD sequences  or their generators i
 	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
-	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}, and
-	\item[Robbe] LD Sequences in Julia \cite{Rob20a}.
+	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}, and
+	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}.
 \end{description}
 Software focusing on QMC algorithms and applications includes
 \begin{description}[format=\textup,format=\textbf]
