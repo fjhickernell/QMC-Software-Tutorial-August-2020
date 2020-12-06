@@ -91,6 +91,12 @@
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
 
 \newcommand{\hmu}{\widehat{\mu}}
+\newcommand{\IID}{\textup{IID}}
+\newcommand{\LD}{\textup{LD}}
+\newcommand{\unif}{\textup{unif}}
+\newcommand{\IIDsim}{\overset{\IID}{\sim}}
+\newcommand{\LDsim}{\overset{\LD}{\sim}}
+\newcommand{\abs}[1]{\left \lvert #1 \right \rvert}
 
 \begin{document}
 
@@ -119,19 +125,44 @@ Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent 
 
 If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases to demonstrate their practical value.  
 
-This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to bedome a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
+This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to become a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
 
-The model problem for QMC is to approximate an integral:
+The model problem for QMC is to approximate an integral,
 \begin{equation} \label{eq:integral}
-	\mu = \int_\Omega g(\bst) \, \lambda(\bst) \, \D \bst,
+	\mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, $\mu = \bbE[f(\bsX)]$. A good choice of $f$ can make computation more efficient.
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, 
+\begin{equation} \label{eq:fintegral}
+	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx,
+\end{equation}
+where $\varrho$ is a probability density. 
+A good choice of $f$ can make computation more efficient.
 
- QMC approximates this population mean by a sample mean
-\begin{equation} \label{eq:integral}
-	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), 
+ QMC approximates this population mean by a sample mean,
+\begin{equation} \label{eq:samplemean}
+	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim \varrho.
 \end{equation}
-where $\bsX_1, \bsX_2, \ldots$ is a carefully chosen sequence.  The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+Here the notation ``$\sim$'' means that the sequence mimics the specified distribution/density, but not necessarily in a probabilistic way.  The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+
+Figure \ref{fig:comparePts} contrasts IID uniform points, $\bsX^{\IID}_1, \bsX^{\IID}_2, \ldots$  on the unit square  with LD points, $\bsX^{\LD}_1, \bsX^{\LD}_2, \ldots$, in this case linearly scrambled Sobol' points.  
+\begin{figure}
+	\includegraphics[height=5cm]{ProgramsImages/IIDPoints.eps} \qquad
+	\includegraphics[height=5cm]{ProgramsImages/SSobolPoints.eps}
+	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.} \label{fig:comparePts}
+\end{figure}
+The IID points are random. The position of each point is not influenced by the other.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim \calU[0,1]^d$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
+\begin{equation*}
+	F_{\unif,n}(\bsx_1, \ldots, \bsx_n) = F_{\unif}(\bsx_1) \cdots  F_{\unif}(\bsx_n), \qquad F_{\unif}(\bsx) = x_1 \cdots x_d.
+\end{equation*}
+where the case depicted in Figure \ref{fig:comparePts} is $d = 2$.
+
+The LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_1, \bsX_2, \ldots \LDsim \calU[0,1]^d$, we mean that for any positive integer $n$, that the empirical distribution of $\bsX_1, \ldots, \bsX_n$, denoted $F_{\{\bsX_i\}_{i=1}^n}$, should approximate the uniform distribution, $F_{\unif}$, well (relative to $n$).  (The empirical distribution of a set of points assigns equal probability to each.)  The measure of the difference between the empirical distribution of a set of points and the target distribution, $F$, is called a \emph{discrepancy} and denoted $D(\{\bsX_i\}_{i=1}^n, F)$.  Hence the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  In the example in Figure \ref{fig:comparePts} and in most QMC methods, the target distribution is the uniform distribution, $F_{\unif}$, on the unit cube, $[0,1]^d$.
+
+The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
+\begin{equation}
+	\abs{\mu - \hmu} = \abs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=1}^n}) (\bsx)} \le D(\{\bsX_i\}_{i=1}^n, F) V(f),
+\end{equation} 
+The variation is typically a (semi-) norm of the integrand in a suitable Banach space.  For details, the reader is referred to the references.  For our purposes, the we hope that the reader sees that the LD points cover the integration domain more evenly than IID points and that this will lead to smaller cubature errors in the examples below.
 
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
@@ -161,6 +192,20 @@ Software focusing on QMC algorithms and applications includes
 
 
 \section{Components of QMC Software}
+
+
+\begin{description}
+	\setlength{\itemsep}{0.5cm}
+	
+	\item[LD Generator] producing $\{\vX_1, \vX_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
+	
+	\item[True Measure] that defines the original integral, e.g., Lebesgue
+	
+	\item[Integrand] $g$, which defines the original integral, plus the transformed version, $f$, to fit the LD generator
+	
+	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$
+\end{description}
+
 
 \section{Low Discrepancy Generators}
 
