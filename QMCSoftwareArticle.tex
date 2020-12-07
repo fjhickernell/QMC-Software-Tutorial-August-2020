@@ -135,14 +135,23 @@ where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu
 \begin{equation} \label{eq:fintegral}
 	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx,
 \end{equation}
-where $\varrho$ is a probability density. 
+where $\varrho$ is a probability density with corresponding probability distribution $F$. 
 A good choice of $f$ can make computation more efficient.
 
- QMC approximates this population mean by a sample mean,
+QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
-	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim \varrho.
+	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim F.
 \end{equation}
-Here the notation ``$\sim$'' means that the sequence mimics the specified distribution/density, but not necessarily in a probabilistic way.  The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+
+Here the notation ``$\sim$'' means that the sequence mimics the specified density/distribution, but not necessarily in a probabilistic way.  We  use this notation primarily  in two forms:  $\IIDsim$ and $\LDsim$.
+
+IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  A subset of IID points chosen randomly is also IID.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim \calU[0,1]^d$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
+\begin{equation*}
+	F_{\unif,n}(\bsx_1, \ldots, \bsx_n) = F_{\unif}(\bsx_1) \cdots  F_{\unif}(\bsx_n), \qquad F_{\unif}(\bsx) = x_1 \cdots x_d.
+\end{equation*}
+When IID points are used to approximate $\mu$ by the sample mean, the error is $\calO(n^{-1/2})$.
+
 
 Figure \ref{fig:comparePts} contrasts IID uniform points, $\bsX^{\IID}_1, \bsX^{\IID}_2, \ldots$  on the unit square  with LD points, $\bsX^{\LD}_1, \bsX^{\LD}_2, \ldots$, in this case linearly scrambled Sobol' points.  
 \begin{figure}
@@ -150,13 +159,13 @@ Figure \ref{fig:comparePts} contrasts IID uniform points, $\bsX^{\IID}_1, \bsX^{
 	\includegraphics[height=5cm]{ProgramsImages/SSobolPoints.eps}
 	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.} \label{fig:comparePts}
 \end{figure}
-The IID points are random. The position of each point is not influenced by the other.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim \calU[0,1]^d$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
+The IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim \calU[0,1]^d$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
 \begin{equation*}
 	F_{\unif,n}(\bsx_1, \ldots, \bsx_n) = F_{\unif}(\bsx_1) \cdots  F_{\unif}(\bsx_n), \qquad F_{\unif}(\bsx) = x_1 \cdots x_d.
 \end{equation*}
 where the case depicted in Figure \ref{fig:comparePts} is $d = 2$.
 
-The LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_1, \bsX_2, \ldots \LDsim \calU[0,1]^d$, we mean that for any positive integer $n$, that the empirical distribution of $\bsX_1, \ldots, \bsX_n$, denoted $F_{\{\bsX_i\}_{i=1}^n}$, should approximate the uniform distribution, $F_{\unif}$, well (relative to $n$).  (The empirical distribution of a set of points assigns equal probability to each.)  The measure of the difference between the empirical distribution of a set of points and the target distribution, $F$, is called a \emph{discrepancy} and denoted $D(\{\bsX_i\}_{i=1}^n, F)$.  Hence the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  In the example in Figure \ref{fig:comparePts} and in most QMC methods, the target distribution is the uniform distribution, $F_{\unif}$, on the unit cube, $[0,1]^d$.
+The LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_1, \bsX_2, \ldots \LDsim \calU[0,1]^d$, we mean that for any positive integer $n$, that the empirical distribution of $\bsX_1, \ldots, \bsX_n$, denoted $F_{\{\bsX_i\}_{i=1}^n}$, should approximate the uniform distribution, $F_{\unif}$, well (relative to $n$).  (The empirical distribution of a set of points assigns equal probability to each.)  The measure of the difference between the empirical distribution of a set of points and the target distribution, $F$, is called a \emph{discrepancy} and denoted $D(\{\bsX_i\}_{i=1}^n, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  In the example in Figure \ref{fig:comparePts} and in most QMC methods, the target distribution is the uniform distribution, $F_{\unif}$, on the unit cube, $[0,1]^d$.
 
 The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
@@ -190,6 +199,8 @@ Software focusing on QMC algorithms and applications includes
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
 
+The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface and written in Python 3.  
+
 
 \section{Components of QMC Software}
 
@@ -197,7 +208,7 @@ Software focusing on QMC algorithms and applications includes
 \begin{description}
 	\setlength{\itemsep}{0.5cm}
 	
-	\item[LD Generator] producing $\{\vX_1, \vX_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
+	\item[LD Generator] producing $\{\bsX_1, \bsX_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
 	
 	\item[True Measure] that defines the original integral, e.g., Lebesgue
 	
