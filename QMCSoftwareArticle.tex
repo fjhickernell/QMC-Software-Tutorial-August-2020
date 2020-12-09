@@ -130,7 +130,7 @@ This tutorial points to some of the best QMC software available.  Moreover, we d
 
 The model problem for QMC is to approximate an integral,
 \begin{equation} \label{eq:integral}
-	\mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
+	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
 where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, 
 \begin{equation} \label{eq:fintegral}
@@ -141,7 +141,7 @@ A good choice of $f$ can make computation more efficient.
 
 QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
-	\hmu = \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim F.
+	\hmu := \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim F.
 \end{equation}
 The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
 
@@ -166,11 +166,11 @@ The error of the sample mean in approximating the integral can be bounded accord
 \begin{equation}
 	\abs{\mu - \hmu} = \abs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=1}^n}) (\bsx)} \le D(\{\bsX_i\}_{i=1}^n, F) V(f),
 \end{equation} 
-The variation is typically a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, the we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, the we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
 
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
-\section{Available Software for QMC}
+\section{Available Software for QMC} \label{sec:available} 
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
 Software focusing on generating high quality LD sequences  or their generators includes
 \begin{description}[format=\textup,format=\textbf]
@@ -194,26 +194,32 @@ Software focusing on QMC algorithms and applications includes
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
 
-The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface and written in Python 3.  
+The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface and written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
 
 
 \section{Components of QMC Software}
+QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
+\begin{multline} \label{eq:cubSummary}
+	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=1}^n f(\bsX_i) =: \hmu, \\
+	 \bsX_1, \bsX_2, \ldots \sim F.
+\end{multline}
+This required four components, which we implement in QMCPy as classes:
 
-
-\begin{description}
-	\setlength{\itemsep}{0.5cm}
+\begin{description}[format=\textup,format=\textbf]
 	
-	\item[LD Generator] producing $\{\bsX_1, \bsX_2, \dots \}$ that mimics the distribution with PDF $\varrho$, e.g., uniform
+	\item[Discrete Distribution] that produces $\bsX_1, \bsX_2, \dots$ mimicking the distribution $F$, which typically is $\calU[0,1]^d$;
 	
-	\item[True Measure] that defines the original integral, e.g., Lebesgue
+	\item[True Measure] $\bst \mapsto \lambda (\bst) \D \bst$ that defines the original integral, e.g., Gaussian or Lebesgue;
 	
-	\item[Integrand] $g$, which defines the original integral, plus the transformed version, $f$, to fit the LD generator
+	\item[Integrand] $g$ that  defines the original integral, plus the transformed version, $f$, to fit the discrete distribution; and
 	
-	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$
+	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$.
 \end{description}
 
+The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy provides multiple examples of them all.
 
-\section{Low Discrepancy Generators}
+
+\section{Discrete Distributions}
 
 \subsection{Standard Uniform Distributions}
 
