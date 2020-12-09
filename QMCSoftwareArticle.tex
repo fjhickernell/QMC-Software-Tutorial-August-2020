@@ -134,7 +134,7 @@ The model problem for QMC is to approximate an integral,
 \end{equation}
 where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, 
 \begin{equation} \label{eq:fintegral}
-	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx,
+	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx =  \int_\calX f(\bsx) \,  \D F(\bsx) ,
 \end{equation}
 where $\varrho$ is a probability density with corresponding probability distribution $F$. 
 A good choice of $f$ can make computation more efficient.
@@ -145,7 +145,7 @@ QMC approximates this population mean by a sample mean,
 \end{equation}
 The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
 
-Here the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation primarily  in two forms:  $\IIDsim$ and $\LDsim$.
+Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
 IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  A subset of IID points chosen randomly is also IID.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
 \begin{equation*}
