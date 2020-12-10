@@ -141,17 +141,17 @@ A good choice of $f$ can make computation more efficient.
 
 QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
-	\hmu := \frac 1n \sum_{i=1}^n f(\bsX_i), \qquad \bsX_1, \bsX_2, \ldots \sim F.
+	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim F.
 \end{equation}
 The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
 
 Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
-IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  A subset of IID points chosen randomly is also IID.  When we say that $\bsX_1, \bsX_2, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_1, \ldots, \bsX_n$ is the product of the marginals, specifically,
+IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  A subset of IID points chosen randomly is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
 \begin{equation*}
-	F_{n}(\bsx_1, \ldots, \bsx_n) = F(\bsx_1) \cdots  F(\bsx_n).
+	F_{n}(\bsx_0, \ldots, \bsx_{n-1}) = F(\bsx_0) \cdots  F(\bsx_{n-1}).
 \end{equation*}
-When IID points are used to approximate $\mu$ by the sample mean, the error is $\calO(n^{-1/2})$.  Figure \ref{fig:comparePts} displays IID uniform points, $\bsX^{\IID}_1, \bsX^{\IID}_2, \ldots \IIDsim \calU[0,1]^2$, where the target distribution is $F(\bsx) = x_1 x_2$
+When IID points are used to approximate $\mu$ by the sample mean, the error is $\calO(n^{-1/2})$.  Figure \ref{fig:comparePts} displays IID uniform points, $\bsX^{\IID}_0, \bsX^{\IID}_1, \ldots \IIDsim \calU[0,1]^2$, where the target distribution is $F(\bsx) = x_1 x_2$
 
 
 \begin{figure}
@@ -160,11 +160,11 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.} \label{fig:comparePts}
 \end{figure}
 
-LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_1, \bsX_2, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_1, \ldots, \bsX_n$, denoted $F_{\{\bsX_i\}_{i=1}^n}$,  approximate the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=1}^n, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_1, \bsX^{\LD}_2, \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
+LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximate the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
 
 The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
-	\abs{\mu - \hmu} = \abs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=1}^n}) (\bsx)} \le D(\{\bsX_i\}_{i=1}^n, F) V(f),
+	\abs{\mu - \hmu} = \abs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
 \end{equation} 
 The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, the we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
 
@@ -200,14 +200,14 @@ The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt 
 \section{Components of QMC Software}
 QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
 \begin{multline} \label{eq:cubSummary}
-	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=1}^n f(\bsX_i) =: \hmu, \\
-	 \bsX_1, \bsX_2, \ldots \sim F.
+	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
+	 \bsX_0, \bsX_1, \ldots \sim F.
 \end{multline}
 This required four components, which we implement in QMCPy as classes:
 
 \begin{description}[format=\textup,format=\textbf]
 	
-	\item[Discrete Distribution] that produces $\bsX_1, \bsX_2, \dots$ mimicking the distribution $F$, which typically is $\calU[0,1]^d$;
+	\item[Discrete Distribution] that produces $\bsX_0, \bsX_1, \dots$ mimicking the distribution $F$, which typically is $\calU[0,1]^d$;
 	
 	\item[True Measure] $\bst \mapsto \lambda (\bst) \D \bst$ that defines the original integral, e.g., Gaussian or Lebesgue;
 	
@@ -216,20 +216,33 @@ This required four components, which we implement in QMCPy as classes:
 	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$.
 \end{description}
 
-The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy provides multiple examples of them all.
+The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy combines multiple examples of them all.
 
 
 \section{Discrete Distributions}
 
-\subsection{Standard Uniform Distributions}
+LD sequences typically mimic $\calU[0,1]^d$, which we assume here.  Good sequences for other distributions are obtained by transformations in the next section.  
 
-\subsection{General Distributions}
+QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use additional $f(\bsX_i)$ without discarding the existing $f(\bsX_i)$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences do.  These latter two also have an elegant group structure, which we summarize here.  
 
-\section{Integration}
+For simplicity we restrict ourselves to the case where the first $2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
 
-\subsection{Integrands}
+\[
+\begin{array}{cc}
+	\topline
+	\text{Integration Lattices} & \text{Digital Nets} \hline
+	\multicolumn{2}{c}{\text{unshifted} \bsZ_i \oplus \bsZ_i' }
+\end{array}
+\]
 
-\subsection{Stopping Criteria}
+We focus on integration lattice.  here on the case where a single LD sequence works well for sample sizes $n=1, 2, 4, 8, \ldots$.  This allows the user to obtain additional function data without discarding the existing function data.  
+
+
+\section{True Measure}
+
+\section{Integrands}
+
+\section{Stopping Criteria}
 
 \section{Under the Hood}
 
