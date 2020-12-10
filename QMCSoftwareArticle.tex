@@ -67,12 +67,12 @@
 %\input FJHDef.tex
 
 
-\newcommand{\DHJRnorm}[2][{}]{\ensuremath{\left \lVert #2 \right \rVert}_{#1}}
-\newcommand{\DHJRnormnorm}[2][{}]{\ensuremath{\lVert #2 \rVert}_{#1}}
-\newcommand{\DHJRbignorm}[2][{}]{\ensuremath{\bigl \lVert #2 \bigr \rVert}_{#1}}
-\newcommand{\DHJRBignorm}[2][{}]{\ensuremath{\Bigl \lVert #2 \Bigr \rVert}_{#1}}
-\newcommand{\DHJRabs}[1]{\ensuremath{{\left \lvert #1 \right \rvert}}}
-\newcommand{\DHJRbigabs}[1]{\ensuremath{{\bigl \lvert #1 \bigr \rvert}}}
+\newcommand{\QMCPYnorm}[2][{}]{\ensuremath{\left \lVert #2 \right \rVert}_{#1}}
+\newcommand{\QMCPYnormnorm}[2][{}]{\ensuremath{\lVert #2 \rVert}_{#1}}
+\newcommand{\QMCPYbignorm}[2][{}]{\ensuremath{\bigl \lVert #2 \bigr \rVert}_{#1}}
+\newcommand{\QMCPYBignorm}[2][{}]{\ensuremath{\Bigl \lVert #2 \Bigr \rVert}_{#1}}
+\newcommand{\QMCPYabs}[1]{\ensuremath{{\left \lvert #1 \right \rvert}}}
+\newcommand{\QMCPYbigabs}[1]{\ensuremath{{\bigl \lvert #1 \bigr \rvert}}}
 
 
 \providecommand{\HickernellFJ}{Hickernell}
@@ -96,7 +96,6 @@
 \newcommand{\unif}{\textup{unif}}
 \newcommand{\IIDsim}{\overset{\IID}{\sim}}
 \newcommand{\LDsim}{\overset{\LD}{\sim}}
-\newcommand{\abs}[1]{\left \lvert #1 \right \rvert}
 
 \begin{document}
 
@@ -164,7 +163,7 @@ LD points may be deterministic or random, but each point is carefully coordinate
 
 The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
-	\abs{\mu - \hmu} = \abs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
+	\QMCPYabs{\mu - \hmu} = \QMCPYabs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
 \end{equation} 
 The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, the we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
 
@@ -213,7 +212,7 @@ This required four components, which we implement in QMCPy as classes:
 	
 	\item[Integrand] $g$ that  defines the original integral, plus the transformed version, $f$, to fit the discrete distribution; and
 	
-	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\abs{\mu - \hmu_n} \le \varepsilon$.
+	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\QMCPYabs{\mu - \hmu_n} \le \varepsilon$.
 \end{description}
 
 The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy combines multiple examples of them all.
@@ -228,10 +227,29 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 For simplicity we restrict ourselves to the case where the first $2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
 
 \[
-\begin{array}{cc}
-	\topline
-	\text{Integration Lattices} & \text{Digital Nets} \hline
-	\multicolumn{2}{c}{\text{unshifted} \bsZ_i \oplus \bsZ_i' }
+	\renewcommand{\arraystretch}{1.3}
+\begin{array}{c@{\qquad}c}
+	\toprule
+	\multicolumn{2}{c}{\text{Define \ldots}} \\
+	\multicolumn{2}{c}{\bsZ_0 = \bszero, \qquad \bsZ_1, \bsZ_2, \bsZ_4, \ldots \in [0,1)^d \text{chosen well} } \\
+	\multicolumn{2}{c}{
+		\bsZ_{i + 2^m} := \bsZ_i \oplus \bsZ_{2^m} 
+		 \qquad
+    	\forall  i \in \{1, \ldots, 2^{m} -1\}, \ m \in \bbN_0 }\\
+    	\multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \bsDelta \IIDsim [0,1)^d} \\  \hline
+	\text{Rank-1 Integration Lattices} & \text{Digital Nets} \\
+		\bst \oplus \bsx : = \bst + \bsx \bmod \bsone & \bst \oplus \bsx := \text{binary digitwise addition} \\ 
+		 \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
+		 	\bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{2^{m-1}} \quad \forall m \in \bbN \end{array}
+		\\
+\toprule
+\multicolumn{2}{c}{\text{Then it follows that \ldots}} \\
+	\multicolumn{2}{c}{\begin{array}{r}
+			\calP_m := \{\bsZ_0, \ldots, \bsZ_{2^m-1}\}, \quad
+			\bsZ_i \oplus \bsZ_j \in \calP_m \\
+			\calP_{\bsDelta,m} := \{\bsX_0, \ldots, \bsX_{2^m-1}\}, \quad
+			\bsX_i \oplus \bsX_j \ominus \bsX_k \in \calP_m 
+	\end{array} \quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}}
 \end{array}
 \]
 
