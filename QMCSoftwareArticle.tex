@@ -87,6 +87,16 @@
 
 \allowdisplaybreaks[4]
 
+%   python styling
+\usepackage{listings}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\lstdefinestyle{Python}{
+    language        = Python,
+    basicstyle      = \ttfamily,
+    keywordstyle    = \color{blue},
+    keywordstyle    = [2] \color{teal}, % just to check that it works
+    stringstyle     = \color{green},
+    commentstyle    = \color{darkgreen}\ttfamily}
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
 
@@ -102,7 +112,7 @@
 \title*{Quasi-Monte Carlo Software}
 \authorrunning{S.-C.\ T.\ Choi, F. J. Hickernell, R. Jagadeeswaran, M. J. McCourt, and A. G. Sorokin}
 \author{Sou-Cheng Terrya Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei Sorokin}
-\institute{Sou-Cheng Terrya Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{yding2@hawk.iit.edu}
+\institute{Sou-Cheng Terrya Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{schoi32@hawk.iit.edu}
 \and
 Fred J. Hickernell \at Center for Interdisciplinary Scientific Computation and \\
 Department of Applied Mathematics, Illinois Institute of Technology \\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{hickernell@iit.edu}
@@ -154,9 +164,10 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 
 
 \begin{figure}
-	\includegraphics[height=5cm]{ProgramsImages/IIDPoints.eps} \qquad
-	\includegraphics[height=5cm]{ProgramsImages/SSobolPoints.eps}
-	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.} \label{fig:comparePts}
+	\includegraphics[height=5cm]{ags/figs/iid_uniform_pts.png}%{ProgramsImages/IIDPoints.eps} 
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/sobol_pts.png}%{ProgramsImages/SSobolPoints.eps}
+	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly. \AGSComment{Changed above figs.}} \label{fig:comparePts}
 \end{figure}
 
 LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximate the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
@@ -165,15 +176,17 @@ The error of the sample mean in approximating the integral can be bounded accord
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYabs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, the we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
 
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC} \label{sec:available} 
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
 Software focusing on generating high quality LD sequences  or their generators includes
+\AGSComment{Reformatted the first bullet as an example. I can change the rest if this is what we want.}
 \begin{description}[format=\textup,format=\textbf]
-	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
+% https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
+	\item[$\cdot$ BRODA:] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
 	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
 	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
 	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
@@ -193,7 +206,7 @@ Software focusing on QMC algorithms and applications includes
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
 
-The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface and written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
+The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
 
 
 \section{Components of QMC Software}
@@ -202,7 +215,7 @@ QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
 	 \bsX_0, \bsX_1, \ldots \sim F.
 \end{multline}
-This required four components, which we implement in QMCPy as classes:
+This required four components, which we implement in QMCPy as classes: \AGSComment{... QMCPy as abstract classes that can be fleshed out into concrete implementations.}
 
 \begin{description}[format=\textup,format=\textbf]
 	
@@ -252,17 +265,67 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 	\end{array} \quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}}
 \end{array}
 \]
+\AGSComment{Change to (t+x) mod 1?}
 
+QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
+
+The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distribution objects uses the same syntax with a uniform API. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
+
+\lstinputlisting[style=Python]{ags/python/discrete_distrib.py}
+
+\AGSComment{Do we want to list available classes? \\ Should we put examples for other discrete distrib objects? \\ $>>>$ ? \\ Talk about custom generating vectors / matrices?}
+
+\begin{figure}
+	\includegraphics[height=5cm]{ags/figs/dd_iid.png}
+	\caption{\AGSComment{ToDO}} \label{fig:dd_iid}
+\end{figure}
+\begin{figure}
+	\includegraphics[height=4cm]{ags/figs/dd_ld.png}
+	\caption{\AGSComment{ToDO}} \label{fig:dd_ld}
+\end{figure}
 
 \section{True Measure}
 
+\lstinputlisting[style=Python]{ags/python/true_measure.py}
+
+\begin{figure}
+	\includegraphics[height=4cm]{ags/figs/tm1.png}
+	\caption{\AGSComment{ToDO}} \label{fig:dd_ld}
+\end{figure}
+
 \section{Integrands}
+
+\lstinputlisting[style=Python]{ags/python/integrand.py}
+
+\begin{figure}
+	\includegraphics[height=4cm]{ags/figs/i_keister_figs.png}
+	\caption{\AGSComment{ToDO}} \label{fig:ikf}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[height=4cm]{ags/figs/i_keister_contours.png}
+	\caption{\AGSComment{ToDO}} \label{fig:ikc}
+\end{figure}
 
 \section{Stopping Criteria}
 
+\lstinputlisting[style=Python]{ags/python/stopping_criterion.py}
+\AGSComment{show output?}
+
+
+
 \section{Under the Hood}
 
+\lstinputlisting[style=Python]{ags/python/under_the_hood_1.py}
 
+\AGSComment{
+\begin{itemize}
+    \item \texttt{print} method for all QMCPy objects
+    \item custom generating vectors / matrices
+    \item \texttt{Sobol} / \texttt{DigitalNet} options unique to QMCPy
+    \item \texttt{plot} method for most objects
+    \item more option pricing examples? 
+\end{itemize}}
 
 \section{Further Work} \label{sec:further}
 
