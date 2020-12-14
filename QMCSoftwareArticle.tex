@@ -183,10 +183,9 @@ In the sections that follow we first overview available QMC software.  We next d
 \section{Available Software for QMC} \label{sec:available} 
 QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
 Software focusing on generating high quality LD sequences  or their generators includes
-\AGSComment{Reformatted the first bullet as an example. I can change the rest if this is what we want.}
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
-	\item[$\cdot$ BRODA:] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
+	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
 	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
 	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
 	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
@@ -270,6 +269,8 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
 
 The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distribution objects uses the same syntax with a uniform API. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
+
+Docs at \cite{QMCPyDocs}
 
 \lstinputlisting[style=Python]{ags/python/discrete_distrib.py}
 
