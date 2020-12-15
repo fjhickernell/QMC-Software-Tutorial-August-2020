@@ -164,9 +164,9 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 
 
 \begin{figure}
-	\includegraphics[height=5cm]{ags/figs/iid_uniform_pts.png}%{ProgramsImages/IIDPoints.eps} 
+	\includegraphics[height=5cm]{ags/figs/dd.iid_uniform_pts.png}%{ProgramsImages/IIDPoints.eps} 
 	\qquad
-	\includegraphics[height=5cm]{ags/figs/sobol_pts.png}%{ProgramsImages/SSobolPoints.eps}
+	\includegraphics[height=5cm]{ags/figs/dd.sobol_pts.png}%{ProgramsImages/SSobolPoints.eps}
 	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly. \AGSComment{Changed above figs.}} \label{fig:comparePts}
 \end{figure}
 
@@ -214,7 +214,7 @@ QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
 	 \bsX_0, \bsX_1, \ldots \sim F.
 \end{multline}
-This required four components, which we implement in QMCPy as classes: \AGSComment{... QMCPy as abstract classes that can be fleshed out into concrete implementations.}
+This required four components, which we implement in QMCPy as abstract classes that can be fleshed out into concrete implementations.
 
 \begin{description}[format=\textup,format=\textbf]
 	
@@ -250,7 +250,7 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
     	\forall  i \in \{1, \ldots, 2^{m} -1\}, \ m \in \bbN_0 }\\
     	\multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \bsDelta \IIDsim [0,1)^d} \\  \hline
 	\text{Rank-1 Integration Lattices} & \text{Digital Nets} \\
-		\bst \oplus \bsx : = \bst + \bsx \bmod \bsone & \bst \oplus \bsx := \text{binary digitwise addition} \\ 
+		\bst \oplus \bsx : = (\bst + \bsx) \bmod \bsone & \bst \oplus \bsx := \text{binary digitwise addition} \\ 
 		 \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
 		 	\bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{2^{m-1}} \quad \forall m \in \bbN \end{array}
 		\\
@@ -264,7 +264,6 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 	\end{array} \quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}}
 \end{array}
 \]
-\AGSComment{Change to (t+x) mod 1?}
 
 QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
 
@@ -272,17 +271,26 @@ The following example shows how to utilize QMCPy's \texttt{Sobol} object to gene
 
 Docs at \cite{QMCPyDocs}
 
+\AGSComment{Import qmcpy as qp}
+
 \lstinputlisting[style=Python]{ags/python/discrete_distrib.py}
 
-\AGSComment{Do we want to list available classes? \\ Should we put examples for other discrete distrib objects? \\ $>>>$ ? \\ Talk about custom generating vectors / matrices?}
+\begin{figure}
+	\includegraphics[height=5cm]{ags/figs/dd.iid_std_uniform_1.png}
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/dd.iid_std_gaussian.png}
+	\caption{\AGSComment{TODO}}
+	\label{fig:dd_iid}
+\end{figure}
 
 \begin{figure}
-	\includegraphics[height=5cm]{ags/figs/dd_iid.png}
-	\caption{\AGSComment{ToDO}} \label{fig:dd_iid}
-\end{figure}
-\begin{figure}
-	\includegraphics[height=4cm]{ags/figs/dd_ld.png}
-	\caption{\AGSComment{ToDO}} \label{fig:dd_ld}
+	\includegraphics[height=5cm]{ags/figs/dd.sobol.png}
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/dd.lattice.png}
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/dd.halton.png}
+	\caption{\AGSComment{TODO}}
+	\label{fig:dd_ld}
 \end{figure}
 
 \section{True Measure}
@@ -290,8 +298,13 @@ Docs at \cite{QMCPyDocs}
 \lstinputlisting[style=Python]{ags/python/true_measure.py}
 
 \begin{figure}
-	\includegraphics[height=4cm]{ags/figs/tm1.png}
-	\caption{\AGSComment{ToDO}} \label{fig:dd_ld}
+	\includegraphics[height=5cm]{ags/figs/tm.uniform.png} 
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/tm.gaussian.png}
+	\qquad
+	\includegraphics[height=5cm]{ags/figs/tm.brownian_motion.png}
+	\caption{\AGSComment{TODO}}
+	\label{fig:tm}
 \end{figure}
 
 \section{Integrands}
@@ -299,25 +312,22 @@ Docs at \cite{QMCPyDocs}
 \lstinputlisting[style=Python]{ags/python/integrand.py}
 
 \begin{figure}
-	\includegraphics[height=4cm]{ags/figs/i_keister_figs.png}
+	\includegraphics[height=4cm]{ags/figs/i.keister_figs.png}
 	\caption{\AGSComment{ToDO}} \label{fig:ikf}
 \end{figure}
 
 \begin{figure}
-	\includegraphics[height=4cm]{ags/figs/i_keister_contours.png}
+	\includegraphics[height=4cm]{ags/figs/i.keister_contours.png}
 	\caption{\AGSComment{ToDO}} \label{fig:ikc}
 \end{figure}
 
 \section{Stopping Criteria}
 
-\lstinputlisting[style=Python]{ags/python/stopping_criterion.py}
-\AGSComment{show output?}
+\lstinputlisting[style=Python]{ags/python/sc_mc.py}
 
-
+\lstinputlisting[style=Python]{ags/python/sc_qmc.py}
 
 \section{Under the Hood}
-
-\lstinputlisting[style=Python]{ags/python/under_the_hood_1.py}
 
 \AGSComment{
 \begin{itemize}
