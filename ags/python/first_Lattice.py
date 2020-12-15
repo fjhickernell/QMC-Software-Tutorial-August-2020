@@ -1,4 +1,4 @@
->> lattice = qp.Lattice(dimenaion=2,randomize=False)
+>> lattice = qp.Lattice(dimension=2,randomize=False)
 >> lattice.gen_samples(n=8)
 /usr/local/lib/python3.6/dist-packages/qmcpy/discrete_distribution/lattice/lattice.py:197: ParameterWarning: Non-randomized lattice sequence includes the origin
   warnings.warn("Non-randomized lattice sequence includes the origin",ParameterWarning)

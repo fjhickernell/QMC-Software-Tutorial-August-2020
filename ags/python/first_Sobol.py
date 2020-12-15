@@ -1,2 +1,2 @@
-!pip install qmcpy==0.8.1a0 # install qmcpy
-import qmcpy as qp # bring qmcpy into the environment 
+sobol = qp.Sobol(2,randomize=False)
+sobol.gen_samples(8)
