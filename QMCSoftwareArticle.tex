@@ -135,7 +135,7 @@ Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent 
 
 If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases to demonstrate their practical value.  
 
-This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to become a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google colaboratory notebook \cite{QMCPyTutColab2020}.
+This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to become a community owned Python library that combines the best QMC algorithms under a common user interface.  A demonstration of how QMCPy works is given in a Google Colab notebook \cite{QMCPyTutColab2020}.
 
 The model problem for QMC is to approximate an integral,
 \begin{equation} \label{eq:integral}
@@ -167,7 +167,8 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 	\includegraphics[height=5cm]{ags/figs/dd.iid_uniform_pts.png}%{ProgramsImages/IIDPoints.eps} 
 	\qquad
 	\includegraphics[height=5cm]{ags/figs/dd.sobol_pts.png}%{ProgramsImages/SSobolPoints.eps}
-	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly. \AGSComment{Changed above figs.}} \label{fig:comparePts}
+	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.}
+	\label{fig:comparePts}
 \end{figure}
 
 LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximate the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
@@ -193,7 +194,7 @@ Software focusing on generating high quality LD sequences  or their generators i
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
 	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}, and
-	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}.
+	\item [qrng]  Sobol', Halton, and Korobov sequences in R \cite{QRNG2020}.
 \end{description}
 Software focusing on QMC algorithms and applications includes
 \begin{description}[format=\textup,format=\textbf]
@@ -214,7 +215,7 @@ QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
 	 \bsX_0, \bsX_1, \ldots \sim F.
 \end{multline}
-This required four components, which we implement in QMCPy as abstract classes that can be fleshed out into concrete implementations.
+This required four components, which we implement in QMCPy as classes.
 
 \begin{description}[format=\textup,format=\textbf]
 	
@@ -227,8 +228,12 @@ This required four components, which we implement in QMCPy as abstract classes t
 	\item[Stopping Criterion] that determines how large $n$ should be to ensure that $\QMCPYabs{\mu - \hmu_n} \le \varepsilon$.
 \end{description}
 
-The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy combines multiple examples of them all.
+The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy combines multiple examples of them all under and object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and use cases each component and select implementations. Thorough documentation of all QMCPy classes can be found in \cite{QMCPyDocs}. 
 
+QMCPy may be installed from PyPI via the command 
+\lstinputlisting[]{ags/python/qmcpy_install.py}. 
+In the sections that follow we assume qmcpy as been imported via the following python command: 
+\lstinputlisting[style=Python]{ags/python/qmcpy_install.py}. 
 
 \section{Discrete Distributions}
 
@@ -265,9 +270,7 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 \end{array}
 \]
 
-We illustrate the difference between lattice and Sobol' sequences using QMCPy.  After installing and importing QMCPy via the Python commands
-\lstinputlisting[style=Python]{ags/python/qmcpy_install.py}
-we create an instance of a $d=2$ dimensional instance of a \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice:
+We illustrate the difference between lattice and Sobol' sequences using QMCPy. First, we create an instance of a $d=2$ dimensional instance of a \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice:
 \lstinputlisting[style=Python]{ags/python/first_Lattice.py}
 The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $\bsZ_6 = (\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625)$.
 
@@ -275,8 +278,6 @@ The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 =
 QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
 
 The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distribution objects uses the same syntax with a uniform API. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
-
-Docs at \cite{QMCPyDocs}
 
 \AGSComment{Import qmcpy as qp}
 
