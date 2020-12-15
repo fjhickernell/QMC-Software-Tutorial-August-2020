@@ -1,3 +1,6 @@
-from qmcpy import Sobol
-s = Sobol(dimension=2)
-x = s.gen_samples(2**10)
+>>> s = qp.Sobol(dimension=2)
+>>> s.gen_samples(n_min=4, n_max=8)
+array([[0.537, 0.917],
+       [0.253, 0.2  ],
+       [0.799, 0.417],
+       [0.02 , 0.7  ]])
