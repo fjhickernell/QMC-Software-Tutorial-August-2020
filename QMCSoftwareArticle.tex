@@ -244,12 +244,12 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 \begin{array}{c@{\qquad}c}
 	\toprule
 	\multicolumn{2}{c}{\text{Define \ldots}} \\
-	\multicolumn{2}{c}{\bsZ_0 = \bszero, \qquad \bsZ_1, \bsZ_2, \bsZ_4, \ldots \in [0,1)^d \text{chosen well} } \\
+	\multicolumn{2}{c}{\bsZ_1, \bsZ_2, \bsZ_4, \ldots \in [0,1)^d \text{chosen well} } \\
 	\multicolumn{2}{c}{
-		\bsZ_{i + 2^m} := \bsZ_i \oplus \bsZ_{2^m} 
-		 \qquad
-    	\forall  i \in \{1, \ldots, 2^{m} -1\}, \ m \in \bbN_0 }\\
-    	\multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \bsDelta \IIDsim [0,1)^d} \\  \hline
+	\bsZ_{i} := i_0  \bsZ_1 \oplus i_1 \bsZ_{2} + i_2  \bsZ_{4} +  i_3  \bsZ_{8} + \cdots 
+	\qquad
+	\text{for }i = i_0 +i_1 2 + i_2 4 + i_3 8 + \cdots} \\
+    \multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \text{where }\bsDelta \IIDsim [0,1)^d} \\  \hline
 	\text{Rank-1 Integration Lattices} & \text{Digital Nets} \\
 		\bst \oplus \bsx : = \bst + \bsx \bmod \bsone & \bst \oplus \bsx := \text{binary digitwise addition} \\ 
 		 \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
@@ -266,6 +266,13 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 \end{array}
 \]
 \AGSComment{Change to (t+x) mod 1?}
+
+We illustrate the difference between lattice and Sobol' sequences using QMCPy.  After installing and importing QMCPy via the Python commands
+\lstinputlisting[style=Python]{ags/python/qmcpy_install.py}
+we create an instance of a $d=2$ dimensional instance of a \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice:
+\lstinputlisting[style=Python]{ags/python/first_Lattice.py}
+The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $\bsZ_6 = (\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625)$.
+
 
 QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
 
