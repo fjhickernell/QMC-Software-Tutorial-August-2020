@@ -2,9 +2,9 @@
 >>> # create a custom function
 d = 3
 >>> def my_Keister(x):
-...    norm = np.sqrt((x**2).sum(1))
-    k = np.pi**(d/2)*np.cos(norm)
-    return k  # size n vector
+...     norm = np.sqrt((x**2).sum(1))
+...     k = np.pi**(d/2)*np.cos(norm)
+...     return k  # size n vector
 # define QMCPy components
 lebesgue = qp.Gaussian(qp.Halton(d), mean=0, covariance=1/2)
 cf = qp.CustomFun(lebesgue, custom_fun=my_Keister)
