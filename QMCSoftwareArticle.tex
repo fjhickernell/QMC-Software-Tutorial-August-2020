@@ -99,6 +99,7 @@
     commentstyle    = \color{darkgreen}\ttfamily}
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
+\newcommand{\FJHComment}[1]{{\color{magenta} Fred: #1}}
 
 \newcommand{\hmu}{\widehat{\mu}}
 \newcommand{\IID}{\textup{IID}}
@@ -106,6 +107,7 @@
 \newcommand{\unif}{\textup{unif}}
 \newcommand{\IIDsim}{\overset{\IID}{\sim}}
 \newcommand{\LDsim}{\overset{\LD}{\sim}}
+\newcommand{\dig}{\textup{dig}}
 
 \begin{document}
 
@@ -238,6 +240,9 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 
 For simplicity we restrict ourselves to the case where the first $2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
 
+\begin{table}
+	\centering
+	\caption{Properties of lattices and digital net sequences.  Note that they share group properties but also have distinctives.} \label{tab:GroupProp}
 \[
 	\renewcommand{\arraystretch}{1.3}
 \begin{array}{c@{\qquad}c}
@@ -264,12 +269,34 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 	\end{array} \quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}}
 \end{array}
 \]
+\end{table}
 
 We illustrate the difference between lattice and Sobol' sequences using QMCPy.  After installing and importing QMCPy via the Python commands
 \lstinputlisting[style=Python]{ags/python/qmcpy_install.py}
 we create an instance of a $d=2$ dimensional instance of a \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice:
 \lstinputlisting[style=Python]{ags/python/first_Lattice.py}
-The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $\bsZ_6 = (\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625)$.
+\FJHComment{Can we set the listlistings style to break long lines of code?}
+The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $(\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625) = \bsZ_6$, as Table \ref{tab:GroupProp} specifies.
+
+The randomized shift has been turned off above to illuminate the group structure.  In practice, we normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions with such as the Gaussian, no LD points will be transformed to infinity.
+
+Now, we generate Sobol' points using a similar process as we did for lattice points.  Sobol' sequences are one of the most popular example of digital sequences.
+\lstinputlisting[style=Python]{ags/python/first_Sobol.py}
+Here, $\bsZ_4$ differs from that for lattices, but more importantly, the definition of addition for digital sequences is different than that for lattices.  Using digitwise addition for digital sequences, we can confirm that according to Table \ref{tab:GroupProp},
+\[
+\bsZ_2 \oplus_{\dig} \bsZ_4 = ({}_20.010,{}_20.110)  \oplus_{\dig} ({}_20.001,{}_20.101) = ({}_20.011,{}_20.011) = \bsZ_6.
+\]
+
+By contrast, if we construct a digital sequence using the generators for the lattice above, we would obtain
+\begin{multline*}
+\bsZ_6 = (\bsZ_2 + \bsZ_4) \bmod \bsone  = ({}_20.010,{}_20.110)  \oplus_{\dig} ({}_20.001,{}_20.111)  \\
+= ({}_20.011,{}_20.0.001) = (0.0375, 0.0375),
+\end{multline*}
+which differs from the $\bsZ_6$ constructed for lattices.  Thus, lattices and digital sequences are different sets, even if they share the same generators.
+
+The examples of \texttt{gp.Lattice} and \texttt{gp.Sobol} illustrate how QMCPy LD generators share a common user interface, which includes specifying the dimension, when the instance is constructed and specifying the number of points when the \texttt{gen\_samples} method is called.  Following Python practice, parameters can be input without specifying their names if they are input in the prescribed order.  QMCPy also includes Halton sequences and IID sequences.
+
+
 
 
 QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
