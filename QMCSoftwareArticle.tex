@@ -364,10 +364,19 @@ Figure \ref{fig:ikc} visualizes sampling on the original integrand versus sampli
 	\label{fig:ikc}
 \end{figure}
 
-Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $t = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
+Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
 $$S(t_j,\bsx_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
-Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmatic Asian call option may be written as 
-$$\bsx_j.$$
+Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
+$$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(\bst_{j-1},\bsx_{j-1})+S(\bst_j,\bsx_j)]-K,0\right).$$
+Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
+\lstinputlisting[style=Python]{ags/python/i.aco.py}
+\begin{figure}
+	\includegraphics[width=.45\textwidth]{ags/figs/i.bm.png} 
+%	\quad
+	\includegraphics[width=.45\textwidth]{ags/figs/i.aco.png}
+	\caption{Left: Brownian Motion paths with drift $a=2$.\\ Right: Corresponding Asian Call option paths with $S_0=35$, $K=40$. \AGSComment{Fix above figs to match what I have in presentation.}}
+	\label{fig:aco}
+\end{figure}
 
 \section{Stopping Criteria}
 
