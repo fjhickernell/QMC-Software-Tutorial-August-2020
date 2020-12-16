@@ -231,9 +231,10 @@ This required four components, which we implement in QMCPy as classes.
 The software libraries referenced in Section \ref{sec:available} provide one or more of these components.  QMCPy combines multiple examples of them all under and object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and use cases each component and select implementations. Thorough documentation of all QMCPy classes can be found in \cite{QMCPyDocs}. 
 
 QMCPy may be installed from PyPI via the command 
-\lstinputlisting[]{ags/python/qmcpy_install.py}. 
+\lstinputlisting{ags/python/qmcpy_install.py} 
+\AGSComment{Specify version? Change from alpha with newer release.}
 In the sections that follow we assume qmcpy as been imported via the following python command: 
-\lstinputlisting[style=Python]{ags/python/qmcpy_install.py}. 
+\lstinputlisting[style=Python]{ags/python/qmcpy_import.py}
 
 \section{Discrete Distributions}
 
@@ -270,55 +271,66 @@ For simplicity we restrict ourselves to the case where the first $2^m$ points of
 \end{array}
 \]
 
-We illustrate the difference between lattice and Sobol' sequences using QMCPy. First, we create an instance of a $d=2$ dimensional instance of a \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice:
+We illustrate the difference between lattice and Sobol' sequences using QMCPy. First, we create an instance of a $d=2$ dimensional \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class.  Then we generate the first eight (non-randomized) points in this lattice: \AGSComment{How to handle cut off code?}
 \lstinputlisting[style=Python]{ags/python/first_Lattice.py}
 The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $\bsZ_6 = (\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625)$.
 
 
-QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from with the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
+QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. Again, we refer the reader to the QMCPy documentation \cite{QMCPyDocs}.
 
-The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distribution objects uses the same syntax with a uniform API. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
-
-\AGSComment{Import qmcpy as qp}
+The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distributions have the same syntax. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
 
 \lstinputlisting[style=Python]{ags/python/discrete_distrib.py}
 
 \begin{figure}
-	\includegraphics[height=5cm]{ags/figs/dd.iid_std_uniform_1.png}
-	\qquad
-	\includegraphics[height=5cm]{ags/figs/dd.iid_std_gaussian.png}
-	\caption{\AGSComment{TODO}}
-	\label{fig:dd_iid}
-\end{figure}
-
-\begin{figure}
-	\includegraphics[height=5cm]{ags/figs/dd.sobol.png}
-	\qquad
 	\includegraphics[height=5cm]{ags/figs/dd.lattice.png}
 	\qquad
-	\includegraphics[height=5cm]{ags/figs/dd.halton.png}
-	\caption{\AGSComment{TODO}}
-	\label{fig:dd_ld}
+	\includegraphics[height=5cm]{ags/figs/dd.sobol.png}
+	\caption{Randomized Lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure. \AGSComment{Add LD superscripts. Change to "Scrambled Sobol'". Refer to this fig.}}
+	\label{fig:dd_iid}
 \end{figure}
 
 \section{True Measure}
 
-\lstinputlisting[style=Python]{ags/python/true_measure.py}
+The true measure defines the transform required for $F$ to mimic $\lambda$. In this way, we can transform the original integrand $g$ to the new integrand $f$ which accepts samples generated from the discrete distribution. QMCPy performs the necessary transformations automatically during construction of the integrand object. The following examples assume a discrete distribution mimicking $\calU[0,1]^d$. Figure \ref{fig:tm} shows samples generated from the discrete distribution that have been transformed to mimic the true measure.
+
+Suppose our true measure is defined as $\calU[\bsa,\bsb]^d$ where $\bsa,\bsb$ are finite vectors of lower and upper bounds respectively. Then we may generate samples mimicking this non-standard Uniform distribution using the \texttt{gen\_samples} function $T(\bsx) = (\bsb-\bsa)\bsx + \bsa$. The resulting transformed integrand may be written as $f(\bsx) = g(t(\bsx))$. The following code utilizes QMCPy to construct a non-standard uniform object and draw samples with the \texttt{gen\_samples} for true measures.  Note that each true measure is constructed with a discrete distribution and that that not all true measures implement a \texttt{gen\_samples} method. For example, it is not reasonable to generate samples that mimic the Lebesgue measure. 
+
+
+\lstinputlisting[style=Python]{ags/python/first_uniform.py}
+
+Now, suppose our true measure is a Gaussian $\calN(\mu,\Sigma)$ where the covariance $\Sigma$ may be decomposed as $\Sigma=AA^T$ using methods such as principal component analysis or the Cholesky decomposition. (Note that $\mu$ here is different than $\mu$ the previously defined mean.) Then the \texttt{gen\_samples} function, $T(\bsx) = A^T \Phi^{-1}(\bsx) + \mu$ where $\Phi$ is the CDF function for the standard Gaussian, is utilized to develop the transformed integrand $f(\bsx) = g(T(\bsx))$. The following code uses QMCPy's Gaussian object to generate samples from a Sobol' discrete distribution and transform them to mimic a non-standard Gaussian.   
+
+\lstinputlisting[style=Python]{ags/python/first_gaussian.py}
+
+Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times $t = (j/d)_{j=1}^d$, Brownian Motion is equivalent to the Gaussian true measure $\calN(0,\Sigma)$ where $\Sigma = (\min(t_j,t_k))_{j,k=1}^d$. QMCPy also allows the user to perform importance sampling with a $\calN(\bsa,\Sigma)$ measure where scalar $a$ is a drift parameter that has been extended to a $d \times 1$ mean vector in the importance sampling measure. Intuitively, importance sampling allows an option to sample rare events more frequently but with less weight. Specifically, we define the \texttt{gen\_samples} function as $T(\bsx) = A^T\Phi^{-1}(\bsx) + \bsa$ and then the resulting transformed function as $f(\bsx) = g(T(\bsx))\exp((\bsa/2-\bsx)^T\Sigma^{-1}\bsa)$. Note that if we choose not to use importance sampling, $a=0$, then the transformed function collapses to the familiar $f(\bsx) = g(T(\bsx))$. The following example uses the Brownian Motion object from QMCPy to generate samples with with an upward drift of $a=2$ based on the underlying Sobol' sequence. 
+
+\lstinputlisting[style=Python]{ags/python/tm.brownian_motion.py}
 
 \begin{figure}
-	\includegraphics[height=5cm]{ags/figs/tm.uniform.png} 
-	\qquad
-	\includegraphics[height=5cm]{ags/figs/tm.gaussian.png}
-	\qquad
-	\includegraphics[height=5cm]{ags/figs/tm.brownian_motion.png}
-	\caption{\AGSComment{TODO}}
+	\includegraphics[width=.3\textwidth]{ags/figs/tm.uniform.png} 
+%	\quad
+	\includegraphics[width=.3\textwidth]{ags/figs/tm.gaussian.png}
+%	\quad
+	\includegraphics[width=.3\textwidth]{ags/figs/tm.brownian_motion.png}
+	\caption{Left to right: Sobol' samples transformed to mimic a uniform $\calU\left(\begin{bmatrix} -2 \\ 0 \end{bmatrix}, \begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$, Gaussian $\calN\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$, and 32-dimensional Brownian Motion with upward drift ($a=2$) true measure. \AGSComment{Remove figure titles.}}
 	\label{fig:tm}
 \end{figure}
 
 \section{Integrands}
 
-\lstinputlisting[style=Python]{ags/python/integrand.py}
+Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand, not the transformed integrand. Again, our framework will perform the transorm to get $f$ behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensions array of samples and return a $n$-vector of function evaluations at those samples. 
 
+First, we develop and implement the  Keister function \AGSComment{CITE} which is developed as, 
+\begin{align*}
+\mu 
+&= \int_{\mathbb{R}^d} \cos(\lVert \bsx \rVert) \exp(-\bsx^T \bsx) \D \bsx \\ 
+&= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bsx \rVert)}_{g(\bsx)} \underbrace{\pi^{-d/2} \exp(-\bsx^T \bsx) \D \bsx}_{\calN(0,\bsI/2)} \\ 
+&= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \Phi^{-1}(\bsx)/2 \rVert)}_{f(\bsx)} \underbrace{\D \bsx}_{\calU[0,1]^d}
+\end{align*}
+Thus, to use QMCPy, we use the integrand $g(\bsx) = \pi^{d/2} \cos(\lVert \bsx \rVert)$ and true measure $\calN(0,\bsI/2)$ to implement the Keister function. Note that we may also have defined the integrand as $g(\bsx) = \cos(\lVert \bsx \rVert)\exp(-\bsx^T\bsx)$ and used the Lebesgue true measure. The following code defines the Keister integrand and non-standard Gaussian true measure with Halton discrete distribution. Samples are then drawn from the discrete distribution and evaluate by the transformed integrand $f$. The function evaluations are then averaged as an approximation of the mean.
+\lstinputlisting[style=Python]{ags/python/integrand.py}
+Figure \ref{fig:ikc} shows visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that thee Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
 \begin{figure}
 	\includegraphics[height=4cm]{ags/figs/i.keister_figs.png}
 	\caption{\AGSComment{ToDO}} \label{fig:ikf}
@@ -331,7 +343,7 @@ The following example shows how to utilize QMCPy's \texttt{Sobol} object to gene
 
 \section{Stopping Criteria}
 
-\lstinputlisting[style=Python]{ags/python/sc_mc.py}
+%\lstinputlisting[style=Python]{ags/python/sc_mc.py}
 
 \lstinputlisting[style=Python]{ags/python/sc_qmc.py}
 
