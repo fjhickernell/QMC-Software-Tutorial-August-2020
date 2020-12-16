@@ -306,14 +306,6 @@ The examples of \texttt{qp.Lattice} and \texttt{qp.Sobol} illustrate how QMCPy L
 A crucial difference between 
 
 
-
-
-QMCPy implements numerous discrete distribution classes, both IID and LD. The abstract properties and methods of the abstract discrete distribution class layout requirements for concrete implementations such as the IID standard uniform generator or Sobol' sequence generator. For example, each discrete distribution has a \texttt{gen\_samples} method that allows the user to draw samples from the instance. Moreover, QMCPy has built each discrete distribution object to be highly customizable and support auxiliary features such as plotting, seeding, and skipping dimensions. 
-
-The following example shows how to utilize QMCPy's \texttt{Sobol} object to generate samples from a digital net. The construction and usage of other discrete distributions have the same syntax. Note that many of the parameters are defaulted during construction but may be explicitly set for customized usage. 
-
-\lstinputlisting[style=Python]{ags/python/discrete_distrib.py}
-
 \begin{figure}
 	\includegraphics[height=5cm]{ags/figs/dd.lattice.png}
 	\qquad
