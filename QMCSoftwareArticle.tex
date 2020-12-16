@@ -345,7 +345,7 @@ Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times
 
 \section{Integrands}
 
-Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand, not the transformed integrand. Again, our framework will perform the transorm to get $f$ behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensions array of samples and return a $n$-vector of function evaluations at those samples. 
+Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand, not the transformed integrand. Again, our framework will perform the transform to get $f$ behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensions array of samples and return a $n$-vector of function evaluations at those samples. 
 
 First, we develop and implement the  Keister function \AGSComment{CITE} which is developed as, 
 \begin{align*}
@@ -356,16 +356,15 @@ First, we develop and implement the  Keister function \AGSComment{CITE} which is
 \end{align*}
 Thus, to use QMCPy, we use the integrand $g(\bsx) = \pi^{d/2} \cos(\lVert \bsx \rVert)$ and true measure $\calN(0,\bsI/2)$ to implement the Keister function. Note that we may also have defined the integrand as $g(\bsx) = \cos(\lVert \bsx \rVert)\exp(-\bsx^T\bsx)$ and used the Lebesgue true measure. The following code defines the Keister integrand and non-standard Gaussian true measure with Halton discrete distribution. Samples are then drawn from the discrete distribution and evaluate by the transformed integrand $f$. The function evaluations are then averaged as an approximation of the mean.
 \lstinputlisting[style=Python]{ags/python/integrand.py}
-Figure \ref{fig:ikc} shows visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that thee Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
+Figure \ref{fig:ikc} visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
 \begin{figure}
-	\includegraphics[height=4cm]{ags/figs/i.keister_figs.png}
-	\caption{\AGSComment{ToDO}} \label{fig:ikf}
+	\includegraphics[height=6cm]{ags/figs/i.keister_contours.png}
+	\caption{Left: Sampling the original integrand $g$ using a $calN(0,\bsI/2)$ true measure. \\ Right: Sampling the transformed integrand $f$ using a $calU[0,1]^2$ true measure, as done in QMCPy. \AGSComment{Change color scheme? Use t or x for left fig?}}
+	\label{fig:ikc}
 \end{figure}
 
-\begin{figure}
-	\includegraphics[height=4cm]{ags/figs/i.keister_contours.png}
-	\caption{\AGSComment{ToDO}} \label{fig:ikc}
-\end{figure}
+Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $t = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the 
+$$S(t,x) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j)$$
 
 \section{Stopping Criteria}
 
