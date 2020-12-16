@@ -1,7 +1,7 @@
+>>> import warnings  #to suppress warnings when needed
+>>> warnings.simplefilter('ignore')
 >>> sobol = qp.Sobol(2,randomize=False)
 >>> sobol.gen_samples(8)
-/usr/local/lib/python3.6/dist-packages/qmcpy/discrete_distribution/sobol/sobol.py:180: ParameterWarning: Non-randomized AGS Sobol sequence includes the origin
-  warnings.warn("Non-randomized AGS Sobol sequence includes the origin",ParameterWarning)
 array([[0.   , 0.   ],
        [0.5  , 0.5  ],
        [0.25 , 0.75 ],
