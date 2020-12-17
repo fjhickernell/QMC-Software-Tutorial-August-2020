@@ -303,14 +303,24 @@ which differs from the $\bsZ_6=(0.375, 0.625)$ constructed for lattices.  To emp
 
 The examples of \texttt{qp.Lattice} and \texttt{qp.Sobol} illustrate how QMCPy LD generators share a common user interface.  The dimension is specified when the instance is constructed, and the number of points is specified when the \texttt{gen\_samples} method is called.  Following Python practice, parameters can be input without specifying their names if they are input in the prescribed order.  QMCPy also includes Halton sequences and IID sequences, again deferring details to the QMCPy documentation \cite{QMCPyDocs}.
 
-A crucial difference between 
+A crucial difference between IID generators and LD generators is reflected in the behavior in generating $n$ points.  For an IID generator, asking for $n$ points repeatedly gives you different points each time because they are meant to be random and independent.
+\lstinputlisting[style=Python]{ags/python/dd.iidone.py}
+Your output may look different depending on the seed used to generate these random numbers.
 
+On the other hand for an LD generator, asking for $n$ points repeatedly gives you \emph{the same} points each time because they are meant to be the first $n$ points of a given LD sequence.  
+\lstinputlisting[style=Python]{ags/python/dd.latticeone.py}
+Here we allow the randomization so that the first point in the sequence is not the origin.  To obtain the \emph{next} $n$ points one may specify the start and ending indices of the sequence.
+\lstinputlisting[style=Python]{ags/python/dd.latticenextone.py}
+
+Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol' LD points through powers of two fills in the gaps in an even way.
+
+\FJHComment{Need a figure here with plots of lattice and Sobol' wit $n = 16$, $32$ and $64$ in different colors all on one plot}
 
 \begin{figure}
 	\includegraphics[height=5cm]{ags/figs/dd.lattice.png}
 	\qquad
 	\includegraphics[height=5cm]{ags/figs/dd.sobol.png}
-	\caption{Randomized lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure.}
+	\caption{Randomized lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure for $n = 16, 32,$ and $64$. Note how increasing the number of points evenly fills in the gaps between points.}
 	\label{fig:dd_iid}
 \end{figure}
 
