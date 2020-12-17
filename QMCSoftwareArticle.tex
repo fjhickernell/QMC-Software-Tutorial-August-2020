@@ -110,6 +110,8 @@
 \newcommand{\IIDsim}{\overset{\IID}{\sim}}
 \newcommand{\LDsim}{\overset{\LD}{\sim}}
 \newcommand{\dig}{\textup{dig}}
+\newcommand{\mA}{\mathsf{A}}
+\newcommand{\mSigma}{\mathsf{\Sigma}}
 
 \begin{document}
 
@@ -326,37 +328,68 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 
 \section{True Measure}
 
-The true measure defines the transform required for $F$ to mimic $\lambda$. This change of variables allows us to transform the original integrand $g$ to the a integrand $f$ which accepts samples generated from the discrete distribution. QMCPy performs the necessary transformations automatically during construction of the integrand object. The following examples assume a discrete distribution mimicking $\calU[0,1]^d$. 
+The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented by via variable transformations.  In general, if $\bsX \sim \calU[0,1]^d$, then
+\begin{gather*}
+\bsT = (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
+\bsT = \mA^T\bigl(\Phi^{-1}(X_1),  \ldots, \Phi^{-1}(X_d)\bigr)^T + \bsa \sim \calN(\bsa, \mSigma), \quad \text{where }  \mSigma = \mA \mA^T,
+\end{gather*}
+and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
 
-Suppose our true measure is defined as $\calU[\bsa,\bsb]$ where $\bsa,\bsb$ are finite $d$-dimensional vectors of lower and upper bounds respectively. Then we may generate samples mimicking this non-standard Uniform distribution using the \texttt{gen\_samples} function $T(\bsx) = (\bsb-\bsa)\bsx + \bsa$. The resulting transformed integrand may be written as $f(\bsx) = g(T(\bsx))$. The following code utilizes QMCPy to construct a non-standard uniform object and draw samples with the \texttt{gen\_samples} method for true measures.  Note that each true measure is constructed with a discrete distribution and that that not all true measures implement a \texttt{gen\_samples} method. For example, it is not reasonable to generate samples that mimic the Lebesgue measure. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Uniform measure. 
-
+Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to mimic a uniform and a Gaussian distribution.  The code to generate these points takes the following form of 
 \lstinputlisting[style=Python]{ags/python/tm.uniform.py}
-
-Now, suppose our true measure is a Gaussian $\calN(\mu,\Sigma)$ where the covariance $\Sigma$ may be decomposed as $\Sigma=AA^T$ using methods such as principal component analysis or the Cholesky decomposition. (Note that $\mu$ here is different than the previously defined true mean.) Then the \texttt{gen\_samples} function, $T(\bsx) = A^T \Phi^{-1}(\bsx) + \mu$ where $\Phi$ is the CDF function for the standard Gaussian, is utilized to develop the transformed integrand $f(\bsx) = g(T(\bsx))$. The following code uses QMCPy's Gaussian object to generate samples from a lattice discrete distribution and transform them to mimic a non-standard Gaussian. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Gaussian measure.   
-
+for uniform points based on a Halton sequence, and 
 \lstinputlisting[style=Python]{ags/python/tm.gaussian.py}
+for Gaussian points based on a lattice sequence.
 
 \begin{figure}
 	\includegraphics[width=.45\textwidth]{ags/figs/tm.uniform.png} 
-%	\quad
+	%	\quad
 	\includegraphics[width=.45\textwidth]{ags/figs/tm.gaussian.png}
 	\caption{Sobol' samples transformed to mimic a uniform $\calU\left(\begin{bmatrix} -2 \\ 0 \end{bmatrix}, \begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$ (left) and  Gaussian $\calN\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$ (right).}
 	\label{fig:tm_ug}
 \end{figure}
 
+The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$.  The code for generating a Brownian motion is
+\lstinputlisting[style=Python]{ags/python/tm.brownian_motion.py}
+Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
+
+\begin{figure}
+	\includegraphics[width=.45\textwidth]{ags/figs/tm.bm.png} 
+	%	\quad
+	\includegraphics[width=.45\textwidth]{ags/figs/tm.bm_drift.png}
+	\caption{Sobol' samples transformed to mimic a 32-dimensional Brownian Motion. The figure on the left does not use importance sampling while the figure on the right uses importance sampling with drift coefficient of $2$.}
+	\label{fig:tm_bm}
+\end{figure}
+
+\iffalse
+
+The true measure defines the transform required for $F$ to mimic $\lambda$. This change of variables allows us to transform the original integrand $g$ to the a integrand $f$ which accepts samples generated from the discrete distribution. QMCPy performs the necessary transformations automatically during construction of the integrand object. The following examples assume a discrete distribution mimicking $\calU[0,1]^d$. 
+
+Suppose our true measure is defined as $\calU[\bsa,\bsb]$ where $\bsa,\bsb$ are finite $d$-dimensional vectors of lower and upper bounds respectively. Then we may generate samples mimicking this non-standard Uniform distribution using the \texttt{gen\_samples} function $T(\bsx) = (\bsb-\bsa)\bsx + \bsa$. The resulting transformed integrand may be written as $f(\bsx) = g(T(\bsx))$. The following code utilizes QMCPy to construct a non-standard uniform object and draw samples with the \texttt{gen\_samples} method for true measures.  Note that each true measure is constructed with a discrete distribution and that that not all true measures implement a \texttt{gen\_samples} method. For example, it is not reasonable to generate samples that mimic the Lebesgue measure. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Uniform measure. 
+
+
+
+Now, suppose our true measure is a Gaussian $\calN(\mu,\Sigma)$ where the covariance $\Sigma$ may be decomposed as $\Sigma=AA^T$ using methods such as principal component analysis or the Cholesky decomposition. (Note that $\mu$ here is different than the previously defined true mean.) Then the \texttt{gen\_samples} function, $T(\bsx) = A^T \Phi^{-1}(\bsx) + \mu$ where $\Phi$ is the CDF function for the standard Gaussian, is utilized to develop the transformed integrand $f(\bsx) = g(T(\bsx))$. The following code uses QMCPy's Gaussian object to generate samples from a lattice discrete distribution and transform them to mimic a non-standard Gaussian. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Gaussian measure.   
+
+\lstinputlisting[style=Python]{ags/python/tm.gaussian.py}
+
+
 Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times $\bst = (j/d)_{j=1}^d$, Brownian Motion is equivalent to the Gaussian true measure $\calN(0,\Sigma)$ where $\Sigma = (\min(t_j,t_k))_{j,k=1}^d$. QMCPy also allows the user to perform importance sampling with a $\calN(\bsa,\Sigma)$ measure where scalar $a$ is a drift parameter appropriately extended to a $d \times 1$ mean vector in the importance sampling measure. Intuitively, importance sampling samples rare events more frequently but with less weight, leading to faster convergence. Specifically, we define the \texttt{gen\_samples} function as $T(\bsx) = A^T\Phi^{-1}(\bsx) + \bsa$ and then the resulting transformed function as $f(\bsx) = g(T(\bsx))\exp((\bsa/2-\bsx)^T\Sigma^{-1}\bsa)$. Note that if we choose not to use importance sampling, $a=0$, then the transformed function collapses to the familiar $f(\bsx) = g(T(\bsx))$. The following example uses the Brownian Motion object from QMCPy to generate samples with an upward drift of $a=2$ based on the underlying Sobol' sequence. Figure \ref{fig:tm_bm} shows samples generated from a discrete Brownian Motion with and without importance sampling. 
 
 \lstinputlisting[style=Python]{ags/python/tm.brownian_motion.py}
 
-\begin{figure}
-	\includegraphics[width=.45\textwidth]{ags/figs/tm.bm.png} 
-%	\quad
-	\includegraphics[width=.45\textwidth]{ags/figs/tm.bm_drift.png}
-	\caption{Sobol' samples transformed to mimic a 32-dimensional Brownian Motion. The figure on the left does not use importance sampling while the figure on the right uses importance sampling with drift $a=2$.}
-	\label{fig:tm_bm}
-\end{figure}
+\fi
 
 \section{Integrands}
+
+Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
+\begin{align}
+	\nonumber 
+ \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst &= \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx \\
+  & = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx , \quad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)}.
+\end{align}
+
+Different choices of 
 
 Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their existing function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand $g$, not the transformed integrand $f$. Again, our framework will perform the necessary transform behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensional array of samples and return a length $n$ vector of function evaluations at those samples. 
 
