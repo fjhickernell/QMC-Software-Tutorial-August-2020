@@ -385,11 +385,10 @@ Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times
 Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
 \begin{align}
 	\nonumber 
- \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst &= \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx \\
-  & = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx , \quad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)}.
+ \mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
+  & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)}.
 \end{align}
-
-Different choices of 
+The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$.  Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.  
 
 Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their existing function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand $g$, not the transformed integrand $f$. Again, our framework will perform the necessary transform behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensional array of samples and return a length $n$ vector of function evaluations at those samples. 
 
