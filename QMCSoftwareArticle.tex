@@ -112,6 +112,7 @@
 \newcommand{\dig}{\textup{dig}}
 \newcommand{\mA}{\mathsf{A}}
 \newcommand{\mSigma}{\mathsf{\Sigma}}
+\newcommand{\mI}{\mathsf{I}}
 
 \begin{document}
 
@@ -328,14 +329,17 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 	\label{fig:dd_iid}
 \end{figure}
 
-\section{True Measure}
+\section{True Measures}
 
-The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented by via variable transformations.  In general, if $\bsX \sim \calU[0,1]^d$, then
-\begin{gather*}
-\bsT = (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
-\bsT = \mA^T\bigl(\Phi^{-1}(X_1),  \ldots, \Phi^{-1}(X_d)\bigr)^T + \bsa \sim \calN(\bsa, \mSigma), \quad \text{where }  \mSigma = \mA \mA^T,
-\end{gather*}
-and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
+The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented by via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
+\begin{subequations} \label{eq:exampleVarTrans}
+\begin{gather}
+\bsT = \bsPsi(\bsX) := (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
+\label{eq:exampleVarTransGauss}
+\bsT = \bsPsi(\bsX) := \mA^T\bigl(\Phi^{-1}(X_1),  \ldots, \Phi^{-1}(X_d)\bigr)^T + \bsa \sim \calN(\bsa, \mSigma), \quad \text{where }  \mSigma = \mA \mA^T,
+\end{gather}
+\end{subequations}
+and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
 
 Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to mimic a uniform and a Gaussian distribution.  The code to generate these points takes the following form of 
 \lstinputlisting[style=Python]{ags/python/tm.uniform.py}
@@ -388,9 +392,23 @@ Let's return now to the integration problem in \eqref{eq:integral}, which we mus
 \begin{align}
 	\nonumber 
  \mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
-  & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)}.
+ \label{eq:transVar}
+  & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)} \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}.
 \end{align}
 The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$.  Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.  
+
+We illustrate the use of the \texttt{Integrand} class via the an example of Keister \AGSComment{CITE}:
+\begin{equation*}
+	\mu 
+	= \int_{\mathbb{R}^d} \cos(\lVert \bst \rVert) \exp(-\bst^T \bst) \, \D \bst \\ 
+	= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bst \rVert)}_{g(\bst)}\, \underbrace{\pi^{-d/2} \exp(-\bst^T \bst) }_{\lambda(\bst)} \, \D \bsx
+\end{equation*}
+We plan to use QMC methods to approximate this integral, which means that it will be transformed according to \eqref{eq:transVar} for the case where $\calX = [0,1]^d$ and $\varrho(\bsx) = 1$.  Since $\lambda$ is the density for $\calN(0,\mI/2)$, it is natural to choose $\bsPsi$ according to \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$, in which case $\lambda(\bsPsi(\bsx)) \QMCPYabs{\partial \bsPsi/\partial \bsx} / \varrho(\bsx) = 1$, and so 
+\[
+\mu = \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bsPsi(\bsx)/2 \rVert)}_{f(\bsx)} \, \D \bsx, \qquad 
+\bsPsi(\bsx) := \sqrt{1/2}\bigl(\Phi^{-1}(x_1),  \ldots, \Phi^{-1}(x_d)\bigr)^T .
+\]
+
 
 Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their existing function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand $g$, not the transformed integrand $f$. Again, our framework will perform the necessary transform behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensional array of samples and return a length $n$ vector of function evaluations at those samples. 
 
