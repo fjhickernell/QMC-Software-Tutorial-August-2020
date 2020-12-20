@@ -92,7 +92,7 @@
 \definecolor{darkgreen}{rgb}{0,0.6,0}
 \lstdefinestyle{Python}{
     language        = Python,
-    basicstyle      = \ttfamily,
+    basicstyle      = \small\ttfamily,
     keywordstyle    = \color{blue},
     keywordstyle    = [2] \color{teal}, % just to check that it works
     stringstyle     = \color{green},
@@ -398,18 +398,49 @@ Let's return now to the integration problem in \eqref{eq:integral}, which we mus
 and $\QMCPYabs{\partial \bsPsi/\partial \bsx}$ represents the Jacobian of the variable transformation.  The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$.  Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.  
 
 We illustrate the use of the \texttt{Integrand} class via the an example of Keister \cite{Kei96}:
-\begin{equation*}
+\begin{equation} \label{eq:KeisterIntegral}
 	\mu 
-	= \int_{\mathbb{R}^d} \cos(\lVert \bst \rVert) \exp(-\bst^T \bst) \, \D \bst \\ 
-	= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bst \rVert)}_{g(\bst)}\, \underbrace{\pi^{-d/2} \exp(-\bst^T \bst) }_{\lambda(\bst)} \, \D \bsx
-\end{equation*}
+	= \int_{\bbR^d} \cos(\lVert \bst \rVert) \exp(-\bst^T \bst) \, \D \bst \\ 
+	= \int_{\bbR^d} \underbrace{\pi^{d/2} \cos(\lVert \bst \rVert)}_{g(\bst)}\, \underbrace{\pi^{-d/2} \exp(-\bst^T \bst) }_{\lambda(\bst)} \, \D \bst.
+\end{equation}
 We will use QMC methods to approximate this integral, which means that it will be transformed according to \eqref{eq:transVar} for the case where $\calX = [0,1]^d$ and $\varrho(\bsx) = 1$.  Since $\lambda$ is the density for $\calN(0,\mI/2)$, it is natural to choose $\bsPsi$ according to \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$, in which case $\lambda(\bsPsi(\bsx)) \QMCPYabs{\partial \bsPsi/\partial \bsx} / \varrho(\bsx) = 1$, and so 
 \[
-\mu = \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bsPsi(\bsx)/2 \rVert)}_{f(\bsx)} \, \D \bsx, \qquad 
+\mu = \int_{[0,1]^d} \underbrace{\pi^{d/2} \cos(\lVert \bsPsi(\bsx) \rVert)}_{f(\bsx)} \, \D \bsx, \qquad 
 \bsPsi(\bsx) := \sqrt{1/2}\bigl(\Phi^{-1}(x_1),  \ldots, \Phi^{-1}(x_d)\bigr)^T .
 \]
-\lstinputlisting[style=Python]{ags/python/i.keister.py}
 
+The code below shows sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
+\lstinputlisting[style=Python]{ags/python/i.keister.py}
+For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to those values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
+
+\begin{figure}
+	\includegraphics[height=6cm]{ags/figs/i.keister_contours.png}
+	\caption{Left: Sampling the original integrand $g$ according to $\calN(0,\mI/2)$.  Right: Sampling the transformed integrand $f$ according to $\calU[0,1]^2$.  Halton points are used in both cases.}
+	\label{fig:ikc}
+\end{figure}
+
+Another way to approximate the Keister integral in \eqref{eq:KeisterIntegral} is to write it as an integral with respect to the Lebesgue measure:
+\begin{align*} 
+	\mu 
+	& = \int_{\bbR^d} \underbrace{\cos(\lVert \bst \rVert) \exp(-\bst^T \bst) }_{g(\bst)} \, \underbrace{1}_{\lambda(\bst)} \,\D \bst \\
+	& = \int_{[0,1]^d} \underbrace{\cos(\lVert \bsPsi(\bsx) \rVert) \exp(-\bsPsi^T\!\!(\bsx) \bsPsi(\bsx)) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} }_{f(\bsx)} \, \D \bsx,
+\end{align*}
+where $\bsPsi$ is any transformation from $\bbR^d$ to $[0,1]^d$.  QMCPy can perform the cubature this way as well.
+\lstinputlisting[style=Python]{ags/python/i.keisterLebesgue.py}
+The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
+
+
+Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library.  \FJHComment{Does the built in Keister function work like the Asian options does, meaning that the problem is the same no matter the distribution? }
+
+
+\iffalse
+
+Figure \ref{fig:ikc} visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
+\begin{figure}
+	\includegraphics[height=6cm]{ags/figs/i.keister_contours.png}
+	\caption{Left: Sampling the original integrand $g$ according to $\calN(0,\mI/2)$.  Right: Sampling the transformed integrand $f$ according to $\calU[0,1]^2$.  Halton points are used in both cases.}
+	\label{fig:ikc}
+\end{figure}
 
 Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their existing function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand $g$, not the transformed integrand $f$. Again, our framework will perform the necessary transform behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensional array of samples and return a length $n$ vector of function evaluations at those samples. 
 
@@ -422,12 +453,9 @@ First, we develop and implement the  Keister function \AGSComment{CITE}:
 \end{align*}
 Thus, to use QMCPy, we use the integrand $g(\bsx) = \pi^{d/2} \cos(\lVert \bsx \rVert)$ and true measure $\calN(0,\bsI/2)$ to implement the Keister function. Note that we may also have defined the integrand as $g(\bsx) = \cos(\lVert \bsx \rVert)\exp(-\bsx^T\bsx)$ and used the Lebesgue true measure. The following code defines the Keister integrand and non-standard Gaussian true measure with Halton discrete distribution. Samples are then drawn from the discrete distribution and evaluate by the transformed integrand $f$. The function evaluations are then averaged as an approximation of the mean.
 \lstinputlisting[style=Python]{ags/python/i.keister.py}
-Figure \ref{fig:ikc} visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
-\begin{figure}
-	\includegraphics[height=6cm]{ags/figs/i.keister_contours.png}
-	\caption{Left: Sampling the original integrand $g$ using a $\calN(0,\bsI/2)$ true measure. \\ Right: Sampling the transformed integrand $f$ using a $\calU[0,1]^2$ true measure, as done in QMCPy.}
-	\label{fig:ikc}
-\end{figure}
+\fi
+
+
 
 Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
 $$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
