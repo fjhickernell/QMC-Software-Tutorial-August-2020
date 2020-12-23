@@ -336,7 +336,7 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 
 \section{True Measures}
 
-The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented by via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
+The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
 \begin{subequations} \label{eq:exampleVarTrans}
 \begin{gather}
 \bsT = \bsPsi(\bsX) := (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
@@ -350,7 +350,7 @@ Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to m
 \lstinputlisting[style=Python]{ags/python/tm_uniform.py}
 for uniform points based on a Halton sequence, and 
 \lstinputlisting[style=Python]{ags/python/tm_gaussian.py}
-for Gaussian points based on a lattice sequence.
+for Gaussian points based on a lattice sequence. \AGSComment{Add ... to code when using multi-line commands.}
 
 \begin{figure}
 	\includegraphics[width=.45\textwidth]{ags/figs/tm_uniform.png} 
@@ -393,7 +393,7 @@ Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times
 
 \section{Integrands}
 
-Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
+Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose a transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
 \begin{align}
 	\nonumber 
  \mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
@@ -414,9 +414,9 @@ We will use QMC methods to approximate this integral, which means that it will b
 \bsPsi(\bsx) := \sqrt{1/2}\bigl(\Phi^{-1}(x_1),  \ldots, \Phi^{-1}(x_d)\bigr)^T .
 \]
 
-The code below shows sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
+The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
 \lstinputlisting[style=Python]{ags/python/i_keister.py}
-For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to those values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
+\AGSComment{\texttt{cf} should be \texttt{keister} in above code. }For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to those values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}
 	\includegraphics[height=6cm]{ags/figs/i_keister_contours.png}
