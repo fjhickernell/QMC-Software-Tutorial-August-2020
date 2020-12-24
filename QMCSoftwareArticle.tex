@@ -434,8 +434,12 @@ where $\bsPsi$ is any transformation from $\bbR^d$ to $[0,1]^d$.  QMCPy can perf
 \lstinputlisting[style=Python]{ags/python/i_keisterLebesgue.py}
 The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
 
+In the examples above, one needed to input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem.  The \texttt{Keister} integrand instance  included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}.  Choosing different true measures leave $\mu$ unchanged but  correspond to different choices of $\bsPsi$.  
+\lstinputlisting[style=Python]{ags/python/built-in_Keister.py}
+This is essentially to \emph{importance sampling}.
 
-Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library.  \FJHComment{Does the built in Keister function work like the Asian options does, meaning that the problem is the same no matter the distribution? } \AGSComment{The Keister function now works with either $\calN(0,1/2)$ or the Lebesgue measure (see \texttt{integrand/code/keister} in our Colab notebook). Our Asian Option (not Mike Gile's multi-level) will only work with a Brownian Motion true measure, but will perform importance sampling automatically if drift $\neq 0$. Also, Brownian Motion now supports exercise time $\neq 1$ (see \texttt{true measure/figs/brownian motion} in our Colab notebook.}
+
+\AGSComment{The Keister function now works with either $\calN(0,1/2)$ or the Lebesgue measure (see \texttt{integrand/code/keister} in our Colab notebook). \FJHComment{But only seems to work for these two.} Our Asian Option (not Mike Gile's multi-level) will only work with a Brownian Motion true measure, but will perform importance sampling automatically if drift $\neq 0$. Also, Brownian Motion now supports exercise time $\neq 1$ (see \texttt{true measure/figs/brownian motion} in our Colab notebook.} \FJHComment{Thanks for generalizing.  Sometimes you may want to add not just a drift but importance sample with a different variance for your Brownian motion.}
 
 
 \iffalse
