@@ -246,7 +246,7 @@ The software libraries referenced in Section \ref{sec:available} provide one or 
 
 QMCPy may be installed from PyPI via the command \texttt{pip install qmcpy}. In the sections that follow we assume qmcpy as been imported via the following python command: 
 \lstinputlisting[style=Python]{ags/python/import.py}
-The figures in this paper can be reproduced in the Google Colab notebook \AGSComment{CITE}.
+The figures in this paper can be reproduced in the Google Colab notebook \AGSComment{CITE, put this earlier?}.
 
 \section{Discrete Distributions}
 
@@ -360,7 +360,7 @@ for Gaussian points based on a lattice sequence. \AGSComment{Add ... to code whe
 	\label{fig:tm_ug}
 \end{figure}
 
-The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$.  The code for generating a Brownian motion is
+The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$.  \AGSComment{... and mean 0. QMCPy will automatically perform importance sampling with respect to a $\calN(\bsa,\Sigma)$ distribution where $\bsa$ corresponds to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$. The Brownian Motion samples generated in the following code mimic a $\calN(\bsa,\Sigma)$ distribution, yet the true measure of the problem is $\calN(0,\Sigma)$.} The code for generating a Brownian motion is
 \lstinputlisting[style=Python]{ags/python/tm_brownian_motion.py}
 Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
@@ -402,7 +402,7 @@ Let's return now to the integration problem in \eqref{eq:integral}, which we mus
 \end{align}
 and $\QMCPYabs{\partial \bsPsi/\partial \bsx}$ represents the Jacobian of the variable transformation.  The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$.  Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.  
 
-We illustrate the use of the \texttt{Integrand} class via the an example of Keister \cite{Kei96}:
+We illustrate the use of the \texttt{Integrand} class via an example of Keister \cite{Kei96}:
 \begin{equation} \label{eq:KeisterIntegral}
 	\mu 
 	= \int_{\bbR^d} \cos(\lVert \bst \rVert) \exp(-\bst^T \bst) \, \D \bst \\ 
@@ -416,7 +416,7 @@ We will use QMC methods to approximate this integral, which means that it will b
 
 The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
 \lstinputlisting[style=Python]{ags/python/i_keister.py}
-\AGSComment{\texttt{cf} should be \texttt{keister} in above code. }For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to those values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
+For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to those values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}
 	\includegraphics[height=6cm]{ags/figs/i_keister_contours.png}
@@ -441,6 +441,11 @@ This is essentially to \emph{importance sampling}.
 
 \AGSComment{The Keister function now works with either $\calN(0,1/2)$ or the Lebesgue measure (see \texttt{integrand/code/keister} in our Colab notebook). \FJHComment{But only seems to work for these two.} Our Asian Option (not Mike Gile's multi-level) will only work with a Brownian Motion true measure, but will perform importance sampling automatically if drift $\neq 0$. Also, Brownian Motion now supports exercise time $\neq 1$ (see \texttt{true measure/figs/brownian motion} in our Colab notebook.} \FJHComment{Thanks for generalizing.  Sometimes you may want to add not just a drift but importance sample with a different variance for your Brownian motion.}
 
+\AGSComment{
+Importance sampling with Gaussian
+$$ \bsPsi(\bsx) = A^T\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^T$$
+$$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ji}}{\phi(\Phi^{-1}(x_j))}$$
+$$ \det(J) = \det\left(A^T \odot \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
 
 \iffalse
 
@@ -464,21 +469,6 @@ Thus, to use QMCPy, we use the integrand $g(\bsx) = \pi^{d/2} \cos(\lVert \bsx \
 \lstinputlisting[style=Python]{ags/python/i_keister.py}
 \fi
 
-
-
-Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
-$$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
-Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
-$$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(t_{j-1},x_{j-1})+S(t_j,x_j)]-K,0\right).$$
-Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
-\lstinputlisting[style=Python]{ags/python/i_aco.py}
-\begin{figure}
-    \centering
-	\includegraphics[width=.65\textwidth]{ags/figs/i_aco.png} 
-	\caption{Top: Brownian Motion paths with drift $a=2$.\\ Bottom: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
-	\label{fig:aco}
-\end{figure}
-
 \section{Stopping Criteria}
 
 The stopping criteria determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\epsilon$ of the true mean $\mu$. 
@@ -496,6 +486,20 @@ Figure \ref{fig:sc_comp} compares MC and QMC stopping criterion on the Keister i
 
 \section{Under the Hood}
 
+\subsection{Option Pricing Example}
+Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
+$$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
+Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
+$$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(t_{j-1},x_{j-1})+S(t_j,x_j)]-K,0\right).$$
+Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
+\lstinputlisting[style=Python]{ags/python/i_aco.py}
+\begin{figure}
+    \centering
+	\includegraphics[width=.65\textwidth]{ags/figs/i_aco.png} 
+	\caption{Top: Brownian Motion paths with drift $a=2$.\\ Bottom: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
+	\label{fig:aco}
+\end{figure}
+
 \AGSComment{
 \begin{itemize}
     \item \texttt{print} method for all QMCPy objects
@@ -506,6 +510,7 @@ Figure \ref{fig:sc_comp} compares MC and QMC stopping criterion on the Keister i
     \item transform from low discrepancy does not guarantee low discrepancy in new distribution 
     \item Sobol' samples will repeat after $2^32$ samples
     \item discuss Jag's Bayesian stopping criterion
+    \item make importance sampling an input argument to gaussian and lebesgue true measures. Then gaussian could be importance sampled by a drifted gaussian i.e. brownian motion or lebesgue could be importance sampled by a gaussian with arbitrary mean and covariance or uniform with arbitrary bounds. 
 \end{itemize}}
 
 \section{Further Work} \label{sec:further}
