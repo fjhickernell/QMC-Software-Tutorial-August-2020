@@ -360,7 +360,7 @@ for Gaussian points based on a lattice sequence. \AGSComment{Add ... to code whe
 	\label{fig:tm_ug}
 \end{figure}
 
-The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$.  \AGSComment{... and mean 0. QMCPy will automatically perform importance sampling with respect to a $\calN(\bsa,\Sigma)$ distribution where $\bsa$ corresponds to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$. The Brownian Motion samples generated in the following code mimic a $\calN(\bsa,\Sigma)$ distribution, yet the true measure of the problem is $\calN(0,\Sigma)$.} The code for generating a Brownian motion is
+The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$.  \AGSComment{Talk about how $\lambda \sim \calN(0,\Sigma)$ but you can \texttt{set\_transform} corresponding to $\calN(\ba,\Sigma)$, essentially importance sampling?} The code for generating a Brownian motion is
 \lstinputlisting[style=Python]{ags/python/tm_brownian_motion.py}
 Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
@@ -445,7 +445,7 @@ This is essentially to \emph{importance sampling}.
 Importance sampling with Gaussian
 $$ \bsPsi(\bsx) = A^T\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^T$$
 $$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ji}}{\phi(\Phi^{-1}(x_j))}$$
-$$ \det(J) = \det\left(A^T \odot \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
+$$ \det(J) = \det\left(A^T . \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
 
 \iffalse
 
