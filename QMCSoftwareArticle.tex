@@ -120,6 +120,7 @@
 \newcommand{\dig}{\textup{dig}}
 \newcommand{\mA}{\mathsf{A}}
 \newcommand{\mSigma}{\mathsf{\Sigma}}
+\newcommand{\mLambda}{\mathsf{\Lambda}}
 \newcommand{\mI}{\mathsf{I}}
 
 \begin{document}
@@ -341,7 +342,8 @@ The LD sequences implemented as \text{DiscreteDistribution} objects typically mi
 \begin{gather}
 \bsT = \bsPsi(\bsX) := (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
 \label{eq:exampleVarTransGauss}
-\bsT = \bsPsi(\bsX) := \mA^T\bigl(\Phi^{-1}(X_1),  \ldots, \Phi^{-1}(X_d)\bigr)^T + \bsa \sim \calN(\bsa, \mSigma), \quad \text{where }  \mSigma = \mA \mA^T,
+\bsT = \bsPsi(\bsX) := \mA^T \bsPhi^{-1}(\bsX) + \bsa \sim \calN(\bsa, \mSigma), \\
+\nonumber  \text{where }  \bsPhi^{-1}(\bsX) : = \begin{pmatrix} \Phi^{-1}(X_1) \\ \vdots \\ \Phi^{-1}(X_d)\end{pmatrix}, \qquad \mSigma = \mA \mA^T,
 \end{gather}
 \end{subequations}
 and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
@@ -447,33 +449,45 @@ $$ \bsPsi(\bsx) = A^T\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^
 $$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ji}}{\phi(\Phi^{-1}(x_j))}$$
 $$ \det(J) = \det\left(A^T \odot \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
 
-\iffalse
-
-Figure \ref{fig:ikc} visualizes sampling on the original integrand versus sampling on the transformed integrand. Note that the Keister function has been also implemented as a concrete integrand class in the QMCPy library. 
-\begin{figure}
-	\includegraphics[height=6cm]{ags/figs/i.keister_contours.png}
-	\caption{Left: Sampling the original integrand $g$ according to $\calN(0,\mI/2)$.  Right: Sampling the transformed integrand $f$ according to $\calU[0,1]^2$.  Halton points are used in both cases.}
-	\label{fig:ikc}
-\end{figure}
-
-Use cases are implemented as integrands in QMCPy. Practitioners who wish to use QMCPy in their work will likely only need to utilize QMCPy's \texttt{CustomFun} wrapper to tie their existing function into the framework. When writing a function to be used with QMCPy, it is important to implement the original integrand $g$, not the transformed integrand $f$. Again, our framework will perform the necessary transform behind the scenes. Moreover, the original integrand function is assumed to take as input a $n$ samples by $d$ dimensional array of samples and return a length $n$ vector of function evaluations at those samples. 
-
-First, we develop and implement the  Keister function \AGSComment{CITE}:
+\FJHComment{Given $g$ and $\lambda$ to define your integral, suppose that $\lambda(\bst)$ is some multiple of some multivariate normal distribution:
+	\begin{equation*}
+		\lambda(\bst)  = \frac{c \exp\bigl(-(\bst -\bsb)^T \mLambda^{-1}(\bst -\bsb)/2\bigr)}{\sqrt{ (2\pi)^d \det(\mLambda)}} 
+	\end{equation*}
+Suppose that we use the variable transformation $\bsPsi$ defined in \eqref{eq:exampleVarTransGauss}.  By what you have derived above:
 \begin{align*}
-\mu 
-&= \int_{\mathbb{R}^d} \cos(\lVert \bsx \rVert) \exp(-\bsx^T \bsx) \D \bsx \\ 
-&= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \bsx \rVert)}_{g(\bsx)} \underbrace{\pi^{-d/2} \exp(-\bsx^T \bsx) \D \bsx}_{\calN(0,\bsI/2)} \\ 
-&= \int_{\mathbb{R}^d} \underbrace{\pi^{d/2} \cos(\lVert \Phi^{-1}(\bsx)/2 \rVert)}_{f(\bsx)} \underbrace{\D \bsx}_{\calU[0,1]^d}.
+	\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} 
+	& = \frac{\det(\mA^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))} = \sqrt{(2\pi)^d \det(\mSigma)} \exp\bigl( \QMCPYnormnorm[2]{\bsPhi^{-1}(\bsx)}^2/2\bigr) \\
+	\MoveEqLeft[2]{\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}} \\
+	& =  c \sqrt{\frac{\det(\mSigma)}{\det(\mLambda)}} \exp \bigl( [ \bsPhi^{-1}(\bsx)^T \bsPhi^{-1}(\bsx) \\
+	& \qquad \qquad -   (\mA^T\bsPhi^{-1}(\bsx) +\bsa -\bsb)^T\mLambda^{-1}(\mA^T\bsPhi^{-1}(\bsx) +\bsa -\bsb)        ] /2   \bigr) \\
+	& =  c \sqrt{\frac{\det(\mSigma)}{\det(\mLambda)}} \exp \bigl( [ \bsPhi^{-1}(\bsx)^T \bsPhi^{-1}(\bsx) 
+	-   \bsPhi^{-1}(\bsx)^T\mA\mLambda^{-1}\mA^T \bsPhi^{-1}(\bsx)\\
+	& \qquad \qquad  - 2(\bsa -\bsb)^T \mLambda^{-1}\mA^T\bsPhi^{-1}(\bsx) - (\bsa -\bsb)^T \mLambda^{-1} (\bsa -\bsb)] /2   \bigr) 
 \end{align*}
-Thus, to use QMCPy, we use the integrand $g(\bsx) = \pi^{d/2} \cos(\lVert \bsx \rVert)$ and true measure $\calN(0,\bsI/2)$ to implement the Keister function. Note that we may also have defined the integrand as $g(\bsx) = \cos(\lVert \bsx \rVert)\exp(-\bsx^T\bsx)$ and used the Lebesgue true measure. The following code defines the Keister integrand and non-standard Gaussian true measure with Halton discrete distribution. Samples are then drawn from the discrete distribution and evaluate by the transformed integrand $f$. The function evaluations are then averaged as an approximation of the mean.
-\lstinputlisting[style=Python]{ags/python/i_keister.py}
-\fi
+If $\mLambda = \mSigma$, then this simplifies to
+\begin{equation*}
+		\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}
+	 =  c \exp \bigl( - (\bsa -\bsb)^T \mLambda^{-1} [
+	2\mA^T \bsPhi^{-1}(\bsx) + (\bsa -\bsb)] /2   \bigr) .
+\end{equation*}
+If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then 
+\begin{align*}
+	\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}
+	& = \frac{c\sigma}{\lambda} 
+	\exp \bigl( [ (\lambda^2 -\sigma^2)\bsPhi^{-1}(\bsx)^T\bsPhi^{-1}(\bsx) 
+	\\
+	& -  (\bsa -\bsb)^T [
+	2\sigma \bsPhi^{-1}(\bsx) + (\bsa -\bsb)] /(2\lambda^2)   \bigr) .
+\end{align*}
+
+
+}
 
 \section{Stopping Criteria}
 
-The stopping criteria determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\epsilon$ of the true mean $\mu$. 
+The stopping criteria determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$. 
 
-The following example shows how to run a QMC simulation that approximates the Keister function to within absolute tolerance $\epsilon_{\text{abs}}=10^{-3}$ using QMCPy. Note the nested construction where the discrete distribution is passed into the true measure which is passed into the integrand which is passed into the stopping criterion. This architecture allows QMCPy to perform the change of variables transformation behind the scenes. The nested construction also provides the stopping criterion knowledge of the other three components, thus allowing the \texttt{integrate} method to perform the QMC simulation. Finally, note that the data object returned by the \texttt{integrate} method can be nicely printed to show parameters set during the simulation. Individual QMCPy objects may also be printed to reveal underlying parameters. 
+The following example shows how to run a QMC simulation that approximates the Keister function to within absolute tolerance $\varepsilon_{\text{abs}}=10^{-3}$ using QMCPy. Note the nested construction where the discrete distribution is passed into the true measure which is passed into the integrand which is passed into the stopping criterion. This architecture allows QMCPy to perform the change of variables transformation behind the scenes. The nested construction also provides the stopping criterion knowledge of the other three components, thus allowing the \texttt{integrate} method to perform the QMC simulation. Finally, note that the data object returned by the \texttt{integrate} method can be nicely printed to show parameters set during the simulation. Individual QMCPy objects may also be printed to reveal underlying parameters. 
 \lstinputlisting[style=Python]{ags/python/sc_keister_qmc.py}
 
 Figure \ref{fig:sc_comp} compares MC and QMC stopping criterion on the Keister integrand. We see that QMC methods requires significantly fewer samples that MC methods to achieve the same error tolerance. This empirical behaviour matches the theoretical cost of the QMC/MC methods.
