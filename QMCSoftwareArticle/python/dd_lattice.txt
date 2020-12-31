@@ -1,6 +1,7 @@
 >>> lattice = qp.Lattice(dimension=2,randomize=False)
 >>> lattice.gen_samples(n=8)
-warnings.warn("Non-randomized lattice sequence includes the origin",ParameterWarning)
+"ParameterWarning:
+        Non-randomized lattice sequence includes the origin."
 array([[0.   , 0.   ],
        [0.5  , 0.5  ],
        [0.25 , 0.75 ],

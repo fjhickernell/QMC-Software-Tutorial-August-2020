@@ -2,7 +2,7 @@
 >>> x = qp.Halton(d).gen_samples(4)
 >>> u = qp.Uniform(d, 
 ...         lower_bound = [-2,0], 
-...         upper_bound = [2,4])
+...         upper_bound = [ 2,4])
 >>> u.transform(x)
 array([[ 0.85908285,  0.85683196],
        [-1.14091715,  2.19016529],

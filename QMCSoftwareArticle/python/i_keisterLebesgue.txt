@@ -4,8 +4,7 @@
 ...     norm_sq = (x**2).sum(1)
 ...     out = (d/2)*np.cos(np.sqrt(norm_sq))*np.exp(-norm_sq)
 ...     return out  # size n vector
->>> true_measure = qp.Lebesgue( # weight
-...     transformer=qp.Gaussian(d,covariance=1/2)) # transform
+>>> true_measure = qp.Lebesgue(qp.Gaussian(d))
 >>> keister = qp.CustomFun(
 ...     discrete_distrib = qp.Halton(d),
 ...     g = my_L_Keister,

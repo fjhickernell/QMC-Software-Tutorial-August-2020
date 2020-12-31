@@ -1,11 +1,10 @@
 >>> d = 2
+>>> # default transform
 >>> keister = qp.Keister(qp.Halton(d))
 >>> x = keister.discrete_distrib.gen_samples(1000)
->>> keister.f(x).mean() # approximate integral
+>>> keister.f(x).mean()
 1.80907385320645
->>> keister = qp.Keister(qp.Halton(d))
->>> transform = qp.Gaussian(d,mean=.5,covariance=2)
->>> keister.set_transform(transform) # custom transform
->>> x = keister.discrete_distrib.gen_samples(1000)
->>> keister.f(x).mean() # approximate integral
+>>> # custom transform
+>>> keister.set_transform(qp.Gaussian(d,mean=.5,covariance=2))
+>>> keister.f(x).mean()
 1.8039444213977887
