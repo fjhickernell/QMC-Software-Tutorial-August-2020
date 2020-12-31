@@ -1,0 +1,14 @@
+>>> d = 4 # monitoring times = [1/4, 1/2, 3/4, 1]
+>>> payoff = qp.AsianOption(
+            discrete_distrib = qp.Sobol(d), 
+            start_price = 30,
+            strike_price = 45,
+            volatility = 0.5,
+            interest_rate = 0,
+            call_put = 'call')
+>>> payoff.set_transform( # importance sample by
+...     qp.BrownianMotion(d,drift=1))
+>>> x = payoff.discrete_distrib.gen_samples(2**10)
+>>> y = payoff.f(x)
+>>> y.mean()
+0.4383104434572898
