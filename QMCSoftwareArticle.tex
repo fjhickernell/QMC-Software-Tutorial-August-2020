@@ -145,7 +145,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 \abstract{This is the article based on my MCQMC 2020 Tutorial}
 
 
-\section{Introduction}
+\section{Introduction} \label{sec:intro}
 Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error as IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that is at the heart of QMC. 
 
 If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases to demonstrate their practical value.  
@@ -485,22 +485,34 @@ If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then
 
 \section{Stopping Criteria}
 
-The stopping criteria determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$. 
+The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a} and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
 
-The following example shows how to run a QMC simulation that approximates the Keister function to within absolute tolerance $\varepsilon_{\text{abs}}=10^{-3}$ using QMCPy. Note the nested construction where the discrete distribution is passed into the true measure which is passed into the integrand which is passed into the stopping criterion. This architecture allows QMCPy to perform the change of variables transformation behind the scenes. The nested construction also provides the stopping criterion knowledge of the other three components, thus allowing the \texttt{integrate} method to perform the QMC simulation. Finally, note that the data object returned by the \texttt{integrate} method can be nicely printed to show parameters set during the simulation. Individual QMCPy objects may also be printed to reveal underlying parameters. 
+Let us return to the Keister example from the previous section.  After setting up  a Keister \texttt{Integrand} instance via a Gaussian \texttt{TrueMeasure} using a Sobol' \texttt{DiscreteDistribution},, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution}, inputting our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{ags/python/sc_keister_qmc.py}
+The second output of the stopping criterion provides helpful diagnostic information.  This computation required $n=2^{13}$ Sobol' points and $0.016$ seconds to complete.  The error bound is $0.000617$, which falls below the absolute tolerance.
 
-Figure \ref{fig:sc_comp} compares MC and QMC stopping criterion on the Keister integrand. We see that QMC methods requires significantly fewer samples that MC methods to achieve the same error tolerance. This empirical behaviour matches the theoretical cost of the QMC/MC methods.
+QMC, which uses LD sequences, is touted as providing substantially greater computational efficiency compared to IID MC.
+Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\calO(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\calO(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\calO(n^{-1+\epsilon})$, which implies $\calO(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples that MC methods to achieve the same error tolerance.
 
 \begin{figure}
 	\includegraphics[height=6cm]{ags/figs/sc_comp.png}
-	\caption{Comparison of runtime for MC (\texttt{CubMCG}) and QMC (\texttt{CubQMCLatticeG}) methods on the 5 dimension Keister integrand with varying absolute tolerance. Note that the relative tolerance is set to 0 for all trials. }
+	\caption{Comparison of run times and sample sizes for computing the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID and LD lattice sequences for a variety of absolute error tolerances.  The respective stopping criteria were  (\texttt{CubMCG}) and  (\texttt{CubQMCLatticeG}). The LD sequences provide the desired answer much more efficiently.}
 	\label{fig:sc_comp}
 \end{figure}
 
-\section{Under the Hood}
+To illustrate the QMC cubature on another example, we consider Asian arithmetic mean option pricing.   Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. The payoff of an arithmetic Asian call option depends on how much the average stock price over the time horizon
+$$\text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S_{j-1}+S_j]-K,0\right), \quad \bsS = (S_0, \ldots, S_d).$$
 
-\subsection{Option Pricing Example}
+
+
+
+
+
+
+
+
+
+
 Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
 $$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
 Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
@@ -508,11 +520,43 @@ $$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(t_{j-1},x_{j-1})+S(t_j,x_j)]-K
 Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
 \lstinputlisting[style=Python]{ags/python/i_aco.py}
 \begin{figure}
-    \centering
+	\centering
 	\includegraphics[width=.65\textwidth]{ags/figs/i_aco.png} 
 	\caption{Top: Brownian Motion paths with drift $a=2$.\\ Bottom: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
 	\label{fig:aco}
 \end{figure}
+
+
+
+
+
+
+
+Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
+$$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
+Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
+$$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(t_{j-1},x_{j-1})+S(t_j,x_j)]-K,0\right).$$
+Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
+\lstinputlisting[style=Python]{ags/python/i_aco.py}
+\begin{figure}
+	\centering
+	\includegraphics[width=.65\textwidth]{ags/figs/i_aco.png} 
+	\caption{Top: Brownian Motion paths with drift $a=2$.\\ Bottom: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
+	\label{fig:aco}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\section{Under the Hood}
+
+\subsection{Option Pricing Example}
+
 
 \AGSComment{
 \begin{itemize}
