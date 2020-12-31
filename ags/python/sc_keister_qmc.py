@@ -1,17 +1,14 @@
->>> # QMC problem
->>> dd_qmc = qp.Sobol(dimension=2,seed=7)
->>> m_qmc = qp.Gaussian(dd_qmc,mean=0.,covariance=1./2)
->>> i_qmc = qp.Keister(m_qmc)
->>> sc_qmc = qp.CubQMCSobolG(i_qmc,abs_tol=1e-3)
->>> solution_qmc,data_qmc = sc_qmc.integrate()
+>>> keister = qp.Keister(qp.Gaussian(qp.Sobol(2),covariance=1./2))
+>>> stopping = qp.CubQMCSobolG(keister,abs_tol=1e-3)
+>>> solution_qmc,data_qmc = stopping.integrate()
 >>> print(data_qmc)
-Solution: 1.8081         
+Solution: 1.8086         
 Keister (Integrand Object)
 Sobol (DiscreteDistribution Object)
     dimension       2^(1)
     randomize       1
     graycode        0
-    seed            [61616 58565]
+    seed            [91844 20561]
     mimics          StdUniform
     dim0            0
 Gaussian (TrueMeasure Object)
@@ -25,6 +22,6 @@ CubQMCSobolG (StoppingCriterion Object)
     n_max           2^(35)
 LDTransformData (AccumulateData Object)
     n_total         2^(13)
-    solution        1.808
-    error_bound     5.01e-04
-    time_integrate  0.013
+    solution        1.809
+    error_bound     6.17e-04
+    time_integrate  0.016
