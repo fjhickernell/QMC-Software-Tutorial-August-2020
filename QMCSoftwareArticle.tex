@@ -342,11 +342,11 @@ The LD sequences implemented as \text{DiscreteDistribution} objects typically mi
 \begin{gather}
 \bsT = \bsPsi(\bsX) := (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
 \label{eq:exampleVarTransGauss}
-\bsT = \bsPsi(\bsX) := \mA^T \bsPhi^{-1}(\bsX) + \bsa \sim \calN(\bsa, \mSigma), \\
+\bsT = \bsPsi(\bsX) := \mA \bsPhi^{-1}(\bsX) + \bsa \sim \calN(\bsa, \mSigma), \\
 \nonumber  \text{where }  \bsPhi^{-1}(\bsX) : = \begin{pmatrix} \Phi^{-1}(X_1) \\ \vdots \\ \Phi^{-1}(X_d)\end{pmatrix}, \qquad \mSigma = \mA \mA^T,
 \end{gather}
 \end{subequations}
-\AGSComment{Should be $A\Phi^{-1}(X)+\bsa$.} and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
+and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
 
 Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to mimic a uniform and a Gaussian distribution.  The code to generate these points takes the following form of 
 \lstinputlisting[style=Python]{ags/python/tm_uniform.py}
@@ -459,16 +459,16 @@ Suppose that we use the variable transformation $\bsPsi$ defined in \eqref{eq:ex
 	& = \frac{\det(\mA^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))} = \sqrt{(2\pi)^d \det(\mSigma)} \exp\bigl( \QMCPYnormnorm[2]{\bsPhi^{-1}(\bsx)}^2/2\bigr) \\
 	\MoveEqLeft[2]{\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}} \\
 	& =  c \sqrt{\frac{\det(\mSigma)}{\det(\mLambda)}} \exp \bigl( [ \bsPhi^{-1}(\bsx)^T \bsPhi^{-1}(\bsx) \\
-	& \qquad \qquad -   (\mA^T\bsPhi^{-1}(\bsx) +\bsa -\bsb)^T\mLambda^{-1}(\mA^T\bsPhi^{-1}(\bsx) +\bsa -\bsb)        ] /2   \bigr) \\
+	& \qquad \qquad -   (\mA\bsPhi^{-1}(\bsx) +\bsa -\bsb)^T\mLambda^{-1}(\mA\bsPhi^{-1}(\bsx) +\bsa -\bsb)        ] /2   \bigr) \\
 	& =  c \sqrt{\frac{\det(\mSigma)}{\det(\mLambda)}} \exp \bigl( [ \bsPhi^{-1}(\bsx)^T \bsPhi^{-1}(\bsx) 
-	-   \bsPhi^{-1}(\bsx)^T\mA\mLambda^{-1}\mA^T \bsPhi^{-1}(\bsx)\\
-	& \qquad \qquad  - 2(\bsa -\bsb)^T \mLambda^{-1}\mA^T\bsPhi^{-1}(\bsx) - (\bsa -\bsb)^T \mLambda^{-1} (\bsa -\bsb)] /2   \bigr) 
+	-   \bsPhi^{-1}(\bsx)^T\mA^T\mLambda^{-1}\mA \bsPhi^{-1}(\bsx)\\
+	& \qquad \qquad  - 2(\bsa -\bsb)^T \mLambda^{-1}\mA\bsPhi^{-1}(\bsx) - (\bsa -\bsb)^T \mLambda^{-1} (\bsa -\bsb)] /2   \bigr) 
 \end{align*}
 If $\mLambda = \mSigma$, then this simplifies to
 \begin{equation*}
 		\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}
-	 =  c \exp \bigl( - (\bsa -\bsb)^T \mLambda^{-1} [
-	2\mA^T \bsPhi^{-1}(\bsx) + (\bsa -\bsb)] /2   \bigr) .
+	 =  c \exp \bigl( - (\bsa -\bsb)^T \mA^{-T} [
+	2 \bsPhi^{-1}(\bsx) + \mA^{-1}(\bsa -\bsb)] /2   \bigr) .
 \end{equation*}
 If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then 
 \begin{align*}
