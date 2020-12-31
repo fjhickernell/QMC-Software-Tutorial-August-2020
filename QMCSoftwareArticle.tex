@@ -346,7 +346,7 @@ The LD sequences implemented as \text{DiscreteDistribution} objects typically mi
 \nonumber  \text{where }  \bsPhi^{-1}(\bsX) : = \begin{pmatrix} \Phi^{-1}(X_1) \\ \vdots \\ \Phi^{-1}(X_d)\end{pmatrix}, \qquad \mSigma = \mA \mA^T,
 \end{gather}
 \end{subequations}
-and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
+\AGSComment{Should be $A\Phi^{-1}(X)+\bsa$.} and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
 
 Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to mimic a uniform and a Gaussian distribution.  The code to generate these points takes the following form of 
 \lstinputlisting[style=Python]{ags/python/tm_uniform.py}
@@ -445,9 +445,9 @@ This is essentially to \emph{importance sampling}.
 
 \AGSComment{
 Importance sampling with Gaussian
-$$ \bsPsi(\bsx) = A^T\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^T$$
-$$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ji}}{\phi(\Phi^{-1}(x_j))}$$
-$$ \det(J) = \det\left(A^T . \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A^T)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
+$$ \bsPsi(\bsx) = A\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^T$$
+$$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ij}}{\phi(\Phi^{-1}(x_j))}$$
+$$ \det(J) = \det\left(A . \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
 
 \FJHComment{Given $g$ and $\lambda$ to define your integral, suppose that $\lambda(\bst)$ is some multiple of some multivariate normal distribution:
 	\begin{equation*}
