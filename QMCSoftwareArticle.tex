@@ -143,7 +143,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{This is the article based on my MCQMC 2020 Tutorial}
+\abstract{This is the article based on my MCQMC 2020 Tutorial. \AGSComment{I moved our extra derivations to after the references.}}
 
 
 \section{Introduction} \label{sec:intro}
@@ -397,7 +397,7 @@ Let's return now to the integration problem in \eqref{eq:integral}, which we mus
   & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)} \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}},
 \end{align}
 and $\QMCPYabs{\partial \bsPsi/\partial \bsx}$ represents the Jacobian of the variable transformation.  The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$. Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.
-\AGSComment{If the \texttt{TrueMeasure} corresponds to a PDF, then QMCPy will use the instance's default \texttt{transform} methods which selects $\bsPsi$ so that $f(\bsx)=g(\bsPsi(\bsx)$ (assuming $\varrho(\bsx)=1$). For non-PDF measures, e.g. Lebesgue, $\bsPsi$ requires another \texttt{TrueMeasure} instance whose default transform is to be used. More generally, one may also importance sample a \texttt{TrueMeasure}'s weight $\lambda$ by resetting it's transform to that of anther's via the \texttt{set\_transform} method. Making a linked list of TrueMeasures in this way creates a compound transform. Probably a cleaner way to do this in the future}
+\AGSComment{If the \texttt{TrueMeasure} corresponds to a PDF, then QMCPy will use the instance's default \texttt{transform} methods which selects $\bsPsi$ so that $f(\bsx)=g(\bsPsi(\bsx)$ (assuming $\varrho(\bsx)=1$). For non-PDF measures, e.g. Lebesgue, $\bsPsi$ requires another \texttt{TrueMeasure} instance whose default transform is to be used. More generally, one may also importance sample a \texttt{TrueMeasure}'s weight $\lambda$ by resetting it's transform to that of anther's via the \texttt{set\_transform} method. Making a linked list of TrueMeasures in this way creates a compound transform. Probably a cleaner way to do this in the future.}
 
 We illustrate the use of the \texttt{Integrand} class via an example of Keister \cite{Kei96}:
 \begin{equation} \label{eq:KeisterIntegral}
@@ -431,10 +431,10 @@ where $\bsPsi$ is any transformation from $\bbR^d$ to $[0,1]^d$.  QMCPy can perf
 The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$. \AGSComment{In the above code, a user could supply mean and covariance parameters to the \texttt{Gaussian} transformer to customize $\Psi$ in \eqref{eq:exampleVarTransGauss}.}
 
 In the examples above, one needed to input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}.
-\AGSComment{\texttt{Keister} uses Lebesgue $\lambda$ and defaults $\bsPsi$ to \eqref{eq:exampleVarTransGauss} with $A=\sqrt{1/2}\bsI$. A user can manually set $\bsPsi$ via the \texttt{set\_transform} method, as done in the code below. Resetting $\bsPsi$ performs  \emph{importance sampling} and thus leaves $\mu$ unchanged.}  
+\AGSComment{\texttt{Keister} sets Lebesgue $\lambda$ and defaults $\bsPsi$ to \eqref{eq:exampleVarTransGauss} with $A=\sqrt{1/2}\bsI$. A user can manually set $\bsPsi$ via the \texttt{set\_transform} method, as done in the code below. Resetting $\bsPsi$ performs  \emph{importance sampling} and thus leaves $\mu$ unchanged.}  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterBuiltIn.txt}
 
-\section{Stopping Criteria}
+\section{Stopping Criteria} \label{sec:stopping_crit}
 
 The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier \AGSComment{and Walsh} coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a} and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a} \AGSComment{wrong citation?}.
 
@@ -469,18 +469,63 @@ Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding
 
 \section{Under the Hood}
 
+In this section, we look at the inner workings of QMCPy and points out available features we hope will benefit the community of QMC researchers and practitioners. We also highlight important idiosyncrasies of QMC methods and how QMCPy addresses these challenges. 
+
+\subsection{Link to LatNetBuilder}
+
+QMCPy provides users access to high quality lattice and digital net generators (defined in Table \ref{tab:GroupProp}). A low-discrepancy generator is comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \dots \in [0,1)^d$ and the callable generator function. QMCPy integrates nicely with latnetbuilder \AGSComment{CITE}, a package centered around search algorithms to find high quality generating vectors. QMCPy's lattice and digital net generators can accept a vectors from latnetbuilder and use them to generate custom ordinary lattice, polynomial lattice, polynomial net, or digital net sequence. We defer readers to latnetbuilder and QMCPy documentation \AGSComment{CITE BOTH} for details. 
+
+\subsection{Customization Options for Low Discrepancy Generators}
+
+QMCPy's low discrepancy generator routines also support numerous customizations for users who need specific points sets, orders, or randomizations. For example, our in-house developed digital net generator allows randomizations such as digital shifts and linear matrix scrambles, optional graycode orderings, and an optionally non-zero starting dimension. Moreover, while most lattice and digital net generators use a fixed generating vector, QMCPy allows users to input their own vector for their specific need, as detailed in the previous subsection.
+
+\subsection{Preferred sample sizes for low-discrepancy generators and}
+
+Low-discrepancy sequences differ from IID node sets in that they fill the domain in a more uniform manner. As IID nodes are independent, they do not have a preferred sample size. That is, if $\bsX \IIDsim \calU[0,1]^d$ then each node is equally likely to fall  anywhere in the unit cube. On the other hand, low-discrepancy sequences provide guarantees that the integration domain is more evenly sampled. However, these guarantees only occur at specific sample sizes. For example, lattic and digital net sequences only fill the domain evenly when $n$ is a power of $2$. We illustrate this property in Figure \ref{fig:digitalNet_elementary_intervals}. \AGSComment{More details of elementary intervals? Reference other's work?}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_sobol_elementary_intervals.png} 
+	\caption{The first 64 Sobol' points with a linear matrix scrambling randomization. Sobol' points are a special case of a digital sequence. Note that every square of area 1/64 outlined in red has exactly 1 point. }
+	\label{fig:digitalNet_elementary_intervals}
+\end{figure}
+
+\subsection{\texttt{print} Method for Instances of QMCPy Components}
+
+A helpful features of QMCPy is the ability to print out components instances to see more detailed information. This allows users to quickly see the properties that have been set and defaulted for any given component. This feature was already used to print the data object returned by the stopping criterion's \texttt{integrate} method in Section \ref{sec:stopping_crit}. The following code prints a drifted \texttt{BrownianMotion} instance and displays the connection to an underlying Gaussian measure. 
+\lstinputlisting[style=Python]{QMCSoftwareArticle/python/print_bm.txt}
+
+
 \AGSComment{
 \begin{itemize}
-    \item \texttt{print} method for all QMCPy objects
-    \item custom generating vectors / matrices
-    \item \texttt{Sobol} / \texttt{DigitalNet} options unique to QMCPy
-    \item more option pricing examples? 
-    \item transform from low discrepancy does not guarantee low discrepancy in new distribution 
-    \item Sobol' samples will repeat after $2^32$ samples
-    \item discuss Jag's Bayesian stopping criterion
-    \item PCA and Cholesky decomp for Gaussian + Brownian Motion
-
+    \item transform from low discrepancy does not guarantee low discrepancy in new distribution
+    \item Sobol' samples will repeat after $2^{32}$ samples
+    \item Bayesian stopping criterion
+    \item multi-level stopping criterion
+    \item PCA and Cholesky decomposition for Gaussian (and Brownian Motion which is a subclass of Gaussian)
 \end{itemize}}
+
+\section{Further Work} \label{sec:further}
+
+\AGSComment{
+\begin{itemize}
+    \item Better multi-level stopping criterion (Pieterjan)
+    \item Multi-composed transforms $\bsPsi$ (multiple Jacobian factors)
+    \item Niederreiter sequences (Adrian and Onyekachi)
+    \item Sobol' indicies (Chris Hoyt)
+    \item transformations for discrete distributions that do not mimic $\calU[0,1]^d$
+\end{itemize}}
+
+\begin{acknowledgement}
+The authors would like to thank the organizers for a wonderful MCQMC 2020. 
+We also thank the referees for their many helpful suggestions.  This work is supported in part by National Science Foundation grants DMS-1522687 and SigOpt.
+\end{acknowledgement}
+
+%\section*{References}
+%\nocite{*}
+\bibliographystyle{spmpsci.bst}
+\bibliography{FJH23,FJHown23,QMCSoftwareArticle}
+
+
 
 \AGSComment{
 Importance sampling with Gaussian
@@ -519,22 +564,6 @@ If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then
 	2\sigma \bsPhi^{-1}(\bsx) + (\bsa -\bsb)] /(2\lambda^2)   \bigr) .
 \end{align*}
 }
-
-\section{Further Work} \label{sec:further}
-
-
-\begin{acknowledgement}
-The authors would like to thank the organizers for a wonderful MCQMC 2020. 
-We also thank the referees for their many helpful suggestions.  This work is supported in part by National Science Foundation grants DMS-1522687 and SigOpt.
-
-
-\end{acknowledgement}
-
-%\section*{References}
-%\nocite{*}
-\bibliographystyle{spmpsci.bst}
-\bibliography{FJH23,FJHown23,QMCSoftwareArticle}
-
 
 \end{document}
 
