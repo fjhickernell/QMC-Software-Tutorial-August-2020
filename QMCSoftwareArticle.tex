@@ -147,28 +147,27 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 
 \section{Introduction} \label{sec:intro}
-Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error as IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that is at the heart of QMC. 
+Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error of IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that is at the heart of QMC. 
 
-If you are a practitioner, you would like to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or algorithm developer, you would like try out your best ideas on a variety of use cases to demonstrate their practical value.  
+If you are a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or an algorithm developer, you would want to demonstrate your best ideas on a variety of use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to become a community owned Python library that combines the best QMC algorithms under a common user interface.
+This tutorial points to some of the best QMC software available.  Furthermore, we describe QMCPy \cite{QMCPy2020a}, which is designed to be a community owned Python library that combines the best QMC algorithms from various authors under a common user interface.
 
 The model problem for QMC is to approximate an integral,
 \begin{equation} \label{eq:integral}
 	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we perform a transformation to interpret it as the population mean of a random variable, 
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we interpret it as the population mean of a random variable after a suitable variable transformation:
 \begin{equation} \label{eq:fintegral}
 	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx =  \int_\calX f(\bsx) \,  \D F(\bsx) ,
 \end{equation}
-where $\varrho$ is a probability density with corresponding probability distribution $F$. 
-A good choice of $f$ can make computation more efficient.
+where $\varrho$ is a probability density with corresponding probability distribution $F$.  In practice, $\calX$ often corresponds to the unit cube, $[0,1]^d$, and $F$ corresponds to the uniform distribution.  
 
 QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
 	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim F.
 \end{equation}
-The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions.  QMC software helps the user make those decisions.
+The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions, which  QMC software helps the user make.
 
 Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
