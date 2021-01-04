@@ -440,7 +440,7 @@ In the examples above, one needed to input the correct $g$ into \texttt{CustomFu
 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
-The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier \AGSComment{and Walsh} coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a} and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a} \AGSComment{wrong citation?}.
+The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier \AGSComment{and Walsh} coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a} and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution}, inputting our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
