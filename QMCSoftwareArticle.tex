@@ -188,16 +188,16 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 
 LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
 
-The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
+The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka inequality and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYabs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, we hope  that the reader sees here in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points and that in the examples below the reader will see the demonstrably smaller cubature errors.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
-In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to its growth are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
+In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to that development are urged to visit the GitHub repository at \href{https://qmcsoftware.github.io/QMCSoftware/}{\nolinkurl{https://qmcsoftware.github.io/QMCSoftware/}}.
 
 \section{Available Software for QMC} \label{sec:available} 
-QMC software spans three categories:  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
+QMC software spans  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
 Software focusing on generating high quality LD sequences  or their generators includes
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
@@ -229,7 +229,7 @@ QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
 	 \bsX_0, \bsX_1, \ldots \sim F.
 \end{multline}
-This required four components, which we implement in QMCPy as classes.
+This requires four components, which we implement as QMCPy classes.
 
 \begin{description}[format=\textup,format=\textbf]
 	
@@ -357,7 +357,11 @@ for Gaussian points based on a lattice sequence.
 	\label{fig:tm_ug}
 \end{figure}
 
-The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance $\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d$ and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$. The code for generating a Brownian motion is
+The Brownian motion distribution arises often in financial risk applications.  Here the $d$ components of the variable $\bsT$ correspond to the Brownian motion at times $\tau/d, 2\tau/d, \ldots, \tau$, where $\tau$ is the time horizon.  The distribution is a special case of the Gaussian with covariance 
+\begin{equation} \label{eq:BMcov}
+	\mSigma = (\tau/d) \bigl (\min(j,k) \bigr)_{j,k=1}^d
+\end{equation}
+and mean $\bsa$, which  correspond to a drift coefficient times $(\tau/d)(1, 2, \ldots, d)^T$. The code for generating a Brownian motion is
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_brownian_motion.txt}
 Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
@@ -450,13 +454,19 @@ Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute th
 	\label{fig:sc_comp}
 \end{figure}
 
-To illustrate the QMC cubature on another example, we turn to option pricing. While QMCPy has a number of single and multi-level options available, we focus solely on pricing the Asian arithmetic mean. The payoff of this option is the positive difference between the stock price and strike price averaged over the time horizon: 
-$$\text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S_{j-1}+S_j]-K,0\right), \quad \bsS = (S_0, \ldots, S_d).$$
+To illustrate QMC cubature for another example, we turn to option pricing, in particular pricing the Asian arithmetic mean. The payoff of this option is the positive difference between the strike price averaged over the time horizon and the strike price, $K$: 
+$$
+\text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S_{j-1}+S_j]-K,0\right), \quad \bsS = (S_0, \ldots, S_d).
+$$
+where $S_j$ denotes the stock price at time $\tau j/d$.  A basic model for stock prices is a geometric Brownian motion, 
+\[
+S_j(\bsT) = S_0 \exp((r - \sigma^2) \tau j/d + \sigma T_j),   \;  j = 1, \ldots, d, \; \bsT = (T_1, \ldots, T_d)\sim \calN(0,\mSigma),
+\]
+where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigma$ is the volatility, and $S_0$ is the initial price.  The fair price of the option is then the expected value of the discounted payoff, namely,
+\begin{equation*}
+	\text{price} = \mu = \bbE[g(\bsT)], \quad \text{where } g(\bst) = \text{payoff}\bigl(\bsS(\bst) \bigr) \exp(-r \tau).
+\end{equation*}
 
-Next, we focus our attention on option pricing. While QMCPy has a number of single and multi-level options available, we now focus solely on the Asian call option. Roughly, the  Asian call option computes the average overshot of the strike price. Specifically, if $\bsx$ is a length $d$ discrete Brownian Motion sample and $\bst = (j/d)_{j=1}^d$ are the discrete monitoring times of the option, one may approximate the the option price at the $j^{th}$ monitoring time as 
-$$S(t_j,x_j) = S_0 \exp((r-\sigma^2/2)t+\sigma x_j).$$
-Here $S_0$ is the start price, $\sigma$ is the volatility, and $r$ is the interest rate. Now, if we define $K$ as the strike price, the arithmetic Asian call option may be written as 
-$$g(\bsx) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S(t_{j-1},x_{j-1})+S(t_j,x_j)]-K,0\right).$$
 Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_aco.txt}
 \begin{figure}
