@@ -1,0 +1,23 @@
+>>> # Single level Asian Call Option 
+>>> aco = qp.AsianOption(
+...     sampler = qp.IIDStdUniform(16),
+...     volatility = .5,
+...     start_price = 30,
+...     strike_price = 45,
+...     interest_rate = .05,
+...     call_put = 'call')
+>>> sol,data = qp.CubMCCLT(aco, abs_tol=5e-3).integrate()
+>>> data.time_integrate
+6.900310039520264
+>>> # Fixed-Multilevel Asian Call Option
+>>> aco = qp.AsianOption(
+...     sampler = qp.IIDStdUniform(),
+...     volatility = .5,
+...     start_price = 30,
+...     strike_price = 45,
+...     interest_rate = .05,
+...     call_put = 'call',
+...     multi_level_dimensions = [4,8,16])
+>>> sol,data = qp.CubMCCLT(aco, abs_tol=5e-3).integrate()
+>>> data.time_integrate
+3.6480579376220703

@@ -63,7 +63,7 @@
 
 
 
-\usepackage{bbm,mathtools,array,longtable,booktabs,graphicx,color,enumitem}
+\usepackage{bbm,mathtools,array,longtable,booktabs,graphicx,color,enumitem,xspace}
 %\input FJHDef.tex
 
 
@@ -127,8 +127,8 @@
 \begin{document}
 
 \title*{Quasi-Monte Carlo Software}
-\authorrunning{S.-C.\ T.\ Choi, F. J. Hickernell, R. Jagadeeswaran, M. J. McCourt, and A. G. Sorokin}
-\author{Sou-Cheng Terrya Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei Sorokin}
+\authorrunning{S.-C.\ T.\ Choi et al}
+\author{Sou-Cheng Terrya Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei G. Sorokin}
 \institute{Sou-Cheng Terrya Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{schoi32@hawk.iit.edu}
 \and
 Fred J. Hickernell \at Center for Interdisciplinary Scientific Computation and \\
@@ -143,7 +143,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{This is the article based on my MCQMC 2020 Tutorial. \AGSComment{I moved our extra derivations to after the references.}}
+\abstract{This is the article based on my MCQMC 2020 Tutorial. \AGSComment{Latest code demo at: \href{https://colab.research.google.com/drive/1wijwt0ugsJ9chUHtzSb3lQpc3-N8mCDs?usp=sharing}{https://colab.research.google.com/drive/1wijwt0ugsJ9chUHtzSb3lQpc3-N8mCDs?usp=sharing}}.}
 
 
 \section{Introduction} \label{sec:intro}
@@ -244,7 +244,7 @@ This requires four components, which we implement as QMCPy classes.
 
 The software libraries referenced in Section \ref{sec:available} provide one or more of these components. QMCPy combines multiple examples of them all under and object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and use cases for each component and select implementations. 
 
-Thorough documentation of all QMCPy classes can be found in \cite{QMCPyDocs}. Demonstrations of how QMCPy work are given in Google Colab notebooks \cite{QMCPyTutColab2020,QMCPyTutColab2020_paper}. \AGSComment{Citation \cite{QMCPyTutColab2020_paper} ok?} The project may be installed from PyPI into your Python 3 environment via the command \texttt{pip install qmcpy}. In the codes that follows, we assume QMCPy has been imported alongside Numpy \cite{numpy} 
+Thorough documentation of all QMCPy classes can be found in \cite{QMCPyDocs}. Demonstrations of how QMCPy work are given in Google Colab notebooks \cite{QMCPyTutColab2020,QMCPyTutColab2020_paper} \AGSComment{Update \cite{QMCPyTutColab2020_paper}'s link}. The project may be installed from PyPI into your Python 3 environment via the command \texttt{pip install qmcpy}. In the codes that follows, we assume QMCPy has been imported alongside Numpy \cite{numpy} 
 %and Scipy \cite{scipy} 
 via
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/import.txt}
@@ -289,7 +289,7 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 
 We illustrate lattice and Sobol' sequences using QMCPy. First, we create an instance of a $d=2$ dimensional \texttt{Lattice} object of the  \texttt{DiscreteDistribution} abstract class. Then we generate the first eight (non-randomized) points in this lattice. 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_lattice.txt}
-The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.875)$.  One can check that $(\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.625) = \bsZ_6$, as Table \ref{tab:GroupProp} specifies.
+The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.375)$.  One can check that $(\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.125) = \bsZ_6$, as Table \ref{tab:GroupProp} specifies.
 
 The randomized shift has been turned off above to illuminate the group structure.  In practice, we normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions such as the Gaussian, no LD points will be transformed to infinity.  Turning off the randomization generates a warning to the user.
 
@@ -311,7 +311,7 @@ which differs from the $\bsZ_6=(0.375, 0.625)$ constructed for lattices.  To emp
 
 The examples of \texttt{qp.Lattice} and \texttt{qp.Sobol} illustrate how QMCPy LD generators share a common user interface.  The dimension is specified when the instance is constructed, and the number of points is specified when the \texttt{gen\_samples} method is called.  Following Python practice, parameters can be input without specifying their names if they are input in the prescribed order.  QMCPy also includes Halton sequences and IID sequences, again deferring details to the QMCPy documentation \cite{QMCPyDocs}.
 
-A crucial difference between IID generators and LD generators is reflected in the behavior in generating $n$ points.  For an IID generator, asking for $n$ points repeatedly gives you different points each time because they are meant to be random and independent.
+A crucial difference between IID generators and LD generators is reflected in the behavior of generating $n$ points.  For an IID generator, asking for $n$ points repeatedly gives you different points each time because they are meant to be random and independent.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_iidone.txt}
 Your output may look different depending on the seed used to generate these random numbers.
 
@@ -367,7 +367,7 @@ Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with 
 
 \begin{figure}
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/tm_bm.png} 
-	\caption{Sobol' samples transformed to mimic a 32-dimensional Brownian Motion. The figure on the left does not use importance sampling while the figure on the right uses importance sampling with drift coefficient of $2$.}
+	\caption{Sobol' samples transformed to mimic a 32-dimensional Brownian Motion without drift (left) and with drift coefficient 2 (right).}
 	\label{fig:tm_bm}
 \end{figure}
 
@@ -400,8 +400,6 @@ Let's return now to the integration problem in \eqref{eq:integral}, which we mus
   & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)} \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}},
 \end{align}
 and $\QMCPYabs{\partial \bsPsi/\partial \bsx}$ represents the Jacobian of the variable transformation.  The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$. Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.
-\AGSComment{If the \texttt{TrueMeasure} corresponds to a PDF, then QMCPy will use the instance's default \texttt{transform} methods which selects $\bsPsi$ so that $f(\bsx)=g(\bsPsi(\bsx))$, assuming $\varrho(\bsx)=1$. For non-PDF measures, e.g. Lebesgue, $\bsPsi$ requires another \texttt{TrueMeasure} instance whose default transform is to be used. More generally, one may importance sample a \texttt{TrueMeasure}'s weight $\lambda$ by resetting it's transform to that of anther's via the \texttt{set\_transform} method. 
-TODO: Making a linked list of TrueMeasures in this way creates a compound transform. Probably a better way to do this in the future.}
 
 We illustrate the use of the \texttt{Integrand} class via an example of Keister \cite{Kei96}:
 \begin{equation} \label{eq:KeisterIntegral}
@@ -432,15 +430,14 @@ Another way to approximate the Keister integral in \eqref{eq:KeisterIntegral} is
 \end{align*}
 where $\bsPsi$ is any transformation from $\bbR^d$ to $[0,1]^d$.  QMCPy can perform the cubature this way as well.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterLebesgue.txt}
-The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$. \AGSComment{In the above code, a user could supply mean and covariance parameters to the \texttt{Gaussian} transformer to customize $\Psi$ in \eqref{eq:exampleVarTransGauss}.}
+The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
 
-In the examples above, one needed to input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}.
-\AGSComment{\texttt{Keister} sets Lebesgue $\lambda$ and defaults $\bsPsi$ to \eqref{eq:exampleVarTransGauss} with $A=\sqrt{1/2}\bsI$. A user can manually set $\bsPsi$ via the \texttt{set\_transform} method, as done in the code below. Resetting $\bsPsi$ performs  \emph{importance sampling} and thus leaves $\mu$ unchanged.}  
+In the examples above, one needed to input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling} which leaves $\mu$ unchanged.  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterBuiltIn.txt}
 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
-The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier \AGSComment{and Walsh} coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a} and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
+The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution}, inputting our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
@@ -469,13 +466,15 @@ where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigm
 \end{equation*}
 
 Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
-\lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_aco.txt}
+\lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
 \begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/i_aco.png} 
 	\caption{Left: Brownian Motion paths with drift $a=2$. Right: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
 	\label{fig:aco}
 \end{figure}
+
+\AGSComment{Bayesian stopping criterion}
 
 \section{Under the Hood}
 
@@ -491,13 +490,7 @@ QMCPy's low discrepancy generator routines also support numerous customizations 
 
 \subsection{Preferred sample sizes for low-discrepancy generators and}
 
-Low-discrepancy sequences differ from IID node sets in that they fill the domain in a more uniform manner. As IID nodes are independent, they do not have a preferred sample size. That is, if $\bsX \IIDsim \calU[0,1]^d$ then each node is equally likely to fall  anywhere in the unit cube. On the other hand, low-discrepancy sequences provide guarantees that the integration domain is more evenly sampled. However, these guarantees only occur at specific sample sizes. For example, lattic and digital net sequences only fill the domain evenly when $n$ is a power of $2$. We illustrate this property in Figure \ref{fig:digitalNet_elementary_intervals}. \AGSComment{More details of elementary intervals? Reference other's work?}
-\begin{figure}
-	\centering
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_sobol_elementary_intervals.png} 
-	\caption{The first 64 Sobol' points with a linear matrix scrambling randomization. Sobol' points are a special case of a digital sequence. Note that every square of area 1/64 outlined in red has exactly 1 point. }
-	\label{fig:digitalNet_elementary_intervals}
-\end{figure}
+Low-discrepancy sequences differ from IID node sets in that they fill the domain in a more uniform manner. As IID nodes are independent, they do not have a preferred sample size. That is, if $\bsX \IIDsim \calU[0,1]^d$ then each node is equally likely to fall  anywhere in the unit cube. On the other hand, low-discrepancy sequences provide guarantees that the integration domain is more evenly sampled. However, these guarantees only occur at specific sample sizes. For example, lattice and digital net sequences only fill the domain evenly when $n$ is a power of $2$.
 
 \subsection{\texttt{print} Method for Instances of QMCPy Components}
 
@@ -507,9 +500,9 @@ A helpful features of QMCPy is the ability to print out components instances to 
 
 \AGSComment{
 \begin{itemize}
+    \item we have better generating vector (under latnetbuilder sub-section)
     \item transform from low discrepancy does not guarantee low discrepancy in new distribution
     \item Sobol' samples will repeat after $2^{32}$ samples
-    \item Bayesian stopping criterion
     \item multi-level stopping criterion
     \item PCA and Cholesky decomposition for Gaussian (and Brownian Motion which is a subclass of Gaussian)
 \end{itemize}}
@@ -538,7 +531,11 @@ We also thank the referees for their many helpful suggestions.  This work is sup
 
 
 \AGSComment{
-Importance sampling with Gaussian
+
+\section{Extra Derivations}
+
+\subsection{Importance sampling with Gaussian}
+
 $$ \bsPsi(\bsx) = A\Phi^{-1}(\bsx) + \mu \quad \text{where} \quad \Sigma = AA^T$$
 $$ \left\lvert \frac{\D \bsPsi}{\D \bsx} \right\rvert = \det(J) \quad \text{for} \quad J_{ij} = \frac{\D \Psi_i}{\D x_j} = \frac{A_{ij}}{\phi(\Phi^{-1}(x_j))}$$
 $$ \det(J) = \det\left(A . \text{diag}\left(\frac{1}{\phi(\Phi^{-1}(\bsx))}\right)\right) = \frac{\det(A)}{\prod_{j=1}^d \phi(\Phi^{-1}(x_j))}$$}
@@ -573,6 +570,39 @@ If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then
 	& -  (\bsa -\bsb)^T [
 	2\sigma \bsPhi^{-1}(\bsx) + (\bsa -\bsb)] /(2\lambda^2)   \bigr) .
 \end{align*}
+}
+
+\AGSComment{
+
+\subsection{Chaining Transforms}
+With $k$ transforms, let $\hat{\bsPsi}_j(\bsx) = (\bsPsi_j \circ \bsPsi_{j-1} \circ \dots \circ \bsPsi_1)(\bsx)$ denote the first $j$ compositions and $\bst = \hat{\bsPsi}_k(\bsx)$ be the complete transformation. Then, 
+$$f(\bsx) = g(\hat{\bsPsi}_k(\bsx)) \frac{\lambda(\hat{\bsPsi}_k(\bsx))}{\varrho(\bsx)} \prod_{i=1}^{k} \left\lvert \frac{\D \, \bsPsi_i}{\D \, \hat{\bsPsi}_{i-1}(\bsx)} \right\rvert$$
+where $\hat{\bsPsi}_0(\bsx) = \bsx$.
+}
+
+\FJHComment{
+
+\subsection{Software Framework}
+
+\newcommand{\dd}{\texttt{DiscreteDistribution}\xspace}
+\newcommand{\tm}{\texttt{TrueMeasure}\xspace}
+
+\begin{itemize}
+\item \dd $\rightarrow$ \tm gives an instance that can generate a sequence that mimics the measure specified by \tm if \tm is a probability measure; it also has a \texttt{gen\_samples} method.
+
+\item if \tm is not a probability measure, then \dd $\rightarrow$ \tm sets up a transformation from $\calX$ to $\calT$.
+
+\item \texttt{CustomFun} takes a user-defined function $g$ and a \tm instance and uses the $\lambda$ inferred from the \tm to form $f$.
+
+\item Built-in \texttt{Integrand} classes know what $g$ and $f$ are.
+
+\begin{itemize}
+    \item One way is to have these \texttt{Integrand} classes assume a \tm and only need a \dd input. If you do not like the default \tm, then you need to input your own.
+    
+    \item Another way is to have these \texttt{Integrand} classes take a \tm input and use that, plus their knowledge of $g$ and $\lambda$ to find $f$, perhaps by what could be considered importance sampling.
+    
+\end{itemize}
+\end{itemize}
 }
 
 \end{document}

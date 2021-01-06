@@ -2,12 +2,10 @@
 >>> def my_Keister(x): # create a custom function
 ...     norm = np.sqrt((x**2).sum(1))
 ...     out = np.pi**(d/2)*np.cos(norm)
-...     return out # x is (nxd), out is a length-n vector
->>> kqp = qp.CustomFun(
-...     discrete_distrib = qp.Halton(d),
-...     g = my_Keister,
-...     true_measure = qp.Gaussian(d,mean=0,covariance=1/2))
->>> x = kqp.discrete_distrib.gen_samples(1000) # Halton points
->>> y = kqp.f(x) # evaluate transformed integrand
+...     return out  # size n vector
+>>> gauss = qp.Gaussian(qp.Halton(d),covariance=1/2)
+>>> keister = qp.CustomFun(true_measure=gauss,g=my_Keister)
+>>> x = keister.discrete_distrib.gen_samples(1000) 
+>>> y = keister.f(x) # evaluate f at Halton points
 >>> y.mean() # approximate the integral
-1.808459727813744
+1.8068921077383129
