@@ -465,7 +465,7 @@ where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigm
 	\text{price} = \mu = \bbE[g(\bsT)], \quad \text{where } g(\bst) = \text{payoff}\bigl(\bsS(\bst) \bigr) \exp(-r \tau).
 \end{equation*}
 
-Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. The following code utilizes QMCPy's Asian option object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
+The following code utilizes QMCPy's Asian option \texttt{Integrand} object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
 \begin{figure}
 	\centering
@@ -474,6 +474,8 @@ Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding
 	\label{fig:aco}
 \end{figure}
 
+
+Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. 
 \AGSComment{Bayesian stopping criterion}
 
 \section{Under the Hood}
