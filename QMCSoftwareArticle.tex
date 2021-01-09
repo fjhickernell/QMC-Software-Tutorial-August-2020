@@ -441,7 +441,7 @@ The \texttt{StoppingCriterion} object determines the number of samples $n$ that 
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution}, inputting our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
-The second output of the stopping criterion provides helpful diagnostic information.  This computation required $n=2^{13}$ Sobol' points and $0.020$ seconds to complete.  The error bound is $0.000517$, which falls below the absolute tolerance.
+The second output of the stopping criterion provides helpful diagnostic information.  This computation required $n=2^{13}$ Sobol' points and $0.028$ seconds to complete.  The error bound is $0.000517$, which falls below the absolute tolerance.
 
 QMC, which uses LD sequences, is touted as providing substantially greater computational efficiency compared to IID MC.
 Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\calO(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\calO(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\calO(n^{-1+\epsilon})$, which implies $\calO(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples that MC methods to achieve the same error tolerance.
@@ -494,7 +494,7 @@ QMCPy's low discrepancy generator routines also support numerous customizations 
 
 Low-discrepancy sequences differ from IID node sets in that they fill the domain in a more uniform manner. As IID nodes are independent, they do not have a preferred sample size. That is, if $\bsX \IIDsim \calU[0,1]^d$ then each node is equally likely to fall  anywhere in the unit cube. On the other hand, low-discrepancy sequences provide guarantees that the integration domain is more evenly sampled. However, these guarantees only occur at specific sample sizes. For example, lattice and digital net sequences only fill the domain evenly when $n$ is a power of $2$.
 
-\subsection{\texttt{print} Method for Instances of QMCPy Components}
+\subsection{\texttt{print}ing  QMCPy Instances}
 
 A helpful features of QMCPy is the ability to print out components instances to see more detailed information. This allows users to quickly see the properties that have been set and defaulted for any given component. This feature was already used to print the data object returned by the stopping criterion's \texttt{integrate} method in Section \ref{sec:stopping_crit}. The following code prints a drifted \texttt{BrownianMotion} instance and displays the connection to an underlying Gaussian measure. 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/print_bm.txt}
