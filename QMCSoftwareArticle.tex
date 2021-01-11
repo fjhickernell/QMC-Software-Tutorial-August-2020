@@ -452,7 +452,7 @@ Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute th
 	\label{fig:sc_comp}
 \end{figure}
 
-To illustrate QMC cubature for another example, we turn to option pricing, in particular pricing the Asian arithmetic mean. The payoff of this option is the positive difference between the strike price averaged over the time horizon and the strike price, $K$: 
+For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The payoff of this option is the positive difference between the strike price averaged over the time horizon and the strike price, $K$: 
 $$
 \text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S_{j-1}+S_j]-K,0\right), \quad \bsS = (S_0, \ldots, S_d).
 $$
@@ -518,6 +518,8 @@ A helpful features of QMCPy is the ability to print out components instances to 
     \item Niederreiter sequences (Adrian and Onyekachi)
     \item Sobol' indicies (Chris Hoyt)
     \item transformations for discrete distributions that do not mimic $\calU[0,1]^d$
+    \item control variates
+    \item vectorized integrals
 \end{itemize}}
 
 \begin{acknowledgement}

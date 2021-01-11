@@ -1,9 +1,9 @@
->>> d = 2
 >>> def my_Keister(x): # create a custom function
+...     d = x.shape[1]
 ...     norm = np.sqrt((x**2).sum(1))
 ...     out = np.pi**(d/2)*np.cos(norm)
 ...     return out  # size n vector
->>> gauss = qp.Gaussian(qp.Halton(d),covariance=1/2)
+>>> gauss = qp.Gaussian(qp.Halton(2),covariance=1/2)
 >>> keister = qp.CustomFun(true_measure=gauss,g=my_Keister)
 >>> x = keister.discrete_distrib.gen_samples(1000) 
 >>> y = keister.f(x) # evaluate f at Halton points

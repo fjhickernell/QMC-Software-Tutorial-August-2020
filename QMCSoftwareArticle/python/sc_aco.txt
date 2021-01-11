@@ -1,23 +1,11 @@
->>> # Single level Asian Call Option 
->>> aco = qp.AsianOption(
-...     sampler = qp.IIDStdUniform(16),
-...     volatility = .5,
-...     start_price = 30,
-...     strike_price = 45,
-...     interest_rate = .05,
+>>> payoff = qp.AsianOption( # defaults lambda to BrownianMotion(d,t_final)
+...     qp.Sobol(52), # weekly monitoring 
+...     start_price = 100,
+...     strike_price = 120,
+...     volatility = 0.5,
+...     interest_rate = 0,
+...     t_final = 1,
 ...     call_put = 'call')
->>> sol,data = qp.CubMCCLT(aco, abs_tol=5e-3).integrate()
->>> data.time_integrate
-6.900310039520264
->>> # Fixed-Multilevel Asian Call Option
->>> aco = qp.AsianOption(
-...     sampler = qp.IIDStdUniform(),
-...     volatility = .5,
-...     start_price = 30,
-...     strike_price = 45,
-...     interest_rate = .05,
-...     call_put = 'call',
-...     multi_level_dimensions = [4,8,16])
->>> sol,data = qp.CubMCCLT(aco, abs_tol=5e-3).integrate()
->>> data.time_integrate
-3.6480579376220703
+>>> price, data = qp.CubQMCSobolG(payoff, abs_tol = 0.001).integrate()
+>>> print(f'Option price = ${price:.3f} using {data.time_integrate:.3f} seconds and {data.n_total:.2e} samples')
+Option price = $5.194 using 1.309 seconds and 1.31e+05 samples
