@@ -147,13 +147,13 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 
 \section{Introduction} \label{sec:intro}
-Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC may achieve one hundredth of the error of IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by the low discrepancy (LD) sampling that is at the heart of QMC. 
+Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC  achieves one hundredth of the error of IID MC in the same amount of time. Often, these efficiency gains are obtained simply by  replacing IID sampling by low discrepancy (LD) sampling, which is the heart of QMC. 
 
-If you are a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  If you are a theoretician or an algorithm developer, you would want to demonstrate your best ideas on a variety of use cases to show their practical value.  
+As a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  As a theoretician or an algorithm developer, you would want to demonstrate your best ideas on  various  use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  Furthermore, we describe QMCPy \cite{QMCPy2020a}, which is designed to be a community owned Python library that combines the best QMC algorithms from various authors under a common user interface.
+This tutorial points to some of the best QMC software available.  Moreover, we describe QMCPy \cite{QMCPy2020a}, which is designed to be a community owned Python library that combines the best QMC algorithms from various authors under a common user interface.
 
-The model problem for QMC is to approximate an integral,
+The model problem for QMC is approximating an integral,
 \begin{equation} \label{eq:integral}
 	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
@@ -167,11 +167,11 @@ QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
 	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim F.
 \end{equation}
-The choice of this sequence, and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions, which  QMC software helps the user make.
+The choice of this sequence and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions, which  QMC software helps the user make.
 
 Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
-IID points are random. The position of each point is not influenced by the other, so clusters and gaps occur.  A subset of IID points chosen randomly is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
+IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A subsequence of IID points chosen randomly is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
 \begin{equation*}
 	F_{n}(\bsx_0, \ldots, \bsx_{n-1}) = F(\bsx_0) \cdots  F(\bsx_{n-1}).
 \end{equation*}
@@ -186,9 +186,9 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 	\label{fig:comparePts}
 \end{figure}
 
-LD points may be deterministic or random, but each point is carefully coordinated with the other so that they fill the square well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the empirical distribution of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term low discrepancy points.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For most LD sequences, the target distribution is $\calU[0,1]^d$.
+LD sequences may be deterministic or random, but each point is carefully coordinated with the other so that they fill the domain well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For nearly all LD sequences, the target distribution is $\calU[0,1]^d$.
 
-The error of the sample mean in approximating the integral can be bounded according to the Koksma-Hlawka inequality and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
+The error in using the sample mean to approximate the integral can be bounded according to the Koksma-Hlawka inequality and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYabs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
 \end{equation} 
@@ -224,7 +224,7 @@ Software focusing on QMC algorithms and applications includes
 The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
 
 \section{Components of QMC Software}
-QMC cubature can be summarized as follows.  We want to approximate $\mu$ well by $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
+QMC cubature can be summarized as follows.  We want to approximate the integral oe expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
 \begin{multline} \label{eq:cubSummary}
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
 	 \bsX_0, \bsX_1, \ldots \sim F.
@@ -253,7 +253,7 @@ via
 
 LD sequences typically mimic $\calU[0,1]^d$, which we assume here.  Good sequences for other distributions are obtained by transformations in the next section.  
 
-QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use additional $f(\bsX_i)$ without discarding the existing $f(\bsX_i)$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences do.  These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  For simplicity we restrict ourselves to the case where the first $2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
+QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding the existing $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences do.  These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  For simplicity we restrict ourselves to the case where the first $n = 2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
 
 \begin{table}
 	\centering
@@ -265,7 +265,7 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 	\multicolumn{2}{c}{\text{Define \ldots}} \\
 	\multicolumn{2}{c}{\bsZ_1, \bsZ_2, \bsZ_4, \ldots \in [0,1)^d \text{ chosen well} } \\
 	\multicolumn{2}{c}{
-	\bsZ_{i} := i_0  \bsZ_1 \oplus i_1 \bsZ_{2} + i_2  \bsZ_{4} +  i_3  \bsZ_{8} + \cdots 
+	\bsZ_{i} := i_0  \bsZ_1 \oplus i_1 \bsZ_{2} \oplus + i_2  \bsZ_{4} \oplus  i_3  \bsZ_{8} + \cdots 
 	\quad
 	\text{for }i = i_0 +i_1 2 + i_2 4 + i_3 8 + \cdots, \; i_\ell \in \{0,1\}} \\
     \multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \text{where }\bsDelta \IIDsim [0,1)^d} \\  \hline
@@ -276,12 +276,12 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 		\\
 \toprule
 \multicolumn{2}{c}{\text{Then it follows that \ldots}} \\
-	\multicolumn{2}{c}{\begin{array}{r}
+	\multicolumn{2}{c}{\left . \begin{array}{r}
 			\calP_m := \{\bsZ_0, \ldots, \bsZ_{2^m-1}\}, \quad
 			\bsZ_i \oplus \bsZ_j \in \calP_m \\
 			\calP_{\bsDelta,m} := \{\bsX_0, \ldots, \bsX_{2^m-1}\}, \quad
 			\bsX_i \oplus \bsX_j \ominus \bsX_k \in \calP_{\bsDelta,m}
-	\end{array} \quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}} \\
+	\end{array} \right \}\quad \begin{array}{l}\forall  i,j,k \in \{0, \ldots, 2^{m} -1\} \\ \forall m \in \bbN_0\end{array}} \\
 \bottomrule
 \end{array}
 \]
@@ -291,7 +291,7 @@ We illustrate lattice and Sobol' sequences using QMCPy. First, we create an inst
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_lattice.txt}
 The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.375)$.  One can check that $(\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.125) = \bsZ_6$, as Table \ref{tab:GroupProp} specifies.
 
-The randomized shift has been turned off above to illuminate the group structure.  In practice, we normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions such as the Gaussian, no LD points will be transformed to infinity.  Turning off the randomization generates a warning to the user.
+The randomized shift has been turned off above to illuminate the group structure.  In practice, we normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions such as the Gaussian, no LD points will be transformed to infinity.  Turning off the randomization generates a warning.
 
 Now, we generate Sobol' points using a similar process as we did for lattice points.  Sobol' sequences are one of the most popular example of digital sequences.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_sobol.txt}
@@ -332,12 +332,12 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 
 \section{True Measures}
 
-The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This can be implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
+The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This is implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
 \begin{subequations} \label{eq:exampleVarTrans}
 \begin{gather}
-\bsT = \bsPsi(\bsX) := (\bsb - \bsa) \odot \bsX + \bsa \sim  \calU[\bsa,\bsb], \\
+\bsT = \bsPsi(\bsX) := \bsa  + (\bsb - \bsa) \odot \bsX \sim  \calU[\bsa,\bsb], \\
 \label{eq:exampleVarTransGauss}
-\bsT = \bsPsi(\bsX) := \mA \bsPhi^{-1}(\bsX) + \bsa \sim \calN(\bsa, \mSigma), \\
+\bsT = \bsPsi(\bsX) := \bsa + \mA \bsPhi^{-1}(\bsX)  \sim \calN(\bsa, \mSigma), \\
 \nonumber  \text{where }  \bsPhi^{-1}(\bsX) : = \begin{pmatrix} \Phi^{-1}(X_1) \\ \vdots \\ \Phi^{-1}(X_d)\end{pmatrix}, \qquad \mSigma = \mA \mA^T,
 \end{gather}
 \end{subequations}
@@ -371,25 +371,6 @@ Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with 
 	\label{fig:tm_bm}
 \end{figure}
 
-\iffalse
-
-The true measure defines the transform required for $F$ to mimic $\lambda$. This change of variables allows us to transform the original integrand $g$ to the a integrand $f$ which accepts samples generated from the discrete distribution. QMCPy performs the necessary transformations automatically during construction of the integrand object. The following examples assume a discrete distribution mimicking $\calU[0,1]^d$. 
-
-Suppose our true measure is defined as $\calU[\bsa,\bsb]$ where $\bsa,\bsb$ are finite $d$-dimensional vectors of lower and upper bounds respectively. Then we may generate samples mimicking this non-standard Uniform distribution using the \texttt{gen\_samples} function $T(\bsx) = (\bsb-\bsa)\bsx + \bsa$. The resulting transformed integrand may be written as $f(\bsx) = g(T(\bsx))$. The following code utilizes QMCPy to construct a non-standard uniform object and draw samples with the \texttt{gen\_samples} method for true measures.  Note that each true measure is constructed with a discrete distribution and that that not all true measures implement a \texttt{gen\_samples} method. For example, it is not reasonable to generate samples that mimic the Lebesgue measure. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Uniform measure. 
-
-
-
-Now, suppose our true measure is a Gaussian $\calN(\mu,\Sigma)$ where the covariance $\Sigma$ may be decomposed as $\Sigma=AA^T$ using methods such as principal component analysis or the Cholesky decomposition. (Note that $\mu$ here is different than the previously defined true mean.) Then the \texttt{gen\_samples} function, $T(\bsx) = A^T \Phi^{-1}(\bsx) + \mu$ where $\Phi$ is the CDF function for the standard Gaussian, is utilized to develop the transformed integrand $f(\bsx) = g(T(\bsx))$. The following code uses QMCPy's Gaussian object to generate samples from a lattice discrete distribution and transform them to mimic a non-standard Gaussian. Figure \ref{fig:tm_ug} shows samples generated from a non-standard Gaussian measure.   
-
-\lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_gaussian.txt}
-
-
-Finally, we discuss Geometric Brownian Motion using QMCPy. With monitoring times $\bst = (j/d)_{j=1}^d$, Brownian Motion is equivalent to the Gaussian true measure $\calN(0,\Sigma)$ where $\Sigma = (\min(t_j,t_k))_{j,k=1}^d$. QMCPy also allows the user to perform importance sampling with a $\calN(\bsa,\Sigma)$ measure where scalar $a$ is a drift parameter appropriately extended to a $d \times 1$ mean vector in the importance sampling measure. Intuitively, importance sampling samples rare events more frequently but with less weight, leading to faster convergence. Specifically, we define the \texttt{gen\_samples} function as $T(\bsx) = A^T\Phi^{-1}(\bsx) + \bsa$ and then the resulting transformed function as $f(\bsx) = g(T(\bsx))\exp((\bsa/2-\bsx)^T\Sigma^{-1}\bsa)$. Note that if we choose not to use importance sampling, $a=0$, then the transformed function collapses to the familiar $f(\bsx) = g(T(\bsx))$. The following example uses the Brownian Motion object from QMCPy to generate samples with an upward drift of $a=2$ based on the underlying Sobol' sequence. Figure \ref{fig:tm_bm} shows samples generated from a discrete Brownian Motion with and without importance sampling. 
-
-\lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_brownian_motion.txt}
-
-\fi
-
 \section{Integrands}
 
 Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose a transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
@@ -415,7 +396,7 @@ We will use QMC methods to approximate this integral, which means that it will b
 
 The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keister.txt}
-For Halton sequences the preferred $n$ values are rather sparse, so we typically do not try to limit $n$ to certain values as we do for lattices and Sobol' sequences.  We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
+We have no indication yet of how accurate our approximation is.  This aspect of QMCPy is described in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}
 	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/i_keister_contours.png}
@@ -437,7 +418,7 @@ In the examples above, one needed to input the correct $g$ into \texttt{CustomFu
 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
-The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hat{\mu}$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
+The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hmu$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution}, inputting our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
@@ -454,7 +435,7 @@ Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute th
 
 For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The payoff of this option is the positive difference between the strike price averaged over the time horizon and the strike price, $K$: 
 $$
-\text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d [S_{j-1}+S_j]-K,0\right), \quad \bsS = (S_0, \ldots, S_d).
+\text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d (S_{j-1}+S_j)-K,0\right), \quad \bsS = (S_0, \ldots, S_d).
 $$
 where $S_j$ denotes the stock price at time $\tau j/d$.  A basic model for stock prices is a geometric Brownian motion, 
 \[
@@ -465,14 +446,31 @@ where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigm
 	\text{price} = \mu = \bbE[g(\bsT)], \quad \text{where } g(\bst) = \text{payoff}\bigl(\bsS(\bst) \bigr) \exp(-r \tau).
 \end{equation*}
 
-The following code utilizes QMCPy's Asian option \texttt{Integrand} object to make a crude approximation of the payoff. The following section will describe stopping criterion useful to automatically determining $n$. 
+The following code utilizes QMCPy's Asian option \texttt{Integrand} object to approximate the Asian call option for a particular choice of the parameters.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
+Because this \texttt{Integrand} object has the built-in Brownian motion t\texttt{TrueMeasure}, one only neeed provide the LD sampler.
+
+Out of the money option price calculations can be sped up by adding a drift to the Brownian motion that produces more in the money paths.  This is a form of importance sampling.  Using a Brownian motion without drift we get
+\lstinputlisting[style=Python]{QMCSoftwareArticle/python/wo_imp_samp_aco.txt}
+Adding the drift gives us the answer faster:
+\lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
+The choice of a good drift is an art.  
+
+The the improvement in time is less than improvement in $n$ because the function 
+
 \begin{figure}
 	\centering
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/i_aco.png} 
 	\caption{Left: Brownian Motion paths with drift $a=2$. Right: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
 	\label{fig:aco}
 \end{figure}
+
+
+
+
+
+
+s ca
 
 
 Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. 
