@@ -115,6 +115,7 @@
 \newcommand{\hmu}{\widehat{\mu}}
 \newcommand{\IID}{\textup{IID}}
 \newcommand{\LD}{\textup{LD}}
+\newcommand{\IMP}{\textup{imp}}
 \newcommand{\unif}{\textup{unif}}
 \newcommand{\IIDsim}{\overset{\IID}{\sim}}
 \newcommand{\LDsim}{\overset{\LD}{\sim}}
@@ -456,7 +457,21 @@ Adding the drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
 The choice of a good drift is an art.  
 
-The the improvement in time is less than improvement in $n$ because the function 
+The the improvement in time is less than improvement in $n$ because the integrand $f$ is more expensive to compute in when the drift is added.  In the case of no drift, the $\lambda$ in \eqref{eq:transVar} corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\partial \bsPsi/\partial \bsx} = \varrho(\bsx) = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, if we choose $\lambda_{\IMP}$ as our importance sampling density and $\bsPsi_{\IMP}$ as the variable transformation corresponding to $\lambda_\IMP\bigl(\bsPsi\IMP(\cdot)\bigr) \QMCPYabs{\partial \bsPsi_\IMP/\partial \bsx} = \varrho(\bsx) = 1$, then
+\begin{align}
+	\nonumber 
+	\mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calT g(\bst) \, \frac{\lambda(\bst)}{\lambda_\IMP(\bst) } \, \lambda_\IMP(\bst) \D \bst  \\ 
+	\nonumber
+	& =  \int_\calX g\bigl(\bsPsi_\IMP(\bsx)\bigr) \, \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) } \lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi_\IMP}{\partial \bsx}} \, \D \bsx \\
+	\nonumber
+	& =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
+	\label{eq:transVarImp}
+	& \qquad \qquad \text{where } f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \,  \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) }
+\end{align}
+
+
+
+
 
 \begin{figure}
 	\centering
