@@ -73,6 +73,8 @@
 \newcommand{\QMCPYBignorm}[2][{}]{\ensuremath{\Bigl \lVert #2 \Bigr \rVert}_{#1}}
 \newcommand{\QMCPYabs}[1]{\ensuremath{{\left \lvert #1 \right \rvert}}}
 \newcommand{\QMCPYbigabs}[1]{\ensuremath{{\bigl \lvert #1 \bigr \rvert}}}
+\newcommand{\QMCPYBigabs}[1]{\ensuremath{{\Bigl \lvert #1 \Bigr \rvert}}}
+\newcommand{\QMCPYbiggabs}[1]{\ensuremath{{\biggl \lvert #1 \biggr \rvert}}}
 
 
 \providecommand{\HickernellFJ}{Hickernell}
@@ -124,6 +126,7 @@
 \newcommand{\mSigma}{\mathsf{\Sigma}}
 \newcommand{\mLambda}{\mathsf{\Lambda}}
 \newcommand{\mI}{\mathsf{I}}
+\newcommand{\cube}{[0,1]^d}
 
 \begin{document}
 
@@ -158,21 +161,20 @@ The model problem for QMC is approximating an integral,
 \begin{equation} \label{eq:integral}
 	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we interpret it as the population mean of a random variable after a suitable variable transformation:
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we interpret it as the population mean of a function of a uniform random variable after a suitable variable transformation:
 \begin{equation} \label{eq:fintegral}
-	\mu = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx =  \int_\calX f(\bsx) \,  \D F(\bsx) ,
+	\mu = \bbE[f(\bsX)] =  \int_{\cube}  f(\bsx) \,  \D \bsx ,
 \end{equation}
-where $\varrho$ is a probability density with corresponding probability distribution $F$.  In practice, $\calX$ often corresponds to the unit cube, $[0,1]^d$, and $F$ corresponds to the uniform distribution.  
 
 QMC approximates this population mean by a sample mean,
 \begin{equation} \label{eq:samplemean}
-	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim F.
+	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim \calU\cube.
 \end{equation}
 The choice of this sequence and the choice of $n$ to satisfy  the prescribed error tolerance are important decisions, which  QMC software helps the user make.
 
 Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
-IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A subsequence of IID points chosen randomly is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
+IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A subsequence of IID points chosen randomly is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$ for some distribution $F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
 \begin{equation*}
 	F_{n}(\bsx_0, \ldots, \bsx_{n-1}) = F(\bsx_0) \cdots  F(\bsx_{n-1}).
 \end{equation*}
@@ -187,11 +189,11 @@ When IID points are used to approximate $\mu$ by the sample mean, the error is $
 	\label{fig:comparePts}
 \end{figure}
 
-LD sequences may be deterministic or random, but each point is carefully coordinated with the other so that they fill the domain well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim F$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the target distribution, $F$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the target distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1}, F)$.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points. For nearly all LD sequences, the target distribution is $\calU[0,1]^d$.
+LD sequences may be deterministic or random, but each point is carefully coordinated with the other so that they fill the domain well.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim \calU\cube$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the uniform distribution, $F_\unif$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the uniform distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1})$.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points.
 
 The error in using the sample mean to approximate the integral can be bounded according to the Koksma-Hlawka inequality and its extensions as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
-	\QMCPYabs{\mu - \hmu} = \QMCPYabs{\int_{\calX} f(\bsx) \, \D (F - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D(\{\bsX_i\}_{i=0}^{n-1}, F) V(f),
+	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f),
 \end{equation} 
 The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
@@ -227,14 +229,14 @@ The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt 
 \section{Components of QMC Software}
 QMC cubature can be summarized as follows.  We want to approximate the integral oe expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
 \begin{multline} \label{eq:cubSummary}
-	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
-	 \bsX_0, \bsX_1, \ldots \sim F.
+	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_{\cube} f(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
+	 \bsX_0, \bsX_1, \ldots \sim \calU\cube.
 \end{multline}
 This requires four components, which we implement as QMCPy classes.
 
 \begin{description}[format=\textup,format=\textbf]
 	
-	\item[Discrete Distribution] that produces $\bsX_0, \bsX_1, \dots$ mimicking the distribution $F$, which typically is $\calU[0,1]^d$;
+	\item[Discrete Distribution] that produces $\bsX_0, \bsX_1, \dots$ mimicking $\calU[0,1]^d$;
 	
 	\item[True Measure] $\bst \mapsto \lambda (\bst) \D \bst$ that defines the original integral, e.g., Gaussian or Lebesgue;
 	
@@ -254,7 +256,9 @@ via
 
 LD sequences typically mimic $\calU[0,1]^d$, which we assume here.  Good sequences for other distributions are obtained by transformations in the next section.  
 
-QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding the existing $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences do.  These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  For simplicity we restrict ourselves to the case where the first $n = 2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
+QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding the existing $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences do.  
+
+These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  For simplicity we restrict ourselves to the case where the first $n = 2^m$ points of these LD sequences form a group under the addition operator $\oplus$.
 
 \begin{table}
 	\centering
@@ -333,7 +337,7 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 
 \section{True Measures}
 
-The LD sequences implemented as \text{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This is implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
+The LD sequences implemented as \texttt{DiscreteDistribution} objects typically mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This is implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
 \begin{subequations} \label{eq:exampleVarTrans}
 \begin{gather}
 \bsT = \bsPsi(\bsX) := \bsa  + (\bsb - \bsa) \odot \bsX \sim  \calU[\bsa,\bsb], \\
@@ -374,12 +378,12 @@ Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with 
 
 \section{Integrands}
 
-Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose a transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\calX \to \calT$.  This leads to 
+Let's return now to the integration problem in \eqref{eq:integral}, which we must rewrite as \eqref{eq:fintegral}.  We choose a transformation of variables defined as $\bst = \bsPsi(\bsx)$ where $\bsPsi:\cube \to \calT$.  This leads to 
 \begin{align}
 	\nonumber 
- \mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calX g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
+ \mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_{\cube} g\bigl(\bsPsi(\bsx)\bigr) \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}} \, \D \bsx =  \int_{\cube}f(\bsx) \, \D \bsx  \\
  \label{eq:transVar}
-  & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda(\bsPsi(\bsx))}{\varrho(\bsx)} \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}},
+  & \qquad \qquad \text{where } f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \lambda\bigl(\bsPsi(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}},
 \end{align}
 and $\QMCPYabs{\partial \bsPsi/\partial \bsx}$ represents the Jacobian of the variable transformation.  The abstract class \texttt{Integrand} provides $f$ based on the user's input of $g$ and the \texttt{TrueMeasure} instance, which defines $\lambda$ and the transformation $\bsPsi$. Different choices of $\bsPsi$ lead to different $f$, which may give different rates of convergence of the cubature, $\hmu$ to $\mu$.
 
@@ -389,7 +393,7 @@ We illustrate the use of the \texttt{Integrand} class via an example of Keister 
 	= \int_{\bbR^d} \cos(\lVert \bst \rVert) \exp(-\bst^T \bst) \, \D \bst \\ 
 	= \int_{\bbR^d} \underbrace{\pi^{d/2} \cos(\lVert \bst \rVert)}_{g(\bst)}\, \underbrace{\pi^{-d/2} \exp(-\bst^T \bst) }_{\lambda(\bst)} \, \D \bst.
 \end{equation}
-We will use QMC methods to approximate this integral, which means that it will be transformed according to \eqref{eq:transVar} for the case where $\calX = [0,1]^d$ and $\varrho(\bsx) = 1$.  Since $\lambda$ is the density for $\calN(0,\mI/2)$, it is natural to choose $\bsPsi$ according to \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$, in which case $\lambda(\bsPsi(\bsx)) \QMCPYabs{\partial \bsPsi/\partial \bsx} / \varrho(\bsx) = 1$, and so 
+Since $\lambda$ is the density for $\calN(0,\mI/2)$, it is natural to choose $\bsPsi$ according to \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$, in which case $\lambda(\bsPsi(\bsx)) \QMCPYabs{\partial \bsPsi/\partial \bsx} / \varrho(\bsx) = 1$, and so 
 \[
 \mu = \int_{[0,1]^d} \underbrace{\pi^{d/2} \cos(\lVert \bsPsi(\bsx) \rVert)}_{f(\bsx)} \, \D \bsx, \qquad 
 \bsPsi(\bsx) := \sqrt{1/2} \,\bsPhi^{-1}(\bsx).
@@ -414,8 +418,21 @@ where $\bsPsi$ is any transformation from $\bbR^d$ to $[0,1]^d$.  QMCPy can perf
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterLebesgue.txt}
 The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill the $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
 
-In the examples above, one needed to input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling} which leaves $\mu$ unchanged.  
+In the examples above, one must input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling} which leaves $\mu$ unchanged.  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterBuiltIn.txt}
+
+In the first case above, the $\lambda$ in \eqref{eq:transVar} corresponds to the density IID Gaussian with mean zero and variance $1/2$ by default, and the corresponding variable transformation, $\bsPsi$, is chosen to make $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\partial \bsPsi/\partial \bsx} = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  In the second case,  we choose an importance sampling density $\lambda_{\IMP}$, corresponding  to standard  Gaussian, and the variable transformation $\bsPsi_{\IMP}$ makes $\lambda_\IMP\bigl(\bsPsi\IMP(\cdot)\bigr) \QMCPYabs{\partial \bsPsi_\IMP/\partial \bsx} = 1$.  Then
+\begin{align}
+	\nonumber 
+	\mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calT g(\bst) \, \frac{\lambda(\bst)}{\lambda_\IMP(\bst) } \, \lambda_\IMP(\bst) \D \bst  \\ 
+	\nonumber
+	& =  \int_{\cube} g\bigl(\bsPsi_\IMP(\bsx)\bigr) \, \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) } \lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi_\IMP}{\partial \bsx}} \, \D \bsx \\
+	\nonumber
+	& =  \int_{\cube} f_\IMP(\bsx) \, \D \bsx  \\
+	\label{eq:transVarImp}
+	& \qquad \qquad \text{where } f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \,  \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) }.
+\end{align}
+Because LD samples mimic $\calU\cube$, choosing different sampling distributions is equivalent to choosing different variable transforms.
 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
@@ -457,66 +474,36 @@ Adding the drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
 The choice of a good drift is an art.  
 
-The the improvement in time is less than improvement in $n$ because the integrand $f$ is more expensive to compute in when the drift is added.  In the case of no drift, the $\lambda$ in \eqref{eq:transVar} corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\partial \bsPsi/\partial \bsx} = \varrho(\bsx) = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, if we choose $\lambda_{\IMP}$ as our importance sampling density and $\bsPsi_{\IMP}$ as the variable transformation corresponding to $\lambda_\IMP\bigl(\bsPsi\IMP(\cdot)\bigr) \QMCPYabs{\partial \bsPsi_\IMP/\partial \bsx} = \varrho(\bsx) = 1$, then
-\begin{align}
-	\nonumber 
-	\mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calT g(\bst) \, \frac{\lambda(\bst)}{\lambda_\IMP(\bst) } \, \lambda_\IMP(\bst) \D \bst  \\ 
-	\nonumber
-	& =  \int_\calX g\bigl(\bsPsi_\IMP(\bsx)\bigr) \, \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) } \lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi_\IMP}{\partial \bsx}} \, \D \bsx \\
-	\nonumber
-	& =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
-	\label{eq:transVarImp}
-	& \qquad \qquad \text{where } f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \,  \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) }
-\end{align}
+The the improvement in time is less than improvement in $n$ because the integrand is more expensive to compute in when the drift is employed.  Referring to \eqref{eq:transVarImp}, in the case of no drift, the $\lambda$ corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, in the case of a drift, the integrand becomes  $f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)/\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr)$, which requires more computation time per integrand value.   more 
 
 
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/i_aco.png} 
-	\caption{Left: Brownian Motion paths with drift $a=2$. Right: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
-	\label{fig:aco}
-\end{figure}
-
-
-
-
-
-
-s ca
-
-
-Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. 
 \AGSComment{Bayesian stopping criterion}
 
 \section{Under the Hood}
 
-In this section, we look at the inner workings of QMCPy and points out available features we hope will benefit the community of QMC researchers and practitioners. We also highlight important idiosyncrasies of QMC methods and how QMCPy addresses these challenges. 
+In this section, we look at the inner workings of QMCPy and point out features we hope will benefit the community of QMC researchers and practitioners. We also highlight important idiosyncrasies of QMC methods and how QMCPy addresses these challenges. For details readers should refer to the QMCPy documentation \cite{QMCPyDocs}.
 
 \subsection{Link to LatNetBuilder}
 
-QMCPy provides users access to high quality lattice and digital net generators (defined in Table \ref{tab:GroupProp}). A low-discrepancy generator is comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \dots \in [0,1)^d$ and the callable generator function. QMCPy integrates nicely with latnetbuilder \AGSComment{CITE}, a package centered around search algorithms to find high quality generating vectors. QMCPy's lattice and digital net generators can accept a vectors from latnetbuilder and use them to generate custom ordinary lattice, polynomial lattice, polynomial net, or digital net sequence. We defer readers to latnetbuilder and QMCPy documentation \AGSComment{CITE BOTH} for details. 
+QMCPy provides users access to high quality lattice and digital net generators (defined in Table \ref{tab:GroupProp}). A LD generator is comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \dots \in [0,1)^d$ and the callable generator function. QMCPy integrates nicely with LatNetBuilder \cite{LEcEtal22a,LatNet}. QMCPy's lattice and digital net generators can accept vectors from LatNetBuilder to generate custom lattice and digital net sequences. We defer readers to latnetbuilder and QMCPy documentation \AGSComment{CITE BOTH} for details. 
 
 \subsection{Customization Options for Low Discrepancy Generators}
 
-QMCPy's low discrepancy generator routines also support numerous customizations for users who need specific points sets, orders, or randomizations. For example, our in-house developed digital net generator allows randomizations such as digital shifts and linear matrix scrambles, optional graycode orderings, and an optionally non-zero starting dimension. Moreover, while most lattice and digital net generators use a fixed generating vector, QMCPy allows users to input their own vector for their specific need, as detailed in the previous subsection.
-
-\subsection{Preferred sample sizes for low-discrepancy generators and}
-
-Low-discrepancy sequences differ from IID node sets in that they fill the domain in a more uniform manner. As IID nodes are independent, they do not have a preferred sample size. That is, if $\bsX \IIDsim \calU[0,1]^d$ then each node is equally likely to fall  anywhere in the unit cube. On the other hand, low-discrepancy sequences provide guarantees that the integration domain is more evenly sampled. However, these guarantees only occur at specific sample sizes. For example, lattice and digital net sequences only fill the domain evenly when $n$ is a power of $2$.
+QMCPy's LD generators support several customizations. Our in-house digital net generator allows digital shifts, linear  scrambling \cite{Mat98}, optional graycode orderings, and an optionally non-zero starting dimension\FJHComment{What?}.  Not all digital net generators provide linear scrambling. Moreover, while most lattice and digital net generators use a fixed generating vector, QMCPy allows users to input their own vector for their specific need, as detailed in the previous subsection.
 
 \subsection{\texttt{print}ing  QMCPy Instances}
 
-A helpful features of QMCPy is the ability to print out components instances to see more detailed information. This allows users to quickly see the properties that have been set and defaulted for any given component. This feature was already used to print the data object returned by the stopping criterion's \texttt{integrate} method in Section \ref{sec:stopping_crit}. The following code prints a drifted \texttt{BrownianMotion} instance and displays the connection to an underlying Gaussian measure. 
+QMCPy provides the a \texttt{print} command to display information about instances of QMCPy classes. In the sample code in Section \ref{sec:stopping_crit} this command was used show the output of a \texttt{StoppingCriteroion}'s \texttt{integrate} method.
+
+
+faulted for any given component. This feature was already used to print the data object returned by the stopping criterion's \texttt{integrate} method in Section \ref{sec:stopping_crit}. The following code prints a drifted \texttt{BrownianMotion} instance and displays the connection to an underlying Gaussian measure. 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/print_bm.txt}
 
 
 \AGSComment{
 \begin{itemize}
     \item we have better generating vector (under latnetbuilder sub-section)
-    \item transform from low discrepancy does not guarantee low discrepancy in new distribution
+    \item transform from LD does not guarantee LD in new distribution
     \item Sobol' samples will repeat after $2^{32}$ samples
     \item multi-level stopping criterion
     \item PCA and Cholesky decomposition for Gaussian (and Brownian Motion which is a subclass of Gaussian)
