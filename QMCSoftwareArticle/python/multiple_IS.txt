@@ -1,0 +1,10 @@
+>>> s = qp.Sobol(1)
+>>> k1 = qp.Keister(s)
+>>> k2 = qp.Keister(qp.Gaussian(s,covariance=.75))
+>>> k3 = qp.Keister(qp.Gaussian(qp.Kumaraswamy(s,a=.8,b=.8)))
+>>> for i,k in enumerate([k1,k2,k3]):
+...     sol,data = qp.CubQMCSobolG(k,abs_tol=5e-8).integrate()
+...     print("k%d Int Time: %.3f"%(i+1,data.time_integrate))
+k1 Int Time: 2.090
+k2 Int Time: 0.170
+k3 Int Time: 0.074

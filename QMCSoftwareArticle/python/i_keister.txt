@@ -1,11 +1,11 @@
->>> def my_Keister(x): # create a custom function
-...     d = x.shape[1]
+>>> def my_Keister(x):
+...     d = x.shape[1] # x is an (n x d) array
 ...     norm = np.sqrt((x**2).sum(1))
 ...     out = np.pi**(d/2)*np.cos(norm)
 ...     return out  # size n vector
 >>> gauss = qp.Gaussian(qp.Halton(2),covariance=1/2)
 >>> keister = qp.CustomFun(true_measure=gauss,g=my_Keister)
 >>> x = keister.discrete_distrib.gen_samples(1000) 
->>> y = keister.f(x) # evaluate f at Halton points
->>> y.mean() # approximate the integral
+>>> y = keister.f(x)
+>>> y.mean()
 1.8068921077383129

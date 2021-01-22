@@ -449,7 +449,7 @@ where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigm
 
 The following code utilizes QMCPy's Asian option \texttt{Integrand} object to approximate the Asian call option for a particular choice of the parameters.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
-Because this \texttt{Integrand} object has the built-in Brownian motion t\texttt{TrueMeasure}, one only neeed provide the LD sampler.
+Because this \texttt{Integrand} object has the built-in Brownian motion \texttt{TrueMeasure}, one only neeed provide the LD sampler.
 
 Out of the money option price calculations can be sped up by adding a drift to the Brownian motion that produces more in the money paths.  This is a form of importance sampling.  Using a Brownian motion without drift we get
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/wo_imp_samp_aco.txt}
@@ -457,20 +457,17 @@ Adding the drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
 The choice of a good drift is an art.  
 
-The the improvement in time is less than improvement in $n$ because the integrand $f$ is more expensive to compute in when the drift is added.  In the case of no drift, the $\lambda$ in \eqref{eq:transVar} corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\partial \bsPsi/\partial \bsx} = \varrho(\bsx) = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, if we choose $\lambda_{\IMP}$ as our importance sampling density and $\bsPsi_{\IMP}$ as the variable transformation corresponding to $\lambda_\IMP\bigl(\bsPsi\IMP(\cdot)\bigr) \QMCPYabs{\partial \bsPsi_\IMP/\partial \bsx} = \varrho(\bsx) = 1$, then
+The improvement in time is less than improvement in $n$ because the integrand $f$ is more expensive to compute when the drift is added.  In the case of no drift, the $\lambda$ in \eqref{eq:transVar} corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\partial \bsPsi/\partial \bsx} = \varrho(\bsx) = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, if we choose $\lambda_{\IMP}$ as our importance sampling density and $\bsPsi_{\IMP}$ as the variable transformation corresponding to $\lambda_\IMP\bigl(\bsPsi_\IMP(\cdot)\bigr) \QMCPYabs{\partial \bsPsi_\IMP/\partial \bsx} = \varrho(\bsx) = 1$, then
 \begin{align}
 	\nonumber 
 	\mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calT g(\bst) \, \frac{\lambda(\bst)}{\lambda_\IMP(\bst) } \, \lambda_\IMP(\bst) \D \bst  \\ 
 	\nonumber
 	& =  \int_\calX g\bigl(\bsPsi_\IMP(\bsx)\bigr) \, \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) } \lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) \,\QMCPYabs{\frac{\partial \bsPsi_\IMP}{\partial \bsx}} \, \D \bsx \\
 	\nonumber
-	& =  \int_\calX f(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
+	& =  \int_\calX f_\IMP(\bsx) \, \varrho(\bsx) \, \D \bsx  \\
 	\label{eq:transVarImp}
 	& \qquad \qquad \text{where } f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \,  \frac{\lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)} {\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr) }
 \end{align}
-
-
-
 
 
 \begin{figure}
@@ -479,14 +476,6 @@ The the improvement in time is less than improvement in $n$ because the integran
 	\caption{Left: Brownian Motion paths with drift $a=2$. Right: Corresponding Asian Call option paths with $S_0=30$, $K=45$, $\sigma=0.5$, and $r=0$.}
 	\label{fig:aco}
 \end{figure}
-
-
-
-
-
-
-s ca
-
 
 Figure \ref{fig:aco} shows drifted Brownian motion paths and their corresponding option pricing paths. 
 \AGSComment{Bayesian stopping criterion}
