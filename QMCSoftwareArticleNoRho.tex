@@ -499,29 +499,32 @@ Another subtlety arises when a user transforms LD sequences to mimic different d
 
 \subsection{Transformations}
 
-The choice of transformation $\bsPsi$ defines the connection between a discrete distribution and true measure. Up to this point, we have assumed the discrete distribution mimics a $\calU[0,1]^d$ measure with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a discrete distribution that mimics a different measure. For instance, IID standard Gaussian nodes may be transformed to mimic a Gaussian distribution without the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. If a discrete distribution mimics distribution $D$ with PDF $\varrho$ supported on $\calX$, \eqref{eq:transVar} may be rewritten as
+The choice of transformation $\bsPsi$ defines the connection between a discrete distribution and true measure. Up to this point, we have assumed the discrete distribution mimics a $\calU[0,1]^d$ measure with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a discrete distribution that mimics a different measure. For instance, IID standard Gaussian nodes may be transformed to mimic a Gaussian distribution without the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. Suppose we have a discrete distribution mimicking  density $\varrho$ supported on $\calX$. Letting $\lvert \bsPsi_l'(\bsx) \rvert$ denote the Jacobian evaluated at $\bsx$, Then $\mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
 \begin{equation*}
- \mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx  \quad \text{where } \quad f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \,\QMCPYabs{\frac{\partial \bsPsi}{\partial \bsx}}.
+   f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert.
 \end{equation*}
 QMCPy includes an IID standard Gaussian discrete distribution which may be transformed to mimic a Gaussian true measure.
 
-%If weight $\lambda$ corresponds to a probability density, QMCPy can select $\bsPsi$ so that $\lambda\bigl(\bsPsi(\bsx)\bigr) \lvert \partial \bsPsi/ \partial \bsx\rvert = \varrho(\bsx)$ and $f(\bsx)=g(\bsPsi(\bsx))$. However, if $\lambda$ does not correspond to a probability density, an importance sampling measure must be selected as in \eqref{eq:transVarImp}.
+QMCPy also includes support for composed variable transformations. Suppose we are given weight $\lambda$ supported on $\calT$, sampling PDF $\varrho$ supported on  $\calX$, and importance sampling transformation $\bsPsi_\IMP=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure. Let $\hat{\bsPsi}_l=(\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1)$ be the composition of the first $l$ transforms and assume $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
+\begin{equation*}
+    f(\bsx) 
+ = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\hat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert \D \bsx .
+\end{equation*}
+It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ when $\bsX$ is a random variable with density $\varrho_l$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
+\begin{equation*}
+f(\bsx) 
+ = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\hat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\hat{\bsPsi}_l(\bsx))} \D \bsx.
+\end{equation*}
 
-QMCPy includes support for composed variable transformations. Suppose we are given weight $\lambda$ supported on $\calT$, sampling PDF $\varrho$ supported on  $\calX$, and importance sampling transformation $\bsPsi_\IMP=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$ transforms samples mimicking density $\varrho_l$ to mimic density $\lambda_l$, meaning $\lambda_l(\bsPsi_l(\bsx))\lvert \partial \bsPsi_l / \partial \bsx \rvert = \varrho_l(\bsx)$. We enforce that $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure respectively. Let $\hat{\bsPsi}_l=(\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1)$ be the composition of the first $l$ transforms and assume $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. If $\lvert \bsPsi_l'(\bsx) \rvert$ denotes the Jacobian of the $l^{\text{th}}$ transform evaluated at $\bsx$, then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
-\begin{align*}
- f(\bsx) 
- &= g\left(\hat{\bsPsi}_L(\bsx)\right)\frac{\lambda\left(\hat{\bsPsi}_L(\bsx)\right)}{\varrho(\bsx)}\prod_{l=1}^L \left\lvert \bsPsi_l'\left(\hat{\bsPsi}_{l-1}(\bsx)\right) \right\rvert \D \bsx \\
- &= g\left(\hat{\bsPsi}_L(\bsx)\right)\frac{\lambda\left(\hat{\bsPsi}_L(\bsx)\right)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\hat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\hat{\bsPsi}_l(\bsx))} \D \bsx.
-\end{align*}
-
-For an example, we return to the Keister function \eqref{eq:KeisterIntegral}. The following code constructs three instances: the default Keister function without importance sampling (\texttt{K}), the Keister function importance sampled by a Gaussian $\calN(0,3/4)$ measure (\texttt{K\_gauss}), and the Keister function importance sampled by both a standard Gaussian and Kumaraswamy distribution (\texttt{K\_gauss\_kuma}). The multiple importance sampling in the third integrand is valid as the Kumaraswamy transform takes the unit cube to the unite cube, and the Gaussian transform is as defined in Equation \ref{eq:exampleVarTransGauss}. The code concludes by printing the time required for QMC integration to achieve absolute tolerance $5*10^{-8}$.
+For an example, we return to the Keister function \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All integrands use a Sobol' discrete distribution, making $\varrho(\bsx)=1$, and a $\calN(0,1/2)$ true measure, making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$. The first integrand, \texttt{K}, defaults $\bsPsi_1$ to be $\eqref{eq:exampleVarTransGauss}$ with $\mA = \sqrt{1/2} \, \mI$ so that  $\lambda(\bsPsi_1(\bsx)) \lvert \bsPsi_1'(\bsx) \rvert = \varrho(\bsx)$ and $f(\bsx) = g(\bsPsi_1(\bsx))$. The second integrand, \texttt{K\_gauss}, importance samples by a $\calN(0,3/4)$ measure so that $\bsPsi_1$ is \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{3/4} \, \mI$. The third integrand, \texttt{K\_gauss\_kuma}, sets $\bsPsi_2$ as \eqref{eq:exampleVarTransGauss} with $\mA = \mI$ and $\bsPsi_1(\bsx) = \bsPhi^{-1}(\bsx)$ where $\bsPhi$ is the element-wise CDF of the Kumaraswamy measure. The code concludes by printing the times required for the QMC integrations to achieve absolute tolerance $5*10^{-8}$.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
+
 Importance sampling in areas of high variation speeds up the computation. This idea is illustrated in Figure \ref{fig:mIS} using the functions from the above code. Note that QMCPy supports composed transformations in greater than 1 dimension. We restrict ourselves in this example for visualization purposes. 
 \begin{figure}
     \centering
 	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
-\end{figure} \AGSComment{$\varrho_l$ and $\lambda_l$ do not need to be densities, but I think it makes sense to say they are as we think of $\bsPsi_l$ as transforming samples that have some density. Also, all of our current transforms correspond to $\varrho_l$ being a density (and therefore $\lambda_l$ as well).}
+\end{figure}
 
 \section{Further Work} \label{sec:further} \FJHComment{Fred will draft}
 
