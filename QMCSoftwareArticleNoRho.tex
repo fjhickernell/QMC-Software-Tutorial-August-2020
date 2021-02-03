@@ -127,6 +127,7 @@
 \newcommand{\mLambda}{\mathsf{\Lambda}}
 \newcommand{\mI}{\mathsf{I}}
 \newcommand{\cube}{[0,1]^d}
+\newcommand{\Kum}{\textup{Kum}}
 
 \begin{document}
 
@@ -178,7 +179,7 @@ are important decisions, which  QMC software helps the user make.
 
 Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
-IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A randomly chosen subsequence of IID points is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$ for some distribution $F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
+IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A randomly chosen subsequence of an IID sequence is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$ for some distribution $F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
 \begin{equation*}
 	F_{n}(\bsx_0, \ldots, \bsx_{n-1}) = F(\bsx_0) \cdots  F(\bsx_{n-1}).
 \end{equation*}
@@ -423,12 +424,12 @@ Another way to approximate the Keister integral in \eqref{eq:KeisterIntegral} is
 \end{align*}
 where $\bsPsi$ is any transformation from $[0,1]^d$ to $\bbR^d$.  QMCPy can perform the cubature this way as well.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterLebesgue.txt}
-The $\bsPsi$ chosen when transforming uniform points on the unit cube to fill $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
+The $\bsPsi$ chosen when transforming uniform sequences on the unit cube to fill $\bbR^d$ is the one given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
 
 In the examples above, one must input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling} which leaves $\mu$ unchanged.  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterBuiltIn.txt}
 
-In the first case above, the $\lambda$ in \eqref{eq:transVar} corresponds to the Gaussian density  with mean zero and variance $1/2$ by default, and the corresponding variable transformation, $\bsPsi$, is chosen to make $\lambda\bigl(\bsPsi(\cdot)\bigr) \QMCPYabs{\bsPsi'(\cdot)}  = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  In the second case,  we choose an importance sampling density $\lambda_{\IMP}$, corresponding  to standard  Gaussian, and the variable transformation $\bsPsi_{\IMP}$ makes $\lambda_\IMP\bigl(\bsPsi_{\IMP}(\cdot)\bigr) \QMCPYabs{\bsPsi'_{\IMP}(\cdot)}  = 1$.  Then
+In the first case above, the $\lambda$ in \eqref{eq:transVar} corresponds to the Gaussian density  with mean zero and variance $1/2$ by default, and the corresponding variable transformation, $\bsPsi$, is chosen to make $\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\bsPsi'(\bsx)}  = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  In the second case,  we choose an importance sampling density $\lambda_{\IMP}$, corresponding  to standard  Gaussian, and the variable transformation $\bsPsi_{\IMP}$ makes $\lambda_\IMP\bigl(\bsPsi_{\IMP}(\bsx)\bigr) \QMCPYabs{\bsPsi'_{\IMP}(\bsx)}  = 1$.  Then
 \begin{align}
 	\nonumber 
 	\mu &= \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \int_\calT g(\bst) \, \frac{\lambda(\bst)}{\lambda_\IMP(\bst) } \, \lambda_\IMP(\bst) \D \bst  \\ 
@@ -493,37 +494,59 @@ LD sequences are the backbone of QMC methods. QMCPy provides generators that com
 
 Two popular LD sequences are integration lattices and digital nets which we previously outlined in Table \ref{tab:GroupProp}. These LD generators are comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \dots \in [0,1)^d$ and the callable generator function. By default, QMCPy provides a number of high quality generating vectors for users to choose from. For instance, the default ordinary lattice vector was constructed by Cools, Kuo, and Nuyens \cite{doi:10.1137/06065074X} \AGSComment{correct? Check website. Already added?} to support 3600 dimensions and $2^{20}$ samples. However, users who require more samples but fewer dimensions may switch to a generating vector constructed using LatNet Builder \cite{LEcEtal22a,LatNet} to support 750 dimensions and $2^{24}$ samples. Moreover, the \texttt{qp.Lattice} and \texttt{qp.DigitalNet} objects allow users to input their own generating vectors to produce highly customized sequences. To find such vectors, we recommend using LatNet Builder's construction routines as the results can be easily parsed into a QMCPy-compatible format. 
 
-Along with the selection of a generating vector, QMCPy's low-discrepancy sequence routines expose a number of other customization parameters. For instance, the lattice generator extends the Magic Point Shop \cite{Nuy17a} to support either linear or natural ordering. Digital sequences permit either standard or Graycode ordering and may be randomized via a digital shift optionally combined with a linear scrambling \cite{Mat98}. Halton sequences may be randomized via the routines of either Owen \cite{Owe20a} or Hofert and Lemieux \cite{QRNG2020}. 
+Along with the selection of a generating vector, QMCPy's low discrepancy sequence routines expose a number of other customization parameters. For instance, the lattice generator extends the Magic Point Shop \cite{Nuy17a} to support either linear or natural ordering. Digital sequences permit either standard or Graycode ordering and may be randomized via a digital shift optionally combined with a linear scrambling \cite{Mat98}. Halton sequences may be randomized via the routines of either Owen \cite{Owe20a} or Hofert and Lemieux \cite{QRNG2020}. 
+
+\FJHComment{PyTorch?}
+
 \subsubsection{A Word of Caution on Using LD Sequences}
 
-Although QMCPy's discrete distributions have many of the same parameters and methods, one must be careful when swapping IID points with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As touched on earlier, digital nets and integration lattices require sample sizes that are powers of 2 in order to guarantee equal sampling density (see \AGSComment{CITE} for a more thorough treatment). On the other hand, $d$-dimensional Halton points need samples sizes that are a multiple of $\prod_{j=1}^d p_i$ where $p_i$ is the $i^{\text{th}}$ prime number \AGSComment{right?}. Due to the infrequency of such multiples, Halton points are often regarded as not having a preferred sample size.  
+Although QMCPy's discrete distributions have many of the same parameters and methods, one must be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As touched on earlier, digital nets and integration lattices require sample sizes that are powers of 2 in order to guarantee equal sampling density (see \AGSComment{CITE} for a more thorough treatment). On the other hand, the preferred sample sizes for  $d$-dimensional Halton sequences would take the form of $n = \prod_{j=1}^d p_i$ where $p_i$ is the $i^{\text{th}}$ prime number. Due to the infrequency of such values  of $n$, Halton sequences are often regarded as not having a preferred sample size.  
 
-One also runs into trouble when trying to generate too many samples. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
+One could have trouble when trying to generate too many points. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
 
-Another subtlety arises when a user transforms LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values. Moreover, the nice low discrepancy properties of sequences are not preserved when transformations are applied. \AGSComment{Explain better? Cite paper with Professor Kang?}
-
-\AGSComment{Do we need this sub-sub-section? Most of it has already been mentioned earlier in the paper.}
+Another subtlety arises when transforming LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values. Moreover, the nice low discrepancy properties of sequences are not preserved when transformations are applied \cite{LiKanHic20a}
 
 \subsection{Transformations}
 
-The choice of transformation $\bsPsi$ defines the connection between a discrete distribution and true measure. Up to this point, we have assumed the discrete distribution mimics a $\calU[0,1]^d$ measure with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a discrete distribution that mimics a different measure. For instance, IID standard Gaussian nodes may be transformed to mimic a Gaussian distribution without the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. Suppose we have a discrete distribution mimicking  density $\varrho$ supported on $\calX$. Letting $\lvert \bsPsi_l'(\bsx) \rvert$ denote the Jacobian evaluated at $\bsx$, Then $\mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
-\begin{equation*}
-   f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert.
-\end{equation*}
-QMCPy includes an IID standard Gaussian discrete distribution which may be transformed to mimic a Gaussian true measure.
+The choice of transformation $\bsPsi$ defines the connection between a discrete distribution and true measure. Up to this point, we have assumed the discrete distribution mimics a $\calU[0,1]^d$ measure with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a discrete distribution that mimics a different measure. For instance, QMCPy includes a \texttt{DiscreteDistribution} corresponding to an IID standard Gaussian sequence.  It may be transformed to mimic a general Gaussian distribution \texttt{TrueMeasure} while avoiding the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. 
 
-QMCPy also includes support for composed variable transformations. Suppose we are given weight $\lambda$ supported on $\calT$, sampling PDF $\varrho$ supported on  $\calX$, and importance sampling transformation $\bsPsi_\IMP=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure. Let $\hat{\bsPsi}_l=(\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1)$ be the composition of the first $l$ transforms and assume $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
+Suppose we have a discrete distribution mimicking  density $\varrho$ supported on $\calX$.  Then using the variable transformation $\bsPsi$, 
+\begin{equation*}
+	\mu = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx \quad \text{for }
+   f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert,
+\end{equation*}
+which generalizes \eqref{eq:transVar}.
+QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure. Let $\hat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$, the composition of the first $l$ transforms and assume that $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
 \begin{equation*}
     f(\bsx) 
  = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\hat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert \D \bsx .
 \end{equation*}
-It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ when $\bsX$ is a random variable with density $\varrho_l$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
+It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ on sample space $\bsX_l$ when $\bsX$ is a random variable with density $\varrho_l$ on sample space $\bsX_{l-1}$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
 \begin{equation*}
 f(\bsx) 
  = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\hat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\hat{\bsPsi}_l(\bsx))} \D \bsx.
 \end{equation*}
 
-For an example, we return to the Keister function \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All integrands use a Sobol' discrete distribution, making $\varrho(\bsx)=1$, and a $\calN(0,1/2)$ true measure, making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$. The first integrand, \texttt{K}, defaults $\bsPsi_1$ to be $\eqref{eq:exampleVarTransGauss}$ with $\mA = \sqrt{1/2} \, \mI$ so that  $\lambda(\bsPsi_1(\bsx)) \lvert \bsPsi_1'(\bsx) \rvert = \varrho(\bsx)$ and $f(\bsx) = g(\bsPsi_1(\bsx))$. The second integrand, \texttt{K\_gauss}, importance samples by a $\calN(0,3/4)$ measure so that $\bsPsi_1$ is \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{3/4} \, \mI$. The third integrand, \texttt{K\_gauss\_kuma}, sets $\bsPsi_2$ as \eqref{eq:exampleVarTransGauss} with $\mA = \mI$ and $\bsPsi_1(\bsx) = \bsPhi^{-1}(\bsx)$ where $\bsPhi$ is the element-wise CDF of the Kumaraswamy measure. The code concludes by printing the times required for the QMC integrations to achieve absolute tolerance $5*10^{-8}$.
+For an example, we return to the Keister function \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All integrands use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(0,1/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
+
+In all cases $\varrho_1(\bsx) = 1$.
+
+
+The first integrand, \texttt{K}, defaults to $L=1$ and $\bsPsi_1$ to be \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$ so that  $\lambda(\bsPsi_1(\bsx)) \lvert \bsPsi_1'(\bsx) \rvert = 1$, and $f(\bsx) = g(\bsPsi_1(\bsx))$. The second integrand, \texttt{K\_gauss}, importance samples by a $\calN(0,3/4)$ measure so that $\bsPsi_1$ is \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{3/4} \, \mI$. The third integrand, \texttt{K\_gauss\_kuma}, sets $\bsPsi_2$ as \eqref{eq:exampleVarTransGauss} with $\mA = \mI$ and $\bsPsi_1(\bsx) = \bsPhi^{-1}(\bsx)$ where $\bsPhi$ is the element-wise CDF of the Kumaraswamy measure. The code concludes by printing the times required for the QMC integrations to achieve absolute tolerance $5*10^{-8}$.
+
+{\small
+\[\begin{array}{ccccccc}
+	\texttt{Integrand} & L & \lambda_1 & \bsPsi_1 & \lambda_2 & \bsPsi_2 & f \tabularnewline
+	\toprule
+	\texttt{K} & 1 & \calN(0, \mI/2) & \eqref{eq:exampleVarTransGauss}& && g(\bsPsi_1(\cdot)) \tabularnewline [1ex]
+	\texttt{K\_gauss} & 1 & \calN(0,3 \mI/4) & \eqref{eq:exampleVarTransGauss} & && 
+	\displaystyle g(\bsPsi_1(\cdot)) \frac{\lambda(\bsPsi_1(\cdot))}{\lambda_1(\bsPsi_1(\cdot))} \tabularnewline [2.5ex]
+	\texttt{K\_gauss\_kuma} & 2 & \Kum & F^{-1}_\Kum & \calN(0,\mI) &  \eqref{eq:exampleVarTransGauss} &
+	\displaystyle g(\bsPsi_2(\bsPsi_1(\cdot))) \frac{\lambda(\bsPsi_2(\bsPsi_1(\cdot))) \varrho_{\Kum}(\cdot)}{\lambda_1(\bsPsi_1(\cdot)) \lambda_2(\bsPsi_2(\bsPsi_1(\cdot)))} 
+\end{array}
+\]
+}
+
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
 Importance sampling in areas of high variation speeds up the computation. This idea is illustrated in Figure \ref{fig:mIS} using the functions from the above code. Note that QMCPy supports composed transformations in greater than 1 dimension. We restrict ourselves in this example for visualization purposes. 
