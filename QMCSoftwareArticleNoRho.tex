@@ -516,40 +516,40 @@ Suppose we have a discrete distribution mimicking  density $\varrho$ supported o
    f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert,
 \end{equation*}
 which generalizes \eqref{eq:transVar}.
-QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure. Let $\hat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$, the composition of the first $l$ transforms and assume that $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
+QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the discrete distribution and true measure. Let $\hat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$ denote the composition of the first $l$ transforms and assume that $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
 \begin{equation*}
     f(\bsx) 
  = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\hat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert \D \bsx .
 \end{equation*}
-It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ on sample space $\bsX_l$ when $\bsX$ is a random variable with density $\varrho_l$ on sample space $\bsX_{l-1}$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
+It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ on sample space $\calX_l$ when $\bsX$ is a random variable with density $\varrho_l$ on sample space $\calX_{l-1}$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
 \begin{equation*}
 f(\bsx) 
  = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\hat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\hat{\bsPsi}_l(\bsx))} \D \bsx.
 \end{equation*}
 
-For an example, we return to the Keister function \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All integrands use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(0,1/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
+For an example, we return to the Keister integral \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All integrands use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(0,1/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
 
-In all cases $\varrho_1(\bsx) = 1$.
+The table below displays the variable transformations and the measures for these three cases.  In all cases $\varrho_1(\bsx) = \cdots \varrho_L(\bsx) = 1$ because $\bsPsi$ utilizes an inverse distribution.
+
+The third integrand, \texttt{K\_gauss\_kuma}, sets $\bsPsi_2$ as \eqref{eq:exampleVarTransGauss} with $\mA = \mI$ and $\bsPsi_1(\bsx) = \bsPhi^{-1}(\bsx)$ where $\bsPhi$ is the element-wise CDF of the Kumaraswamy measure. 
 
 
-The first integrand, \texttt{K}, defaults to $L=1$ and $\bsPsi_1$ to be \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{1/2} \, \mI$ so that  $\lambda(\bsPsi_1(\bsx)) \lvert \bsPsi_1'(\bsx) \rvert = 1$, and $f(\bsx) = g(\bsPsi_1(\bsx))$. The second integrand, \texttt{K\_gauss}, importance samples by a $\calN(0,3/4)$ measure so that $\bsPsi_1$ is \eqref{eq:exampleVarTransGauss} with $\mA = \sqrt{3/4} \, \mI$. The third integrand, \texttt{K\_gauss\_kuma}, sets $\bsPsi_2$ as \eqref{eq:exampleVarTransGauss} with $\mA = \mI$ and $\bsPsi_1(\bsx) = \bsPhi^{-1}(\bsx)$ where $\bsPhi$ is the element-wise CDF of the Kumaraswamy measure. The code concludes by printing the times required for the QMC integrations to achieve absolute tolerance $5*10^{-8}$.
-
-{\small
 \[\begin{array}{ccccccc}
 	\texttt{Integrand} & L & \lambda_1 & \bsPsi_1 & \lambda_2 & \bsPsi_2 & f \tabularnewline
 	\toprule
 	\texttt{K} & 1 & \calN(0, \mI/2) & \eqref{eq:exampleVarTransGauss}& && g(\bsPsi_1(\cdot)) \tabularnewline [1ex]
 	\texttt{K\_gauss} & 1 & \calN(0,3 \mI/4) & \eqref{eq:exampleVarTransGauss} & && 
 	\displaystyle g(\bsPsi_1(\cdot)) \frac{\lambda(\bsPsi_1(\cdot))}{\lambda_1(\bsPsi_1(\cdot))} \tabularnewline [2.5ex]
-	\texttt{K\_gauss\_kuma} & 2 & \Kum & F^{-1}_\Kum & \calN(0,\mI) &  \eqref{eq:exampleVarTransGauss} &
-	\displaystyle g(\bsPsi_2(\bsPsi_1(\cdot))) \frac{\lambda(\bsPsi_2(\bsPsi_1(\cdot))) \varrho_{\Kum}(\cdot)}{\lambda_1(\bsPsi_1(\cdot)) \lambda_2(\bsPsi_2(\bsPsi_1(\cdot)))} 
+	\texttt{K\_gauss\_kuma} & 2 & \Kum & \bsF^{-1}_\Kum & \calN(0,\mI) &  \eqref{eq:exampleVarTransGauss} &
+	\displaystyle \frac{g(\bsPsi_2(\bsPsi_1(\cdot))) \lambda(\bsPsi_2(\bsPsi_1(\cdot))) }{\lambda_1(\bsPsi_1(\cdot)) \lambda_2(\bsPsi_2(\bsPsi_1(\cdot)))} 
 \end{array}
 \]
-}
+
+Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent marginals, and $ \boldsymbol{F}^{-1}_\Kum$ denotes the element-wise inverse cumulative distribution function.  The following code evaluates the Keister integral \eqref{eq:KeisterIntegral} for $d=1$ and error tolerance $\varepsilon = 5\text{E}-8$.  The timings for each of these different integrands are displayed.
 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
-Importance sampling in areas of high variation speeds up the computation. This idea is illustrated in Figure \ref{fig:mIS} using the functions from the above code. Note that QMCPy supports composed transformations in greater than 1 dimension. We restrict ourselves in this example for visualization purposes. 
+Successful importance sampling places more points where the original integrand, $g$, varies more.  Equivalently, successful importance sampling makes the transformed integrand, $f$, flatter. The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example above uses $d=1$ to facilitate the plot in \ref{fig:mIS}, however the same example works for arbitrary dimensions.
 \begin{figure}
     \centering
 	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
@@ -557,6 +557,12 @@ Importance sampling in areas of high variation speeds up the computation. This i
 \end{figure}
 
 \section{Further Work} \label{sec:further} \FJHComment{Fred will draft}
+
+QMCPy is ripe for growth and development in several areas.  We hope that the QMC community will join us in making this a reality.
+
+Multi-level (quasi-)Monte Carlo (ML(Q)MC)methods make possible the computation of expectations of functionals of stochastic differential equations and partial differential equations with random coefficients.  Such use cases appear in quantitative finance and in geophysical applications.  QMCPy's ML(Q)MC's capability are rudimentary, but under active development.
+
+Control variates 
 
 \AGSComment{
 \begin{itemize}
