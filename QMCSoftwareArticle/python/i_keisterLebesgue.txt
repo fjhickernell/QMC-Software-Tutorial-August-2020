@@ -1,5 +1,5 @@
->>> def my_L_Keister(x):
-...     norm_sq = (x**2).sum(1)
+>>> def my_L_Keister(t):
+...     norm_sq = (t**2).sum(1)
 ...     out = np.cos(np.sqrt(norm_sq))*np.exp(-norm_sq)
 ...     return out
 >>> lebesgue_gauss = qp.Lebesgue(qp.Gaussian(qp.Halton(2)))
