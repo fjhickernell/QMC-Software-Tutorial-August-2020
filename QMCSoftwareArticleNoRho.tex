@@ -113,6 +113,7 @@
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
 \newcommand{\FJHComment}[1]{{\color{magenta} Fred: #1}}
+\newcommand{\JRComment}[1]{{\color{yellow} Jag: #1}}
 
 \newcommand{\hmu}{\widehat{\mu}}
 \newcommand{\IID}{\textup{IID}}
@@ -249,6 +250,7 @@ This requires four components, which we implement as QMCPy classes.
 	\item[True Measure] $\bst \mapsto \lambda (\bst) \D \bst$  defines the original integral, e.g., Gaussian or Lebesgue;
 	
 	\item[Integrand] $g$  defines the original integral, plus the transformed version, $f$, to fit the discrete distribution; and
+	\JRComment{bit confusing; how about: $g$  defines the original, $f$ defines the transformed version to fit the discrete distribution;}
 	
 	\item[Stopping Criterion] determines how large $n$ should be to ensure that $\QMCPYabs{\mu - \hmu} \le \varepsilon$.
 \end{description}
