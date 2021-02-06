@@ -122,6 +122,7 @@
 \newcommand{\unif}{\textup{unif}}
 \newcommand{\IIDsim}{\overset{\IID}{\sim}}
 \newcommand{\LDsim}{\overset{\LD}{\sim}}
+\newcommand{\Msim}{\overset{\textup{M}}{\sim}}
 \newcommand{\dig}{\textup{dig}}
 \newcommand{\mA}{\mathsf{A}}
 \newcommand{\mSigma}{\mathsf{\Sigma}}
@@ -149,7 +150,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{This is the article based on my MCQMC 2020 Tutorial.}
+\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We also highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open source library, which we hope will draw the support of the QMC community.  This tutorial serves as an introduction to QMCPy.}
 
 
 \section{Introduction} \label{sec:intro}
@@ -157,20 +158,20 @@ Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent 
 
 As a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  This segues to a description of  QMCPy \cite{QMCPy2020a}, which is designed to be a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
+This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is designed as a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
-The model problem for QMC is approximating an integral,
+The model problem for QMC is approximating a multivariate integral,
 \begin{equation} \label{eq:integral}
 	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  We use $\mu$ to denote the value of this integral because we interpret it as the population mean of a function of a uniform random variable after a suitable variable transformation:
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  If $\lambda$ is a probability distribution (PDF) for the random variable $\bsT$, then $\mu$ is the mean of $g(\bsT)$.  In any case, we perform a suitable variable transformation to interpret this integral as the  mean of a function of a multivariate, standard uniform random variable:
 \begin{equation} \label{eq:fintegral}
-	\mu = \bbE[f(\bsX)] =  \int_{\cube}  f(\bsx) \,  \D \bsx ,
+	\mu = \bbE[f(\bsX)] =  \int_{\cube}  f(\bsx) \,  \D \bsx , \qquad \bsX \sim \calU\cube.
 \end{equation}
 
-QMC approximates this population mean by a sample mean,
+QMC approximates the population mean, $\mu$,  by a sample mean,
 \begin{equation} \label{eq:samplemean}
-	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \sim \calU\cube.
+	\hmu := \frac 1n \sum_{i=0}^{n-1} f(\bsX_i), \qquad \bsX_0, \bsX_1, \ldots \Msim \calU\cube.
 \end{equation}
 The choice of this sequence and the choice of $n$ to satisfy  the prescribed error requirement,
 \begin{equation} \label{eq:err_req}
@@ -178,7 +179,7 @@ The choice of this sequence and the choice of $n$ to satisfy  the prescribed err
 \end{equation} 
 are important decisions, which  QMC software helps the user make.
 
-Here, the notation ``$\sim$'' means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
+Here, the notation $\Msim$ means that the sequence mimics the specified, target distribution, but not necessarily in a probabilistic way.  We  use this notation in two forms:  $\IIDsim$ and $\LDsim$.
 
 IID sequences must be random. The position of any point is not influenced by any other, so clusters and gaps occur.  A randomly chosen subsequence of an IID sequence is also IID.  When we say that $\bsX_0, \bsX_1, \ldots \IIDsim F$ for some distribution $F$, we mean that for any positive integer $n$, the  multivariate probability distribution of $\bsX_0, \ldots, \bsX_{n-1}$ is the product of the marginals, specifically,
 \begin{equation*}
@@ -201,15 +202,15 @@ The error in using the sample mean to approximate the integral can be bounded ac
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f),
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  For our purposes, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
-In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and related software projects will take.  Those interested in following the development of QMCPy or even contributing to that development are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
+In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
 
-An important caveat is that we have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in software development will make this article somewhat obsolete in a good way in the next several years.
+We have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in QMC software development will make this article somewhat obsolete in a good way in the next several years.
 
 \section{Available Software for QMC} \label{sec:available} 
-QMC software spans  LD sequence generators, algorithms, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
-Software focusing on generating high quality LD sequences  or their generators includes
+QMC software spans  LD sequence generators, cubatures, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
+Software focusing on generating high quality LD sequences  and their generators includes
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
@@ -222,7 +223,7 @@ Software focusing on generating high quality LD sequences  or their generators i
 	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}, and
 	\item [qrng]  Sobol', Halton, and Korobov sequences in R \cite{QRNG2020}.
 \end{description}
-Software focusing on QMC algorithms and applications includes
+Software focusing on QMC cubatures and applications includes
 \begin{description}[format=\textup,format=\textbf]
 	\item[GAIL] Automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal20a},
 	\item[ML(Q)MC] Multi-Level (Q)MC routines in C++, MATLAB, Python, and R \cite{GilesSoft},
@@ -238,7 +239,7 @@ The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt 
 QMC cubature can be summarized as follows.  We want to approximate the expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
 \begin{multline} \label{eq:cubSummary}
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_{\cube} f(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
-	 \bsX_0, \bsX_1, \ldots \sim \calU\cube.
+	 bsX \sim \calU\cube, \ \bsX_0, \bsX_1, \ldots \Msim \calU\cube.
 \end{multline}
 Moreover, we want to satisfy the error requirement in \eqref{eq:err_req}.
 This requires four components, which we implement as QMCPy classes.
@@ -249,13 +250,12 @@ This requires four components, which we implement as QMCPy classes.
 	
 	\item[True Measure] $\bst \mapsto \lambda (\bst) \D \bst$  defines the original integral, e.g., Gaussian or Lebesgue;
 	
-	\item[Integrand] $g$  defines the original integral, plus the transformed version, $f$, to fit the discrete distribution; and
-	\JRComment{bit confusing; how about: $g$  defines the original, $f$ defines the transformed version to fit the discrete distribution;}
+	\item[Integrand] $g$  defines the original, and $f$ defines the transformed version to fit the discrete distribution; and
 	
 	\item[Stopping Criterion] determines how large $n$ should be to ensure that $\QMCPYabs{\mu - \hmu} \le \varepsilon$.
 \end{description}
 
-The software libraries referenced in Section \ref{sec:available} provide one or more of these components. QMCPy combines multiple examples of all these components under an object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and use cases for each component and select implementations. 
+The software libraries referenced in Section \ref{sec:available} provide one or more of these components. QMCPy combines multiple examples of all these components under an object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and specific examples for each component. 
 
 Thorough documentation of all QMCPy classes is available in \cite{QMCPyDocs}. Demonstrations of how QMCPy work are given in Google Colab notebooks \cite{QMCPyTutColab2020,QMCPyTutColab2020_paper} \AGSComment{Update \cite{QMCPyTutColab2020_paper}'s link}. The project may be installed from PyPI into your Python 3 environment via the command \texttt{pip install qmcpy}. In the codes that follows, we assume QMCPy has been imported alongside NumPy \cite{numpy} via
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/import.txt}
@@ -345,16 +345,16 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 
 \section{True Measures}
 
-The LD sequences implemented as \texttt{DiscreteDistribution} objects mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This is implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \sim \calU[0,1]^d$, then
+The LD sequences implemented as \texttt{DiscreteDistribution} objects mimic the $\calU[0,1]^d$ distribution.  However, we may need sequences to mimic other distributions.  This is implemented via variable transformations, $\bsPsi$.  In general, if $\bsX \Msim \calU[0,1]^d$, then
 \begin{subequations} \label{eq:exampleVarTrans}
 \begin{gather}
-\bsT = \bsPsi(\bsX) := \bsa  + (\bsb - \bsa) \odot \bsX \sim  \calU[\bsa,\bsb], \\
+\bsT = \bsPsi(\bsX) := \bsa  + (\bsb - \bsa) \odot \bsX \Msim  \calU[\bsa,\bsb], \\
 \label{eq:exampleVarTransGauss}
-\bsT = \bsPsi(\bsX) := \bsa + \mA \bsPhi^{-1}(\bsX)  \sim \calN(\bsa, \mSigma), \\
+\bsT = \bsPsi(\bsX) := \bsa + \mA \bsPhi^{-1}(\bsX)  \Msim \calN(\bsa, \mSigma), \\
 \nonumber  \text{where }  \bsPhi^{-1}(\bsX) : = \begin{pmatrix} \Phi^{-1}(X_1) \\ \vdots \\ \Phi^{-1}(X_d)\end{pmatrix}, \qquad \mSigma = \mA \mA^T,
 \end{gather}
 \end{subequations}
-and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\sim$'' to denote mimicry, not necessarily in a probabilistic sense.
+and $\odot$ denotes term-by-term (Hadamard) multiplication.  Here, $\bsa$ and $\bsb$ are assumed to be finite, and $\Phi$ is the standard Gaussian distribution function.  Again we use ``$\Msim$'' to denote mimicry, not necessarily in a probabilistic sense.
 
 Figure \ref{fig:tm_ug} displays LD sequences transformed as described above to mimic a uniform and a Gaussian distribution.  The code to generate these points takes the following form of 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_uniform.txt}
@@ -413,7 +413,7 @@ We have no indication yet of how accurate our approximation is.  This aspect of 
 
 \begin{figure}
 	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/i_keister_contours.png}
-	\caption{Right: Sampling the transformed integrand $f$ at Halton points $\bsx \sim \calU[0,1]^2$. Left: Sampling the original integrand $g$ at $\bsPsi(\bsx)$ where $\bsPsi$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
+	\caption{Right: Sampling the transformed integrand $f$ at Halton points $\bsx_i \LDsim \calU[0,1]^2$. Left: Sampling the original integrand $g$ at $\bsPsi(\bsx)$ where $\bsPsi$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
 \end{figure}
 
 Another way to approximate the Keister integral in \eqref{eq:KeisterIntegral} is to write it as an integral with respect to the Lebesgue measure:
