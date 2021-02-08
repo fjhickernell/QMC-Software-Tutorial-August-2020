@@ -2,13 +2,13 @@
 >>> stopping = qp.CubQMCSobolG(keister,abs_tol=1e-3)
 >>> solution_qmc,data_qmc = stopping.integrate()
 >>> data_qmc # equivalent to print(data_qmc)
-Solution: 1.8083     
+Solution: 1.8083         
 Keister (Integrand Object)
 Sobol (DiscreteDistribution Object)
     d               2^(1)
     randomize       1
     graycode        0
-    seed            [89310 68286]
+    seed            194061
     mimics          StdUniform
     dim0            0
 Gaussian (TrueMeasure Object)
@@ -23,5 +23,5 @@ CubQMCSobolG (StoppingCriterion Object)
 LDTransformData (AccumulateData Object)
     n_total         2^(13)
     solution        1.808
-    error_bound     5.65e-04
-    time_integrate  0.028
+    error_bound     6.37e-04
+    time_integrate  0.009
