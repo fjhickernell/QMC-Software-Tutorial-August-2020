@@ -82,7 +82,7 @@
 \definecolor{orange}{rgb}{1.0,0.3,0.0}
 \definecolor{violet}{rgb}{0.75,0,1}
 \newcommand{\frednote}[1]{  {\textcolor{red}  {\mbox{**Fred:} #1}}}
-\newcommand{\yuhannote}[1]{ {\textcolor{violet}  {\mbox{**Yuhan:} #1}}}
+\newcommand{\scnote}[1]{ {\textcolor{blue}  {\mbox{**SC:} #1}}}
 \newcommand{\tonynote}[1]{ {\textcolor{orange}  {\mbox{**Tony:} #1}}}
 
 %\journal{Journal of Complexity}
@@ -113,7 +113,7 @@
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
 \newcommand{\FJHComment}[1]{{\color{magenta} Fred: #1}}
-\newcommand{\JRComment}[1]{{\color{yellow} Jag: #1}}
+\newcommand{\JRComment}[1]{{\color{violet} Jag: #1}}
 
 \newcommand{\hmu}{\widehat{\mu}}
 \newcommand{\IID}{\textup{IID}}
@@ -135,8 +135,8 @@
 
 \title*{Quasi-Monte Carlo Software}
 \authorrunning{S.-C.\ T.\ Choi et al}
-\author{Sou-Cheng Terrya Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei G. Sorokin}
-\institute{Sou-Cheng Terrya Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{schoi32@hawk.iit.edu}
+\author{Sou-Cheng T. Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei G. Sorokin}
+\institute{Sou-Cheng T. Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616; and Kamakura Corporation, 2222 Kalakaua Ave, Suite 1400, Honolulu, HI 96815 \email{schoi32@iit.edu}
 \and
 Fred J. Hickernell \at Center for Interdisciplinary Scientific Computation and \\
 Department of Applied Mathematics, Illinois Institute of Technology \\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{hickernell@iit.edu}
@@ -190,11 +190,11 @@ IID sequences must be random. The position of any point is not influenced by any
 When IID points are used to approximate $\mu$ by the sample mean, the error is $\calO(n^{-1/2})$.  Figure \ref{fig:comparePts} displays IID uniform points, $\bsX^{\IID}_0, \bsX^{\IID}_1, \ldots \IIDsim \calU[0,1]^2$, i.e.,  the target distribution is $F_\unif(\bsx) = x_1 x_2$.
 
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[height=5cm]{QMCSoftwareArticle/figs/dd_iid_uniform_pts.png}
 	\qquad
 	\includegraphics[height=5cm]{QMCSoftwareArticle/figs/dd_sobol_pts.png}
-	\caption{IID points contrasted with LD points.  The LD points cover the square more evenly.}
+	\caption{IID points (left) contrasted with LD points (right).  The LD points cover the square more evenly. \scnote{Moved this and other figures/tables to top of page}}
 	\label{fig:comparePts}
 \end{figure}
 
@@ -216,8 +216,8 @@ Software focusing on generating high quality LD sequences  and their generators 
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
-	\item[Burkhardt] Various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
-	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LEcEtal22a,LatNet},
+	\item[Burkhardt] Various QMC software in C++, Fortran, MATLAB, and Python~\cite{Bur20a},
+	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets~\cite{LEcEtal22a,LatNet},
 	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
 	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
@@ -228,7 +228,7 @@ Software focusing on generating high quality LD sequences  and their generators 
 Software focusing on QMC cubatures and applications includes
 \begin{description}[format=\textup,format=\textbf]
 	\item[GAIL] Automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal20a},
-	\item[ML(Q)MC] Multi-Level (Q)MC routines in C++, MATLAB, Python, and R \cite{GilesSoft},
+	\item[ML(Q)MC] Multi-Level (Q)MC routines in C++, MATLAB, Python, and R~\cite{GilesSoft},
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
 	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
 	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}, and
@@ -270,7 +270,7 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 
 These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  The addition operator  is $\oplus$.  The unshifted sequence is $\bsZ_0, \bsZ_1, \ldots$ and the randomly shifted sequence is $\bsX_0, \bsX_1, \ldots$
 
-\begin{table}
+\begin{table}[t]
 	\centering
 	\caption{Properties of lattices and digital net sequences.  Note that they share group properties but also have distinctives.} \label{tab:GroupProp}
 \[
@@ -337,7 +337,7 @@ Here we allow the randomization so that the first point in the sequence is not t
 
 Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol' LD points through powers of two fills in the gaps in an even way.
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_lattice_successive.png}
 	\qquad
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_sobol_successive.png}
@@ -364,7 +364,7 @@ for uniform points based on a Halton sequence, and
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_gaussian.txt}
 for Gaussian points based on a lattice sequence. Here the covariance decomposition $\mSigma = \mA \mA^T$ is done using principal component analysis. The Cholesky decomposition is also available.
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_uniform.png} 
 	%	\quad
 	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_gaussian.png}
@@ -380,7 +380,7 @@ and mean $\bsa$, which  corresponds to a drift coefficient times $(\tau/d)(1, 2,
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/tm_brownian_motion.txt}
 Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/tm_bm.png} 
 	\caption{Sobol' samples transformed to mimic a 52-dimensional Brownian Motion without drift (left) and with drift coefficient 2 (right).}
 	\label{fig:tm_bm}
@@ -413,7 +413,7 @@ The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{Cust
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keister.txt}
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/i_keister_contours.png}
 	\caption{Right: Sampling the transformed integrand $f$ at Halton points $\bsX_i \LDsim \calU[0,1]^2$. Left: Sampling the original integrand $g$ at $\bsT_i = \bsPsi(\bsX_i) \Msim \calN(\bszero,\mI/2)$ where $\bsPsi$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
 \end{figure}
@@ -455,7 +455,7 @@ The second output of the stopping criterion provides helpful diagnostic informat
 QMC, which uses LD sequences, is touted as providing substantially greater computational efficiency compared to IID MC.
 Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\calO(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\calO(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\calO(n^{-1+\epsilon})$, which implies $\calO(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples that MC methods to achieve the same error tolerance.
 
-\begin{figure}
+\begin{figure}[t]
 	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/sc_comp.png}
 	\caption{Comparison of run times and sample sizes for computing the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID and LD lattice sequences for a variety of absolute error tolerances. The respective stopping criteria are  \texttt{qp.CubMCG} \cite{HicEtal14a} and  \texttt{qp.CubQMCLatticeG} \cite{JimHic16a}. The LD sequences provide the desired answer much more efficiently.}
 	\label{fig:sc_comp}
@@ -478,7 +478,7 @@ The following code utilizes QMCPy's Asian option \texttt{Integrand} object to ap
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
 Because this \texttt{Integrand} object has the built-in Brownian motion \texttt{TrueMeasure}, one only need provide the LD sampler.
 
-Out of the money option price calculations can be sped up by adding a drift to the Brownian motion that produces more in the money paths.  This is a form of importance sampling.  Using a Brownian motion without drift we get
+Out of the money option price calculations can be sped up by adding a drift to the Brownian motion that produces more in the money paths  \JRComment{Out of the money option price calculations: This statement is unclear}. This is a form of importance sampling.  Using a Brownian motion without drift we get
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/wo_imp_samp_aco.txt}
 Adding the drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
@@ -504,7 +504,7 @@ Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters
 
 Users may also run into trouble when trying to generate too many points. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
 
-Another subtlety arises when transforming LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values.  An extension discussion of the proper handling of LD sequences is given by \cite{owen2020dropping}.
+Another subtlety arises when transforming LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values.  An extension discussion of the proper handling of LD sequences is given by~\cite{owen2020dropping}.
 
 \subsection{Transformations}
 
@@ -547,7 +547,7 @@ Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent m
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
 Successful importance sampling places more points where the original integrand, $g$, varies more.  Equivalently, successful importance sampling makes the transformed integrand, $f$, flatter. The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}, however the same example works for arbitrary dimensions.
-\begin{figure}
+\begin{figure}[t]
     \centering
 	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
