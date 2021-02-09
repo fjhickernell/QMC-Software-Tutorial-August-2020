@@ -142,6 +142,7 @@ Fred J. Hickernell \at Center for Interdisciplinary Scientific Computation and \
 Department of Applied Mathematics, Illinois Institute of Technology \\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{hickernell@iit.edu}
 \and
 R. Jagadeeswaran \at
+Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616 \email{jrathin1@hawk.iit.edu}
 \and
 Michael J. McCourt \at SigOpt, an Intel company, \\
 100 Bush St., Suite 1100, San Francisco, CA 94104
@@ -152,21 +153,21 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We also highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open source library, which we hope will draw the support of the QMC community.  This tutorial serves as an introduction to QMCPy.}
+\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open source library, which we hope will draw the support of the QMC community.  Here we introduce to QMCPy.}
 
 
 \section{Introduction} \label{sec:intro}
-Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC  achieves one hundredth of the error of IID MC in the same amount of time (see Section \ref{sec:stopping_crit}). Often, these efficiency gains are obtained simply by  replacing IID sampling by low discrepancy (LD) sampling, which is the heart of QMC. 
+Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC  achieves one hundredth of the error of IID MC in the same amount of time (see Figure \ref{fig:sc_comp}). Often, these efficiency gains are obtained simply by  replacing IID sampling by low discrepancy (LD) sampling, which is the heart of QMC. 
 
 As a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is designed as a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
+This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is crafted to be a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
 The model problem for QMC is approximating a multivariate integral,
 \begin{equation} \label{eq:integral}
 	\mu := \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst,
 \end{equation}
-where $g$ is the integrand, and $\lambda$ is a non-negative weight.  If $\lambda$ is a probability distribution (PDF) for the random variable $\bsT$, then $\mu$ is the mean of $g(\bsT)$.  In any case, we perform a suitable variable transformation to interpret this integral as the  mean of a function of a multivariate, standard uniform random variable:
+where $g$ is the integrand, and $\lambda$ is a non-negative weight.  If $\lambda$ is a probability distribution (PDF) for the random variable $\bsT$, then $\mu$ is the mean of $g(\bsT)$.  Regardless, we perform a suitable variable transformation to interpret this integral as the  mean of a function of a multivariate, standard uniform random variable:
 \begin{equation} \label{eq:fintegral}
 	\mu = \bbE[f(\bsX)] =  \int_{\cube}  f(\bsx) \,  \D \bsx , \qquad \bsX \sim \calU\cube.
 \end{equation}
@@ -187,7 +188,7 @@ IID sequences must be random. The position of any point is not influenced by any
 \begin{equation*}
 	F_{n}(\bsx_0, \ldots, \bsx_{n-1}) = F(\bsx_0) \cdots  F(\bsx_{n-1}).
 \end{equation*}
-When IID points are used to approximate $\mu$ by the sample mean, the error is $\calO(n^{-1/2})$.  Figure \ref{fig:comparePts} displays IID uniform points, $\bsX^{\IID}_0, \bsX^{\IID}_1, \ldots \IIDsim \calU[0,1]^2$, i.e.,  the target distribution is $F_\unif(\bsx) = x_1 x_2$.
+When IID points are used to approximate $\mu$ by the sample mean, the root mean squared error is $\calO(n^{-1/2})$.  Figure \ref{fig:comparePts} displays IID uniform points, $\bsX^{\IID}_0, \bsX^{\IID}_1, \ldots \IIDsim \calU[0,1]^2$, i.e.,  the target distribution is $F_\unif(\bsx) = x_1 x_2$.
 
 
 \begin{figure}[t]
@@ -235,7 +236,7 @@ Software focusing on QMC cubatures and applications includes
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
 
-The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
+The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine some of the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
 
 \section{Components of QMC Software}
 QMC cubature can be summarized as follows.  We want to approximate the expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
@@ -566,6 +567,8 @@ We hope to add a greater variety of use cases and are engaging collaborators to 
 Recently, some QMC experts have focused on developing LD generators for Python. Well established packages such as SciPy \cite{SCIPY} and PyTorch \cite{PyTorch} are actively working to develop QMC modules that support numerous LD sequences and related functionalities. When these modules are released to the public, we plan to integrate the routines as optional backends for QMCPy's LD generator objects. Creating ties to these other packages will allow users to call their preferred generators from within the QMCPy framework. 
 
 We also plan to expand our library of digital net generating matrices. We wish to incorporate interlaced digital nets, polynomial lattices, and Niederreiter sequences, among others. By including high quality defaults in QMCPy, we hope to make these sequences more readily available to the public. 
+
+Our \texttt{DiscreteDistrution} places equal weights on each support point, $\bsX_i$.  In the future we might generalize this to unequal weights.
 
 QMCPy already includes importance sampling, but the choice of sampling distribution must be chosen a priori.  We would like to see an automatic, adaptive choice.
 
