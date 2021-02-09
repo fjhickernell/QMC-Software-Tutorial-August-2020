@@ -242,7 +242,7 @@ The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt 
 QMC cubature can be summarized as follows.  We want to approximate the expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
 \begin{multline} \label{eq:cubSummary}
 	\mu : = \int_\calT g(\bst) \, \lambda(\bst) \, \D \bst  = \bbE[f(\bsX)] = \int_{\cube} f(\bsx) \, \D \bsx \approx \frac 1n \sum_{i=0}^{n-1} f(\bsX_i) =: \hmu, \\
-	 bsX \sim \calU\cube, \ \bsX_0, \bsX_1, \ldots \Msim \calU\cube.
+	 \bsX \sim \calU\cube, \ \bsX_0, \bsX_1, \ldots \Msim \calU\cube.
 \end{multline}
 Moreover, we want to satisfy the error requirement in \eqref{eq:err_req}.
 This requires four components, which we implement as QMCPy classes.
@@ -271,7 +271,7 @@ QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practiti
 
 These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  The addition operator  is $\oplus$.  The unshifted sequence is $\bsZ_0, \bsZ_1, \ldots$ and the randomly shifted sequence is $\bsX_0, \bsX_1, \ldots$
 
-\begin{table}[t]
+\begin{table}[h]
 	\centering
 	\caption{Properties of lattices and digital net sequences.  Note that they share group properties but also have distinctives.} \label{tab:GroupProp}
 \[
@@ -307,7 +307,7 @@ We illustrate lattice and Sobol' sequences using QMCPy. First, we create an inst
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_lattice.txt}
 The first three generators for this lattice are $\bsZ_1 = (0.5, 0.5)$, $\bsZ_2 = (0.25, 0.75)$, and $\bsZ_4 = (0.125, 0.375)$.  One can check that $(\bsZ_2 + \bsZ_4) \bmod \bsone = (0.375, 0.125) = \bsZ_6$, as Table \ref{tab:GroupProp} specifies.
 
-The random shift has been turned off above to illuminate the group structure.  We normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions such as the Gaussian, no LD points will be transformed to infinity.  Turning off the randomization generates a warning.
+The random shift has been turned off above to illuminate the group structure.  We normally include the randomization to ensure that there are no points on the boundary of $[0,1]^d$.  Then, when points are transformed to mimic distributions such as the Gaussian, no LD points will be transformed to infinity.  Turning off the randomization generates a warning when the \texttt{gen\_samples} method is called.
 
 Now, we generate Sobol' points using a similar process as we did for lattice points.  Sobol' sequences are one of the most popular example of digital sequences.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_sobol.txt}
@@ -466,7 +466,7 @@ For another illustration of QMC cubature, we turn to pricing an Asian arithmetic
 $$
 \text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d (S_{j-1}+S_j)-K,0\right), \quad \bsS = (S_0, \ldots, S_d).
 $$
-Here $S_j$ denotes the asset price at time $\tau j/d$, and a trapezoidal rule is used for discrete approximation.  A basic model for asset prices is a geometric Brownian motion, 
+Here $S_j$ denotes the asset price at time $\tau j/d$, and a trapezoidal rule is used for discrete approximation of the integral in time that defines the average.  A basic model for asset prices is a geometric Brownian motion, 
 \[
 S_j(\bsT) = S_0 \exp((r - \sigma^2/2) \tau j/d + \sigma T_j),   \;  j = 1, \ldots, d, \; \bsT = (T_1, \ldots, T_d)\sim \calN(\bszero,\mSigma),
 \]
@@ -479,9 +479,9 @@ The following code utilizes QMCPy's Asian option \texttt{Integrand} object to ap
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
 Because this \texttt{Integrand} object has the built-in Brownian motion \texttt{TrueMeasure}, one only need provide the LD sampler.
 
-Out of the money option price calculations can be sped up by adding a drift to the Brownian motion that produces more in the money paths  \JRComment{Out of the money option price calculations: This statement is unclear}. This is a form of importance sampling.  Using a Brownian motion without drift we get
+Out of the money option price calculations can be sped up by adding an upward drift to the Brownian motion.  The upward drift produces more in the money paths and also reduces the variation or variance of the final integrand, $f$.  This is a form of importance sampling.  Using a Brownian motion without drift we get
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/wo_imp_samp_aco.txt}
-Adding the drift gives us the answer faster:
+Adding the upward drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
 The choice of a good drift is an art.  
 
@@ -501,15 +501,17 @@ Along with the selection of a generating vector, QMCPy's low discrepancy sequenc
 
 \subsection{A Word of Caution when Using LD Sequences}
 
-Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, digital nets and integration lattices require sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
+Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, digital nets and integration lattices whow better evenness for sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
 
 Users may also run into trouble when trying to generate too many points. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
 
-Another subtlety arises when transforming LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values.  An extension discussion of the proper handling of LD sequences is given by~\cite{owen2020dropping}.
+Another subtlety arises when transforming LD sequences to mimic different distributions. As mentioned earlier, unrandomized lattice and digital sequences include the origin, making transformations such as \eqref{eq:exampleVarTransGauss} produce infinite values.  
+
+Some popular implementations of LD sequences drop the first point, which is the origin in the absence of randomization.  The rationale is to avoid the transformation of the origin to infinity when mimicking a Gaussian or other distribution with an infinite sample space.  Unfortunately, dropping the first point destroys some of the nice properties of the first $n = 2^m$ points of LD sequences, which can degrade the order of convergence for QMC cubature. A careful  discussion of this matter is given by~\cite{owen2020dropping}.
 
 \subsection{Transformations}
 
-The transformation $\bsPsi$  connects a \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. So far, we have assumed the \texttt{DiscreteDistribution} mimics a $\calU[0,1]^d$ measure with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a \texttt{DiscreteDistribution} that mimics a different measure. For instance, QMCPy includes a \texttt{DiscreteDistribution} corresponding to an IID standard Gaussian sequence.  It may be transformed to mimic a general Gaussian distribution \texttt{TrueMeasure} while avoiding the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. 
+The transformation $\bsPsi$  connects a \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. So far, we have assumed the \texttt{DiscreteDistribution} mimics a $\calU[0,1]^d$ distribution with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a \texttt{DiscreteDistribution} that mimics a different distribution. For instance, QMCPy includes a \texttt{DiscreteDistribution} corresponding to an IID standard Gaussian sequence.  It may be transformed to mimic a general Gaussian distribution \texttt{TrueMeasure} while avoiding the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. 
 
 Suppose we have a \texttt{DiscreteDistribution} mimicking  density $\varrho$ supported on $\calX$.  Then using the variable transformation $\bsPsi$, 
 \begin{equation*}
@@ -517,18 +519,18 @@ Suppose we have a \texttt{DiscreteDistribution} mimicking  density $\varrho$ sup
    f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert,
 \end{equation*}
 which generalizes \eqref{eq:transVar}.
-QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\hat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so the transformations are compatible with the \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. Let $\hat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$ denote the composition of the first $l$ transforms and assume that $\hat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
+QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\widehat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$ and $\calX_L=\calT$ so that the transformations are compatible with the \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. Let $\widehat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$ denote the composition of the first $l$ transforms and assume that $\widehat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
 \begin{equation*}
     f(\bsx) 
- = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\hat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert \D \bsx .
+ = g\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\widehat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert .
 \end{equation*}
 It is often the case that $\bsPsi_l$ is chosen such that $\bsPsi_l(\bsX)$ is stochastically equivalent to a random variable with density $\lambda_l$ on sample space $\calX_l$ when $\bsX$ is a random variable with density $\varrho_l$ on sample space $\calX_{l-1}$.  This implies  $\varrho_l(\bsx) = \lambda_l(\bsPsi_l(\bsx))\lvert  \bsPsi'_l (\bsx) \rvert$ so that
 \begin{equation*}
 f(\bsx) 
- = g\bigl(\hat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\hat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\hat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\hat{\bsPsi}_l(\bsx))} \D \bsx.
+ = g\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\widehat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\widehat{\bsPsi}_l(\bsx))} .
 \end{equation*}
 
-For an example, we return to the Keister integral \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian measure, and one importance sampled by the composition of a Gaussian measure with a Kumaraswamy measure. All \texttt{Integrand}s use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(\bszero,\mI/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
+For an example, we return to the Keister integral \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian distribution, and one importance sampled by the composition of a Gaussian distribution with a Kumaraswamy distribution. All \texttt{Integrand}s use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(\bszero,\mI/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
 
 The table below displays the variable transformations and the measures for these three cases.  In all cases $\varrho_1(\bsx) = \cdots = \varrho_L(\bsx) = 1$ because the $\bsPsi_l$ utilize inverse cumulative distributions.
 
@@ -554,17 +556,18 @@ Successful importance sampling places more points where the original integrand, 
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
 \end{figure}
 
+Automatic Bayesian stopping criteria choose $n$ needed to satisfy the error tolerance via a Bayesian credible interval for $\mu$ \cite{RatHic19a,JagHic22a}.  These are also options in QMCPy.
+
+
 \section{Further Work} \label{sec:further}
 
 QMCPy is ripe for growth and development in several areas.  We hope that the QMC community will join us in making this a reality.
-
-Automatic Bayesian stopping criteria choose $n$ needed to satisfy the error tolerance via a Bayesian credible interval for $\mu$ \cite{RatHic19a,JagHic22a}.  These are intended to be added to QMCPy.
 
 Multi-level (quasi-)Monte Carlo (ML(Q)MC) methods make possible the computation of expectations of functionals of stochastic differential equations and partial differential equations with random coefficients.  Such use cases appear in quantitative finance and in geophysical applications.  QMCPy's ML(Q)MC's capability are rudimentary, but under active development.
 
 We hope to add a greater variety of use cases and are engaging collaborators to help.  Sobol' indices, partial differential equations with random coefficients, expected improvement measures for Bayesian optimization, and multivariate probabilities are some of those on our radar.
 
-Recently, some QMC experts have focused on developing LD generators for Python. Well established packages such as SciPy \cite{SCIPY} and PyTorch \cite{PyTorch} are actively working to develop QMC modules that support numerous LD sequences and related functionalities. When these modules are released to the public, we plan to integrate the routines as optional backends for QMCPy's LD generator objects. Creating ties to these other packages will allow users to call their preferred generators from within the QMCPy framework. 
+Recently, some QMC experts have focused on developing LD generators for Python. Well established packages such as SciPy \cite{SCIPY} and PyTorch \cite{PyTorch} are actively working to develop QMC modules that support numerous LD sequences and related functionalities. When these modules are released to the public, we plan to integrate the routines as optional backends for QMCPy's LD generator objects. Creating ties to these other packages will allow users to call their preferred generators from within the QMCPy framework.  Moreover, as features in QMCPy become more common and prove their value, we will try to incorporate them into SciPy and other popular, general purpose packages.
 
 We also plan to expand our library of digital net generating matrices. We wish to incorporate interlaced digital nets, polynomial lattices, and Niederreiter sequences, among others. By including high quality defaults in QMCPy, we hope to make these sequences more readily available to the public. 
 
@@ -578,7 +581,7 @@ We close with an invitation.  Try QMCPy.  If you find bugs or missing features, 
 
 \begin{acknowledgement}
 The authors would like to thank the organizers for a wonderful MCQMC 2020. 
-We also thank the referees for their many helpful suggestions.  This work is supported in part by National Science Foundation grants DMS-1522687 and SigOpt.
+We also thank the referees for their many helpful suggestions.  This work is supported in part by SigOpt and National Science Foundation grant DMS-1522687.
 \end{acknowledgement}
 
 %\section*{References}
@@ -633,9 +636,9 @@ If $\mLambda = \lambda^2 \mI$ and  $\mA = \sigma \mI$, then
 \AGSComment{
 
 \subsection{Chaining Transforms}
-With $k$ transforms, let $\hat{\bsPsi}_j(\bsx) = (\bsPsi_j \circ \bsPsi_{j-1} \circ \dots \circ \bsPsi_1)(\bsx)$ denote the first $j$ compositions and $\bst = \hat{\bsPsi}_k(\bsx)$ be the complete transformation. Then, 
-$$f(\bsx) = g(\hat{\bsPsi}_k(\bsx)) \frac{\lambda(\hat{\bsPsi}_k(\bsx))}{\varrho(\bsx)} \prod_{i=1}^{k} \left\lvert \frac{\D \, \bsPsi_i}{\D \, \hat{\bsPsi}_{i-1}(\bsx)} \right\rvert$$
-where $\hat{\bsPsi}_0(\bsx) = \bsx$.
+With $k$ transforms, let $\widehat{\bsPsi}_j(\bsx) = (\bsPsi_j \circ \bsPsi_{j-1} \circ \dots \circ \bsPsi_1)(\bsx)$ denote the first $j$ compositions and $\bst = \widehat{\bsPsi}_k(\bsx)$ be the complete transformation. Then, 
+$$f(\bsx) = g(\widehat{\bsPsi}_k(\bsx)) \frac{\lambda(\widehat{\bsPsi}_k(\bsx))}{\varrho(\bsx)} \prod_{i=1}^{k} \left\lvert \frac{\D \, \bsPsi_i}{\D \, \widehat{\bsPsi}_{i-1}(\bsx)} \right\rvert$$
+where $\widehat{\bsPsi}_0(\bsx) = \bsx$.
 }
 
 \FJHComment{
