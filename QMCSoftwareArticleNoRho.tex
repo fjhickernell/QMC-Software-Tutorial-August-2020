@@ -159,7 +159,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 \section{Introduction} \label{sec:intro}
 Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases QMC  achieves one hundredth of the error of IID MC in the same amount of time (see Figure \ref{fig:sc_comp}). Often, these efficiency gains are obtained simply by  replacing IID sampling by low discrepancy (LD) sampling, which is the heart of QMC. 
 
-As a practitioner, you might wish to test whether QMC would speed your computation.  You would like easy access to the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
+As a practitioner, you might wish to test whether QMC would speed your computation.  You would like to easily access the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
 
 This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is crafted to be a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
@@ -205,7 +205,7 @@ The error in using the sample mean to approximate the integral can be bounded ac
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f),
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as highly stratified sampling.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
 In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
 
@@ -287,8 +287,11 @@ These latter two also have an elegant group structure, which we summarize in Tab
     \multicolumn{2}{c}{\bsX_i := \bsZ_i \oplus \bsDelta, \qquad \text{where }\bsDelta \IIDsim [0,1)^d} \\  \hline
 	\text{Rank-1 Integration Lattices} & \text{Digital Nets} \\
 		\bst \oplus \bsx : = (\bst + \bsx) \bmod \bsone & \bst \oplus \bsx := \text{binary digitwise addition}, \oplus_{\dig} \\ 
-		 \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
-		 	\bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{2^{m-1}} \quad \forall m \in \bbN \end{array}
+		\text{require } \bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{\lfloor2^{m-1}\rfloor}
+		\quad \forall m \in \bbN_0 
+%		 \\ \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
+%		 	\bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{2^{m-1}} \quad \forall m \in \bbN 
+%	 	\end{array}
 		\\
 \toprule
 \multicolumn{2}{c}{\text{Then it follows that \ldots}} \\
@@ -577,7 +580,7 @@ QMCPy already includes importance sampling, but the choice of sampling distribut
 
 Control variates can be useful for QMC, as well as for IID MC \cite{HicEtal03}.  These should be incorporated into QMCPy in a seamless way.
 
-We close with an invitation.  Try QMCPy.  If you find bugs or missing features, submit an issue to \href{https://github.com/QMCSoftware/QMCSoftware/issues}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/issues}}.  If you wish to add your great algorithm or use case, submit a pull request to our GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware/pulls}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/pulls}}.  We hope for the community to embrace QMCPy.
+We close with an invitation.  Try QMCPy.  If you find bugs or missing features, submit an issue to \href{https://github.com/QMCSoftware/QMCSoftware/issues}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/issues}}.  If you wish to add your great algorithm or use case, submit a pull request to our GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware/pulls}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/pulls}}.  We hope that the community will embrace QMCPy.
 
 \begin{acknowledgement}
 The authors would like to thank the organizers for a wonderful MCQMC 2020. 
