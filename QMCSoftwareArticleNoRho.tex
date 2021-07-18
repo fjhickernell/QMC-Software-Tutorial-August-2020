@@ -199,11 +199,11 @@ When IID points are used to approximate $\mu$ by the sample mean, the root mean 
 	\label{fig:comparePts}
 \end{figure}
 
-LD sequences may be deterministic or random, but each point is carefully coordinated with the others so that they fill the domain well.  Subsequences of LD sequences are generally not LD.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim \calU\cube$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the uniform distribution, $F_\unif$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  The measure of the difference between the empirical distribution of a set of points and the uniform distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1})$ \cite{DicEtal14a,Hic97a,Hic99a,Nie92}.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points.
+LD sequences may be deterministic or random, but each point is carefully coordinated with the others so that they fill the domain well.  Subsequences of LD sequences are generally not LD.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim \calU\cube$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the uniform distribution, $F_\unif$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  A measure of the difference between the empirical distribution of a set of points and the uniform distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1})$ \cite{DicEtal14a,Hic97a,Hic99a,Nie92}.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points.
 
 The error in using the sample mean to approximate the integral can be bounded according to the Koksma-Hlawka inequality and its extensions \cite{DicEtal14a,Hic97a,Hic99a,Nie92} as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
-	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f),
+	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f).
 \end{equation} 
 The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as highly stratified sampling.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
@@ -413,7 +413,7 @@ Since $\lambda$ is the density for $\calN(\bszero,\mI/2)$, it is natural to choo
 \bsPsi(\bsx) := \sqrt{1/2} \,\bsPhi^{-1}(\bsx).
 \]
 
-The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points.
+The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points. Notice how the two dimensional Halton generator is used to construct the Gaussian true measure which is used alongside the \texttt{my\_Keister} function to construct the integrand for this problem.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keister.txt}
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
@@ -478,7 +478,7 @@ where $\mSigma$ is defined in \eqref{eq:BMcov}, $r$ is the interest rate, $\sigm
 	\text{price} = \mu = \bbE[g(\bsT)], \quad \text{where } g(\bst) = \text{payoff}\bigl(\bsS(\bst) \bigr) \exp(-r \tau).
 \end{equation*}
 
-The following code utilizes QMCPy's Asian option \texttt{Integrand} object to approximate the Asian call option for a particular choice of the parameters.
+The following code utilizes QMCPy's Asian option \texttt{Integrand} object to approximate the value of an Asian call option for a particular choice of the parameters.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_aco.txt}
 Because this \texttt{Integrand} object has the built-in Brownian motion \texttt{TrueMeasure}, one only need provide the LD sampler.
 
@@ -498,13 +498,16 @@ In this section, we look at the inner workings of QMCPy and point out features w
 
 LD sequences are the backbone of QMC methods. QMCPy provides generators that combine research from across the QMC community to enable advanced features and customization options.
 
-Two popular LD sequences are integration lattices and digital nets which we previously outlined in Table \ref{tab:GroupProp}. These LD generators are comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \ldots \in [0,1)^d$ and the callable generator function. By default, QMCPy provides a number of high quality generating vectors for users to choose from. For instance, the default ordinary lattice vector was constructed by Cools, Kuo, and Nuyens \cite{doi:10.1137/06065074X} to support 3600 dimensions and $2^{20}$ samples. However, users who require more samples but fewer dimensions may switch to a generating vector constructed using LatNet Builder \cite{LEcEtal22a,LatNet} to support 750 dimensions and $2^{24}$ samples. Moreover, the \texttt{qp.Lattice} and \texttt{qp.DigitalNet} objects allow users to input their own generating vectors to produce highly customized sequences. To find such vectors, we recommend using LatNet Builder's construction routines as the results can be easily parsed into a QMCPy-compatible format. 
+Two popular LD sequences are integration lattices and digital nets which we previously outlined in Table \ref{tab:GroupProp}. These LD generators are comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \ldots \in [0,1)^d$ and the callable generator function. By default, QMCPy provides a number of high quality generating vectors for users to choose from. For instance, the default ordinary lattice vector was constructed by Cools, Kuo, and Nuyens \cite{doi:10.1137/06065074X} using component-by-component algorithms, is extensible, has order 2 weights, and supports up to 3600 dimensions and $2^{20}$ samples. 
+%https://web.maths.unsw.edu.au/~fkuo/lattice/index.html
+%https://web.maths.unsw.edu.au/~fkuo/sobol/
+However, users who require more samples but fewer dimensions may switch to a generating vector constructed using LatNet Builder \cite{LEcEtal22a,LatNet} to support 750 dimensions and $2^{24}$ samples. Moreover, the \texttt{qp.Lattice} and \texttt{qp.DigitalNet} objects allow users to input their own generating vectors to produce highly customized sequences. To find such vectors, we recommend using LatNet Builder's construction routines as the results can be easily parsed into a QMCPy-compatible format. 
 
 Along with the selection of a generating vector, QMCPy's low discrepancy sequence routines expose a number of other customization parameters. For instance, the lattice generator extends the Magic Point Shop \cite{Nuy17a} to support either linear or natural ordering. Digital sequences permit either standard or Graycode ordering and maybe randomized via a digital shift optionally combined with a linear scrambling \cite{Mat98}. Halton sequences may be randomized via the routines of either Owen \cite{Owe20a} or Hofert and Lemieux \cite{QRNG2020}. 
 
 \subsection{A Word of Caution when Using LD Sequences}
 
-Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, digital nets and integration lattices show better evenness for sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
+Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, base 2 digital nets and extensible integration lattices show better evenness for sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
 
 Users may also run into trouble when trying to generate too many points. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future, we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
 
@@ -514,7 +517,9 @@ Some popular implementations of LD sequences drop the first point, which is the 
 
 \subsection{Transformations}
 
-The transformation $\bsPsi$  connects a \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. So far, we have assumed the \texttt{DiscreteDistribution} mimics a $\calU[0,1]^d$ distribution with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a \texttt{DiscreteDistribution} that mimics a different distribution. For instance, QMCPy includes a \texttt{DiscreteDistribution} corresponding to an IID standard Gaussian sequence.  It may be transformed to mimic a general Gaussian distribution \texttt{TrueMeasure} while avoiding the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$. 
+The transformation $\bsPsi$  connects a \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. So far, we have assumed the \texttt{DiscreteDistribution} mimics a $\calU[0,1]^d$ distribution with PDF $\varrho(\bsx)=1$. However, it may be advantageous to utilize a \texttt{DiscreteDistribution} that mimics a different distribution. 
+%For instance, QMCPy includes a \texttt{DiscreteDistribution} corresponding to an IID standard Gaussian sequence.  It may be transformed to mimic a general Gaussian distribution \texttt{TrueMeasure} while avoiding the inverse CDF transform required for nodes mimicking $\calU[0,1]^d$.
+% the IID standard Gaussian samples still use inverse CDF, so we don't actually save anything aside from maybe a minor speed up from numpy's faster code
 
 Suppose we have a \texttt{DiscreteDistribution} mimicking  density $\varrho$ supported on $\calX$.  Then using the variable transformation $\bsPsi$, 
 \begin{equation*}
@@ -533,7 +538,7 @@ f(\bsx)
  = g\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \frac{\varrho_l(\widehat{\bsPsi}_{l-1}(\bsx))}{\lambda_l(\widehat{\bsPsi}_l(\bsx))} .
 \end{equation*}
 
-For an example, we return to the Keister integral \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian distribution, and one importance sampled by the composition of a Gaussian distribution with a Kumaraswamy distribution. All \texttt{Integrand}s use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(\bszero,\mI/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
+For an example, we return to the Keister integral \eqref{eq:KeisterIntegral}. The following code constructs three \texttt{Keister} instances: one without importance sampling, one importance sampled by a Gaussian distribution, and one importance sampled by the composition of a Gaussian distribution with a Kumaraswamy distribution \cite{Kumaraswamy}. All \texttt{Integrand}s use a Sobol' \texttt{DiscreteDistribution}, making $\varrho(\bsx)=1$ and $\calX = [0,1]^d$. The \texttt{TrueMeasure} is $\calN(\bszero,\mI/2)$ making $\lambda(\bst) = \pi^{-d/2} \exp(-\bst^T \bst)$ and $\calT = \bbR^d$. 
 
 The table below displays the variable transformations and the measures for these three cases.  In all cases $\varrho_1(\bsx) = \cdots = \varrho_L(\bsx) = 1$ because the $\bsPsi_l$ utilize inverse cumulative distributions.
 
