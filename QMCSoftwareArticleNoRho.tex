@@ -232,7 +232,7 @@ Software focusing on QMC cubatures and applications includes
 	\item[ML(Q)MC] Multi-Level (Q)MC routines in C++, MATLAB, Python, and R~\cite{GilesSoft},
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
 	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
-	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}, and
+	\item[SSJ] Stochastic Simulation with the \texttt{hups} package in Java \cite{SSJ}, and
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
 
@@ -267,7 +267,7 @@ Thorough documentation of all QMCPy classes is available in \cite{QMCPyDocs}. De
 
 LD sequences typically mimic $\calU[0,1]^d$.  Good sequences mimicking other distributions are obtained by transformations as described in the next section.  
 
-QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but integration lattices and digital sequences prefer $n$ to be a power of $2$.  
+QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but extensible integration lattices and digital sequences in base $b$ prefer $n$ to be a power of $b$.
 
 These latter two also have an elegant group structure, which we summarize in Table \ref{tab:GroupProp}.  The addition operator  is $\oplus$.  The unshifted sequence is $\bsZ_0, \bsZ_1, \ldots$ and the randomly shifted sequence is $\bsX_0, \bsX_1, \ldots$
 
@@ -413,7 +413,7 @@ Since $\lambda$ is the density for $\calN(\bszero,\mI/2)$, it is natural to choo
 \bsPsi(\bsx) := \sqrt{1/2} \,\bsPhi^{-1}(\bsx).
 \]
 
-The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points. Notice how the two dimensional Halton generator is used to construct the Gaussian true measure which is used alongside the \texttt{my\_Keister} function to construct the integrand for this problem.
+The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points. Notice how a two dimensional Halton generator is used to construct a Gaussian true measure which is used alongside the \texttt{my\_Keister} function to construct a customized, QMCPy compatible, integrand for this problem.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keister.txt}
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
@@ -452,6 +452,8 @@ Because LD samples mimic $\calU\cube$, choosing a different \texttt{sampler} is 
 
 The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hmu$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
 
+The \texttt{CubQMCSobolG} stopping criterion used in the example below assumes the Walsh-Fourier coefficients of the integrand are absolutely convergent. \texttt{CubQMCSobolG} algorithm iteratively doubles the number of samples used in the integration and estimates the error using the decay of the Walsh coefficients \cite{HicJim16a}. When the estimated error is below the user specified tolerance, it finishes the computation and returns the estimated integral.
+
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution} and input our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
 The second output of the stopping criterion provides helpful diagnostic information.  This computation requires $n=2^{13}$ Sobol' points and $0.009$ seconds to complete.  The error bound is $0.000637$, which falls below the absolute tolerance.
@@ -465,11 +467,13 @@ Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute th
 	\label{fig:sc_comp}
 \end{figure}
 
-For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The payoff of this option is the positive difference between the strike price, $K$, averaged over the time horizon: 
+For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The (continuous time) Asian option is defined in terms of the average of the stock price, which is written in terms of an integral. The payoff of this option is the positive difference between the strike price, $K$, averaged over the time horizon: 
 $$
 \text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d (S_{j-1}+S_j)-K, \; 0\right), \quad \bsS = (S_0, \ldots, S_d).
 $$
-Here $S_j$ denotes the asset price at time $\tau j/d$, and a trapezoidal rule is used for discrete approximation of the integral in time that defines the average.  A basic model for asset prices is a geometric Brownian motion, 
+Here $S_j$ denotes the asset price at time $\tau j/d$, and a trapezoidal rule is used for discrete approximation of the integral in time that defines the average. 
+The trapezoidal rule is a more accurate approximation to the integral than a rectangle rule. % Comment from Fred
+A basic model for asset prices is a geometric Brownian motion, 
 \[
 S_j(\bsT) = S_0 \exp((r - \sigma^2/2) \tau j/d + \sigma T_j),   \;  j = 1, \ldots, d, \; \bsT = (T_1, \ldots, T_d)\sim \calN(\bszero,\mSigma),
 \]
@@ -527,7 +531,7 @@ Suppose we have a \texttt{DiscreteDistribution} mimicking  density $\varrho$ sup
    f(\bsx)  = g\bigl(\bsPsi(\bsx)\bigr)  \, \frac{\lambda\bigl(\bsPsi(\bsx)\bigr)}{\varrho(\bsx)} \, \lvert \bsPsi'(\bsx)\rvert,
 \end{equation*}
 which generalizes \eqref{eq:transVar}.
-QMCPy also includes support for composed variable transformations. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\widehat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$, and $\calX_L=\calT$ so that the transformations are compatible with the \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. Let $\widehat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$ denote the composition of the first $l$ transforms and assume that $\widehat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
+QMCPy also includes support for successive changes of measures so users may build complex variable transformations in an intuitive manner. Suppose that the variable transformation is a composition of several transformations: $\bsPsi=\widehat{\bsPsi}_L = \bsPsi_L \circ \bsPsi_{L-1} \circ \dots \circ \bsPsi_1$ as in \eqref{eq:transVarImp}. Here, $\bsPsi_l:\calX_{l-1} \to \calX_l$,  $\calX_0=\calX$, and $\calX_L=\calT$ so that the transformations are compatible with the \texttt{DiscreteDistribution} and \texttt{TrueMeasure}. Let $\widehat{\bsPsi}_l=\bsPsi_l \circ \bsPsi_{l-1} \circ \dots \circ \bsPsi_1$ denote the composition of the first $l$ transforms and assume that $\widehat{\bsPsi}_0(\bsx)=\bsx$, the identity transform. Then we may write $\mu =  \int_{\calX}f(\bsx) \, \varrho(\bsx) \D \bsx$ for 
 \begin{equation*}
     f(\bsx) 
  = g\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)\frac{\lambda\bigl(\widehat{\bsPsi}_L(\bsx)\bigr)}{\varrho(\bsx)}\prod_{l=1}^L \bigl\lvert \bsPsi_l'\bigl(\widehat{\bsPsi}_{l-1}(\bsx)\bigr) \bigr\rvert .
@@ -557,7 +561,8 @@ Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent m
 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
-Successful importance sampling places more points where the original integrand, $g$, varies more.  Equivalently, successful importance sampling makes the transformed integrand, $f$, flatter. The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}, however, the same example works for arbitrary dimensions.
+%Successful importance sampling places more points where the original integrand, $g$, varies more.  Equivalently, 
+Successful importance sampling makes the transformed integrand, $f$, flatter. The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}, however, the same example works for arbitrary dimensions.
 \begin{figure}[t]
     \centering
 	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
