@@ -4,9 +4,9 @@ General ~ Sou-Cheng and Fred
 
 Discrete Distribution ~ Fred
 - Discuss difference between stratification and RQMC
-- Comment on the name DiscreteDistribution, the referee and Dirk Nuyens found this confusing
+- Comment on the name DiscreteDistribution, the referee and Dirk Nuyens found this confusing  Fred Done
 - List criterion used to construct - Lattice sequences
-- Clarify that the better uniformity is for embedded Lattices and is not true in general
+- Clarify that the better uniformity is for embedded Lattices and is not true in general  Fred Done
 
 Code / Choice of Parameters ~ Aleksei
 - Show how the user can customize Sobol' and Lattice generative vectors
