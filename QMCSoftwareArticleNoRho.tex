@@ -185,7 +185,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open source library, which we hope will draw the support of the QMC community.  Here we introduce QMCPy.}
+\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open-source library, which we hope will draw the support of the QMC community.  Here we introduce QMCPy.}
 
 
 \section{Introduction} \label{sec:intro}
@@ -193,7 +193,7 @@ Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent 
 
 As a practitioner, you might wish to test whether QMC would speed up your computation.  You would like to easily access the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is crafted to be a community owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
+This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}, which is crafted to be a community-owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
 The model problem for QMC is approximating a multivariate integral,
 \begin{equation} \label{eq:integral}
@@ -237,15 +237,15 @@ The error in using the sample mean to approximate the integral can be bounded ac
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f).
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as highly stratified sampling.  In the examples below the reader will see the demonstrably smaller cubature errors arising from using LD points.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as highly stratified sampling.  In the examples below, the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
-In the sections that follow we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what are the key components and how should they interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
+In the sections that follow, we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what the key components are and how they should interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
 
 We have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in QMC software development will make this article somewhat obsolete in a good way in the next several years.
 
 \section{Available Software for QMC} \label{sec:available} 
 QMC software spans  LD sequence generators, cubatures, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
-Software focusing on generating high quality LD sequences  and their generators includes
+Software focusing on generating high-quality LD sequences  and their generators includes
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
@@ -256,7 +256,7 @@ Software focusing on generating high quality LD sequences  and their generators 
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
 	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}, and
-	\item [qrng]  Sobol', Halton, and Korobov sequences in R \cite{QRNG2020}.
+	\item [qrng]  Sobol', Halton, and Korobov sequences in R \cite{QRNG2020}. \scnote{qrng $\rightarrow$ QRNG?}
 \end{description}
 Software focusing on QMC cubatures and applications includes
 \begin{description}[format=\textup,format=\textbf]
@@ -290,14 +290,14 @@ This requires four components, which we implement as QMCPy classes.
 	\item[Stopping Criterion] determines how large $n$ should be to ensure that $\QMCPYabs{\mu - \hmu} \le \varepsilon$ as in (\ref{eq:err_req}).
 \end{description}
 
-The software libraries referenced in Section \ref{sec:available} provide one or more of these components. QMCPy combines multiple examples of all these components under an object oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and specific examples for each component. 
+The software libraries referenced in Section \ref{sec:available} provide one or more of these components. QMCPy combines multiple examples of all these components under an object-oriented framework. Each example is implemented as a concrete class that realizes the properties and methods required by the abstract class for that component. The following sections detail descriptions and specific examples for each component. 
 
-Thorough documentation of all QMCPy classes is available in \cite{QMCPyDocs}. Demonstrations of how QMCPy work are given in Google Colab notebooks \cite{QMCPyTutColab2020,QMCPyTutColab2020_paper}. The project may be installed from PyPI into your Python 3 environment via the command \texttt{pip install qmcpy}. In the code snippets that follow, we assume QMCPy has been imported alongside NumPy \cite{numpy} via the following commands in a Python Console:
+Thorough documentation of all QMCPy classes is available in \cite{QMCPyDocs}. Demonstrations of how QMCPy works are given in Google Colab notebooks \cite{QMCPyTutColab2020,QMCPyTutColab2020_paper}. The project may be installed from PyPI into your Python 3 environment via the command \texttt{pip install qmcpy}. In the code snippets that follow, we assume QMCPy has been imported alongside NumPy \cite{numpy} via the following commands in a Python Console:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/import.txt}
 
 \section{Discrete Distributions}
 
-LD sequences typically mimic $\calU[0,1]^d$.  Good sequences mimicking other distributions are obtained by transformations as described in the next section.  We denote by \texttt{DiscreteDistribution} the abstract class containing LD sequence generators.  In most cases that have been implemented, the points $\bsX_0, \ldots, \bsX_{n-1}$ have an empirical (discrete) distribution that closely approximates the uniform distribution, say, in the sense of discrepancy.  We also envision future possible \texttt{DiscreteDistribution} objects that assign unequal weights to the sampling points.  In any case, the term ``discrete'' refers to the fact that these are sequence of points (and weights), not continuous distributions.
+LD sequences typically mimic $\calU[0,1]^d$.  Good sequences mimicking other distributions are obtained by transformations as described in the next section.  We denote by \texttt{DiscreteDistribution} the abstract class containing LD sequence generators.  In most cases that have been implemented, the points $\bsX_0, \ldots, \bsX_{n-1}$ have an empirical (discrete) distribution that closely approximates the uniform distribution, say, in the sense of discrepancy.  We also envision future possible \texttt{DiscreteDistribution} objects that assign unequal weights to the sampling points.  In any case, the term ``discrete'' refers to the fact that these are sequences of points (and weights), not continuous distributions.
 
 QMCPy implements \emph{extensible} LD sequences, i.e., those that allow practitioners to obtain and use $\bsX_n, \bsX_{n+1}, \ldots $ without discarding $\bsX_0, \ldots, \bsX_{n-1}$.  Halton sequences do not have preferred sample sizes $n$, but extensible integration lattices and digital sequences in base $b$ prefer $n$ to be a power of $b$.  For integration lattices and digital sequences, we have focused on base $b=2$ since this is a popular choice and for convenience in generating extensible sequences.
 
@@ -366,9 +366,9 @@ A crucial difference between IID generators and LD generators is reflected in th
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_iidone.txt}
 Your output may look different depending on the seed used to generate these random numbers.
 
-On the other hand for an LD generator, asking for $n$ points repeatedly gives you \emph{the same} points each time because they are meant to be the first $n$ points of a specific LD sequence.  
+On the other hand, for an LD generator, asking for $n$ points repeatedly gives you \emph{the same} points each time because they are meant to be the first $n$ points of a specific LD sequence.  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_latticeone.txt}
-Here we allow the randomization so that the first point in the sequence is not the origin.  To obtain the \emph{next} $n$ points one may specify the start and ending indices of the sequence.
+Here we allow the randomization so that the first point in the sequence is not the origin.  To obtain the \emph{next} $n$ points, one may specify the start and ending indices of the sequence.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/dd_latticenextone.txt}
 
 Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol' LD points through powers of two fills in the gaps in an even way.
@@ -377,7 +377,7 @@ Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_lattice_successive.png}
 	\qquad
 	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_sobol_successive.png}
-	\caption{Randomized lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure for $n = 64, 128,$ and 256. Note how increasing the number of points evenly fills in the gaps between points.}
+	\caption{Randomized lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure for $n = 64, 128,$ and 256. Note how increasing the number of points evenly fills in the gaps between the points.}
 	\label{fig:increase_n}
 \end{figure}
 
@@ -445,7 +445,7 @@ Since $\lambda$ is the density for $\calN(\bszero,\mI/2)$, it is natural to choo
 \bsPsi(\bsx) := \sqrt{1/2} \,\bsPhi^{-1}(\bsx).
 \]
 
-The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points. Notice how a two dimensional Halton generator is used to construct a Gaussian true measure which is used alongside the \texttt{my\_Keister} function to construct a customized, QMCPy compatible, integrand for this problem.
+The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{CustomFun} wrapper to tie a user-defined function $g$ into the QMCPy framework.  Then we evaluate the sample mean of $n=1000$ $f$ values obtained by sampling at transformed Halton points. Notice how a two-dimensional Halton generator is used to construct a Gaussian true measure, which is applied alongside the \texttt{my\_Keister} function to instantiate a customized, QMCPy-compatible integrand for this problem.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keister.txt}
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
@@ -464,7 +464,7 @@ where $\bsPsi$ is any transformation from $[0,1]^d$ to $\bbR^d$. Now $\lambda$ i
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterLebesgue.txt}
 The $\bsPsi$ chosen when transforming uniform sequences on the unit cube to fill $\bbR^d$ is  given by \eqref{eq:exampleVarTransGauss} with $\mA = \mI$.
 
-In the examples above, one must input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach of defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling} which leaves $\mu$ unchanged.  
+In the examples above, one must input the correct $g$ into \texttt{CustomFun} along with the correct \texttt{TrueMeasure} $\lambda$ to define the integration problem. The \texttt{Keister} integrand included in the QMCPy library takes a more flexible approach to defining the integration problem $\mu$ in \eqref{eq:KeisterIntegral}. Selecting a different \texttt{sampler} $\bsPsi$ performs  \emph{importance sampling}, which leaves $\mu$ unchanged.  
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/i_keisterBuiltIn.txt}
 
 In the first case above, the $\lambda$ in \eqref{eq:transVar} corresponds to the Gaussian density  with mean zero and variance $1/2$ by default, and the corresponding variable transformation, $\bsPsi$, is chosen to make $\lambda\bigl(\bsPsi(\bsx)\bigr) \QMCPYabs{\bsPsi'(\bsx)}  = 1$ and $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  In the second case,  we choose an importance sampling density $\lambda_{\IMP}$, corresponding  to standard  Gaussian, and the variable transformation $\bsPsi_{\IMP}$ makes $\lambda_\IMP\bigl(\bsPsi_{\IMP}(\bsx)\bigr) \QMCPYabs{\bsPsi'_{\IMP}(\bsx)}  = 1$.  Then
@@ -482,9 +482,10 @@ Because LD samples mimic $\calU\cube$, choosing a different \texttt{sampler} is 
 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
-The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hmu$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on Bayesian credible intervals \cite{RatHic19a,JagHic22a}.
+The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hmu$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on
+Bayesian-credible intervals \cite{RatHic19a,JagHic22a}.
 
-The \texttt{CubQMCSobolG} stopping criterion used in the example below assumes the Walsh-Fourier coefficients of the integrand are absolutely convergent. The \texttt{CubQMCSobolG} algorithm iteratively doubles the number of samples used in the integration and estimates the error using the decay of the Walsh coefficients \cite{HicJim16a}. When the estimated error is below the user specified tolerance, it finishes the computation and returns the estimated integral.
+The \texttt{CubQMCSobolG} stopping criterion used in the example below assumes the Walsh-Fourier coefficients of the integrand are absolutely convergent. The \texttt{CubQMCSobolG} algorithm iteratively doubles the number of samples used in the integration and estimates the error using the decay of the Walsh coefficients \cite{HicJim16a}. When the estimated error is below the user-specified tolerance, it finishes the computation and returns the estimated integral.
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution} and input our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
@@ -499,7 +500,7 @@ Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute th
 	\label{fig:sc_comp}
 \end{figure}
 
-For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The (continuous time) Asian option is defined in terms of the average of the stock price, which is written in terms of an integral. The payoff of this option is the positive difference between the strike price, $K$, averaged over the time horizon: 
+For another illustration of QMC cubature, we turn to pricing an Asian arithmetic mean call option. The (continuous-time) Asian option is defined in terms of the average of the stock price, which is written in terms of an integral. The payoff of this option is the positive difference between the strike price, $K$, averaged over the time horizon: 
 $$
 \text{payoff}(\bsS) = \max\left(\frac{1}{2d}\sum_{j=1}^d (S_{j-1}+S_j)-K, \; 0\right), \quad \bsS = (S_0, \ldots, S_d).
 $$
@@ -524,7 +525,7 @@ Adding the upward drift gives us the answer faster:
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/w_imp_samp_aco.txt}
 The choice of a good drift is an art.  
 
-The improvement in time is less than improvement in $n$ because the integrand is more expensive to compute when the drift is employed.  Referring to \eqref{eq:transVarImp}, in the case of no drift, the $\lambda$ corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, in the case of a drift, the integrand becomes  $f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)/\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr)$, which requires more computation time per integrand value. 
+The improvement in time is less than that in $n$ because the integrand is more expensive to compute when the drift is employed.  Referring to \eqref{eq:transVarImp}, in the case of no drift, the $\lambda$ corresponds to the density for the discrete Brownian motion, and the variable transformation $\bsPsi$ is chosen so that $f(\bsx) = g\left(\bsPsi(\bsx) \right)$.  However, in the case of a drift, the integrand becomes  $f_\IMP(\bsx)  = g\bigl(\bsPsi_\IMP(\bsx)\bigr)  \lambda\bigl(\bsPsi_\IMP(\bsx)\bigr)/\lambda_\IMP\bigl(\bsPsi_\IMP(\bsx)\bigr)$, which requires more computation time per integrand value. 
 
 \section{Under the Hood}
 
@@ -534,16 +535,16 @@ In this section, we look at the inner workings of QMCPy and point out features w
 
 LD sequences are the backbone of QMC methods. QMCPy provides generators that combine research from across the QMC community to enable advanced features and customization options.
 
-Two popular LD sequences are integration lattices and digital nets which we previously outlined in Table \ref{tab:GroupProp}. These LD generators are comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \ldots \in [0,1)^d$ and the callable generator function. By default, QMCPy provides a number of high quality generating vectors for users to choose from. For instance, the default ordinary lattice vector was constructed by Cools, Kuo, and Nuyens \cite{doi:10.1137/06065074X} using component-by-component algorithms, is extensible, has order 2 weights, and supports up to 3600 dimensions and $2^{20}$ samples. 
+Two popular LD sequences are integration lattices and digital nets which we previously outlined in Table \ref{tab:GroupProp}. These LD generators are comprised of two parts: the static generating vectors $\bsZ_1,\bsZ_2,\bsZ_4, \ldots \in [0,1)^d$ and the callable generator function. By default, QMCPy provides a number of high-quality generating vectors for users to choose from. For instance, the default ordinary lattice vector was constructed by Cools, Kuo, and Nuyens \cite{doi:10.1137/06065074X} using component-by-component algorithms, is extensible, has order-2 weights, and supports up to 3600 dimensions and $2^{20}$ samples. 
 %https://web.maths.unsw.edu.au/~fkuo/lattice/index.html
 %https://web.maths.unsw.edu.au/~fkuo/sobol/
 However, users who require more samples but fewer dimensions may switch to a generating vector constructed using LatNet Builder \cite{LEcEtal22a,LatNet} to support 750 dimensions and $2^{24}$ samples. Moreover, the \texttt{qp.Lattice} and \texttt{qp.DigitalNet} objects allow users to input their own generating vectors to produce highly customized sequences. To find such vectors, we recommend using LatNet Builder's construction routines as the results can be easily parsed into a QMCPy-compatible format. 
 
-Along with the selection of a generating vector, QMCPy's low discrepancy sequence routines expose a number of other customization parameters. For instance, the lattice generator extends the Magic Point Shop \cite{Nuy17a} to support either linear or natural ordering. Digital sequences permit either standard or Graycode ordering and maybe randomized via a digital shift optionally combined with a linear scrambling \cite{Mat98}. Halton sequences may be randomized via the routines of either Owen \cite{Owe20a} or Hofert and Lemieux \cite{QRNG2020}. 
+Along with the selection of a generating vector, QMCPy's low discrepancy sequence routines expose a number of other customization parameters. For instance, the lattice generator extends the Magic Point Shop \cite{Nuy17a} to support either linear or natural ordering. Digital sequences permit either standard or Gray code ordering and may be randomized via a digital shift optionally combined with a linear scrambling \cite{Mat98}. Halton sequences may be randomized via the routines of either Owen \cite{Owe20a} or Hofert and Lemieux \cite{QRNG2020}. 
 
-\subsection{A Word of Caution when Using LD Sequences}
+\subsection{A Word of Caution When Using LD Sequences}
 
-Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, base 2 digital nets and extensible integration lattices show better evenness for sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
+Although QMCPy's \texttt{DiscreteDistribution}s have many of the same parameters and methods, users should be careful when swapping IID sequences with LD sequences. While IID node-sets have no preferred sample size, LD sequences often require special sampling ranges to ensure optimal discrepancy. As mentioned  earlier, base-2 digital nets and extensible integration lattices show better evenness for sample sizes that are powers of 2. On the other hand, the preferred sample sizes for $d$-dimensional Halton sequences are $n = \prod_{j=1}^d p^{m_j}_j$ where $p_j$ is the $j^{\text{th}}$ prime number and $m_j \in \mathbb{N}_0$ for $j=1,\dots,d$. Due to the infrequency of such values, Halton sequences are often regarded as not having a preferred sample size.  
 
 Users may also run into trouble when trying to generate too many points. Since QMCPy's generators construct sequences in 32-bit precision, generating greater than $2^{32}$ consecutive samples will cause the sequence to repeat. In the future, we plan to expand our generators to support optional 64-bit precision at the cost of greater computational overhead.
 
@@ -594,33 +595,34 @@ Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent m
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
 %Successful importance sampling places more points where the original integrand, $g$, varies more.  Equivalently, 
-Successful importance sampling makes the transformed integrand, $f$, flatter. The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}, however, the same example works for arbitrary dimensions.
+Successful importance sampling makes the transformed integrand, $f$, flatter. \scnote{flatter is a verb.} The shorter execution times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}; however, the same example works for arbitrary dimensions.
 \begin{figure}[t]
     \centering
 	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
 \end{figure}
 
-Automatic Bayesian stopping criteria choose $n$ needed to satisfy the error tolerance via a Bayesian credible interval for $\mu$ \cite{RatHic19a,JagHic22a}.  These are also options in QMCPy.
+Automatic Bayesian stopping criteria choose $n$ needed to satisfy the error tolerance via a Bayesian-credible interval for $\mu$ \cite{RatHic19a,JagHic22a}.  These are also options in QMCPy.
 
 
 \section{Further Work} \label{sec:further}
 
 QMCPy is ripe for growth and development in several areas.  We hope that the QMC community will join us in making this a reality.
 
-Multi-level (quasi-)Monte Carlo (ML(Q)MC) methods make possible the computation of expectations of functionals of stochastic differential equations and partial differential equations with random coefficients.  Such use cases appear in quantitative finance and in geophysical applications.  QMCPy's ML(Q)MC's capability is rudimentary, but under active development.
+Multi-level (quasi-)Monte Carlo (ML(Q)MC) methods make possible the computation of expectations of functionals of stochastic differential equations and partial differential equations with random coefficients.  Such use cases appear in quantitative finance and geophysical applications.  QMCPy's ML(Q)MC's capability is rudimentary, but under active development.
 
 We hope to add a greater variety of use cases and are engaging collaborators to help.  Sobol' indices, partial differential equations with random coefficients, expected improvement measures for Bayesian optimization, and multivariate probabilities are some of those on our radar.
 
-Recently, some QMC experts have focused on developing LD generators for Python. Well established packages such as SciPy \cite{SCIPY} and PyTorch \cite{PyTorch} are actively working to develop QMC modules that support numerous LD sequences and related functionalities. When these modules are released to the public, we plan to integrate the routines as optional backends for QMCPy's LD generator objects. Creating ties to these other packages will allow users to call their preferred generators from within the QMCPy framework.  Moreover, as features in QMCPy become more common and prove their value, we will try to incorporate them into SciPy and other popular, general purpose packages.
+Recently, some QMC experts have focused on developing LD generators for Python. 
+Well-established packages such as SciPy \cite{SCIPY} and PyTorch \cite{PyTorch} are actively working to develop QMC modules that support numerous LD sequences and related functionalities. When these modules are released to the public, we plan to integrate the routines as optional backends for QMCPy's LD generator objects. Creating ties to these other packages will allow users to call their preferred generators from within the QMCPy framework.  Moreover, as features in QMCPy become more common and prove their value, we will try to incorporate them into SciPy and other popular, general-purpose packages.
 
-We also plan to expand our library of digital net generating matrices. We wish to incorporate interlaced digital nets, polynomial lattices, and Niederreiter sequences, among others. By including high quality defaults in QMCPy, we hope to make these sequences more readily available to the public. 
+We also plan to expand our library of digital net generating matrices. We wish to incorporate interlaced digital nets, polynomial lattices, and Niederreiter sequences, among others. By including high-quality defaults in QMCPy, we hope to make these sequences more readily available to the public. 
 
-Our \texttt{DiscreteDistrution} places equal weights on each support point, $\bsX_i$.  In the future we might generalize this to unequal weights.
+Our \texttt{DiscreteDistrution} places equal weights on each support point, $\bsX_i$.  In the future, we might generalize this to unequal weights.
 
 QMCPy already includes importance sampling, but the choice of sampling distribution must be chosen a priori.  We would like to see an automatic, adaptive choice.
 
-Control variates can be useful for QMC, as well as for IID MC \cite{HicEtal03}.  These should be incorporated into QMCPy in a seamless way.
+Control variates can be useful for QMC as well as for IID MC \cite{HicEtal03}.  These should be incorporated into QMCPy in a seamless way.
 
 We close with an invitation.  Try QMCPy.  If you find bugs or missing features, submit an issue to \href{https://github.com/QMCSoftware/QMCSoftware/issues}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/issues}}.  If you wish to add your great algorithm or use case, submit a pull request to our GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware/pulls}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware/pulls}}.  We hope that the community will embrace QMCPy.
 
