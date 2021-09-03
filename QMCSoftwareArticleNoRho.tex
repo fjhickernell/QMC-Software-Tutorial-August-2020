@@ -185,10 +185,13 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 \maketitle
 
-\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We highlight the key software components required to approximate multivariate integrals or expectations of functions of vector random variables by QMC.  We have combined these components in QMCPy, a Python open-source library, which we hope will draw the support of the QMC community.  Here we introduce QMCPy.}
+\abstract{Practitioners wishing to experience the efficiency gains from using low discrepancy sequences need correct, well-written software.  This article, based on our MCQMC 2020 tutorial, describes some of the better quasi-Monte Carlo (QMC) software available.  We highlight the key software components required  by QMC to approximate multivariate integrals or expectations of functions of vector random variables.  We have combined these components in QMCPy, a Python open-source library, which we hope will draw the support of the QMC community.  Here we introduce QMCPy.} 
 
 
-\section{Introduction} \label{sec:intro}
+\section{Introduction} \label{sec:intro} 
+
+\scnote{Shall we mention the version of QMCPy this article is based on?}
+
 Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases, QMC  achieves one hundredth of the error of IID MC in the same amount of time (see Figure \ref{fig:sc_comp}). Often, these efficiency gains are obtained simply by replacing IID sampling with low discrepancy (LD) sampling, which is the heart of QMC. 
 
 As a practitioner, you might wish to test whether QMC would speed up your computation.  You would like to easily access the best QMC algorithms available.  As a theoretician or an algorithm developer, you might want to demonstrate your best ideas on  various  use cases to show their practical value.  
@@ -231,7 +234,7 @@ When IID points are used to approximate $\mu$ by the sample mean, the root mean 
 	\label{fig:comparePts}
 \end{figure}
 
-LD sequences may be deterministic or random, but each point is carefully coordinated with the others so that they fill the domain well.  Subsequences of LD sequences are generally not LD.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim \calU\cube$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the uniform distribution, $F_\unif$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  A measure of the difference between the empirical distribution of a set of points and the uniform distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1})$ \cite{DicEtal14a,Hic97a,Hic99a,Nie92}.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case linearly scrambled Sobol' points.
+LD sequences may be deterministic or random, but each point is carefully coordinated with the others so that they fill the domain well.  Subsequences of LD sequences are generally not LD.  When we say that $\bsX_0, \bsX_1, \ldots \LDsim \calU\cube$, we mean that for any positive integer $n$,  the \emph{empirical distribution} of $\bsX_0, \ldots, \bsX_{n-1}$, denoted $F_{\{\bsX_i\}_{i=0}^{n-1}}$,  approximates the uniform distribution, $F_\unif$, well (relative to $n$).  (The empirical distribution of a set assigns equal probability to each point.)  A measure of the difference between the empirical distribution of a set of points and the uniform distribution is called a \emph{discrepancy} and is denoted $D(\{\bsX_i\}_{i=0}^{n-1})$ \cite{DicEtal14a,Hic97a,Hic99a,Nie92}.  This is the origin of the term ``low discrepancy'' points or sequences.  LD points by definition have a smaller discrepancy than IID points.  Figure \ref{fig:comparePts} contrasts IID uniform points with LD points, $\bsX^{\LD}_0, \bsX^{\LD}_1 \ldots \LDsim \calU[0,1]^2$, in this case, linearly scrambled Sobol' points.
 
 The error in using the sample mean to approximate the integral can be bounded according to the Koksma-Hlawka inequality and its extensions \cite{DicEtal14a,Hic97a,Hic99a,Nie92} as the product of the discrepancy of the sampling sequence and the variation of the integrand, denoted $V(\cdot)$:
 \begin{equation}
@@ -245,23 +248,23 @@ We have endeavored to be as accurate as possible at the time of writing this art
 
 \section{Available Software for QMC} \label{sec:available} 
 QMC software spans  LD sequence generators, cubatures, and applications.  We review the better known software collections, recognizing that some software overlaps multiple categories.
-Software focusing on generating high-quality LD sequences  and their generators includes
+Software focusing on generating high-quality LD sequences and their generators includes the following:
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
-	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
+	\item[SobolSeq] Commerical and non-commercial software developed by BRODA Limited and I.M.~Sobol, SobolSeq can generate Sobol' sequences up to 65,536 dimensions in C++, MATLAB, and Excel~\cite{BRODA20a}. \scnote{Not used in QMCPy (yet), right? What is the max dim of Sobol sequences in QMCPy?}
 	\item[Burkhardt] Various QMC software in C++, Fortran, MATLAB, and Python~\cite{Bur20a},
 	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets~\cite{LEcEtal22a,LatNet},
 	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
 	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
-	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}, and
-	\item [qrng]  Sobol', Halton, and Korobov sequences in R \cite{QRNG2020}. \scnote{qrng $\rightarrow$ QRNG?}
+	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}. Julia~\cite{bezanson2012julia} is a language similar to Python in terms of ease of use, but is designed to run much faster.
+	\item [qrng]  Sobol', Halton, and Korobov sequences in R and C~\cite{QRNG2020}. We have translated qrng to Python; see  \url{https://github.com/QMCSoftware/qrngpy}. In addition, the C source files in qrng can be compiled and accessed in QMCPy as one of the backends. In some cases, our version of qrng with its compiled code in QMCPy is more efficient than the original software in R \scnote{Why or how? By taking advantage of MRG63k3a?}; see the demo, \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/quasirandom_generators.html}{\emph{Quasi-Random Sequence Generator Comparison}}, in the QMCPy documentation~\cite{QMCPyDocs}. 
 \end{description}
 Software focusing on QMC cubatures and applications includes
 \begin{description}[format=\textup,format=\textbf]
 	\item[GAIL] Automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal20a},
-	\item[ML(Q)MC] Multi-Level (Q)MC routines in C++, MATLAB, Python, and R~\cite{GilesSoft},
+	\item[ML(Q)MC] Multi-Level (Q)MC routines in C, C++, MATLAB, Python, and R~\cite{GilesSoft},
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
 	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
 	\item[SSJ] Stochastic Simulation with the \texttt{hups} package in Java \cite{SSJ}, and
@@ -634,7 +637,7 @@ We also thank the referees for their many helpful suggestions.  This work is sup
 %\section*{References}
 %\nocite{*}
 \bibliographystyle{spmpsci.bst}
-\bibliography{FJH23,FJHown23,QMCSoftwareArticle}
+\bibliography{FJH23,FJHown23,QMCSoftwareArticle,sc}
 
 
 \iffalse
