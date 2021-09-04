@@ -251,15 +251,15 @@ QMC software spans  LD sequence generators, cubatures, and applications.  We rev
 Software focusing on generating high-quality LD sequences and their generators includes the following:
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
-	\item[SobolSeq] Commerical and non-commercial software developed by BRODA Limited and I.M.~Sobol, SobolSeq can generate Sobol' sequences up to 65,536 dimensions in C++, MATLAB, and Excel~\cite{BRODA20a}. \scnote{Not used in QMCPy (yet), right? What is the max dim of Sobol sequences in QMCPy?}
-	\item[Burkhardt] Various QMC software in C++, Fortran, MATLAB, and Python~\cite{Bur20a},
-	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets~\cite{LEcEtal22a,LatNet},
-	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9},
-	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
+	\item[BRODA] Commerical and non-commercial software developed jointly with I.M.~Sobol in C++, MATLAB, and Excel~\cite{BRODA20a}, it can generate Sobol' sequences up to 65,536 dimensions. \scnote{Not used in QMCPy (yet), right? What is the max dim of Sobol sequences in QMCPy?}	
+	\item[Burkhardt] Various QMC software for generating van der Corput, Faure, Halton, Hammersley, Niederreiter, or Sobol sequences in C, C++, Fortran, MATLAB, or Python~\cite{Bur20a}. 
+	\item[LatNet Builder] Previously called \emph{Lattice Builder}~\cite{l2016algorithm}, LatNet Builder is a C++ library with Python and Java interfaces (in SSJ below) for generating vectors/matrices for lattices and digital nets~\cite{LEcEtal22a,LatNet}. Currently, QMCPy contains a \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/latnetbuilder.html}{demo for LatNet Builder}. \scnote{More plan with it in QMCPy?}
+	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.9}. In our computational experiments, we show that QMCPy's implementation of the two sequences on average executes faster than MATLAB's for up to $10^6$ sampling points. For details, we refer readers to the demo, \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/quasirandom_generators.html}{\emph{Quasi-Random Sequence Generator Comparison}}. \scnote{Update Matlab to 2021a in References}
+	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a}.
 	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
-	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}. Julia~\cite{bezanson2012julia} is a language similar to Python in terms of ease of use, but is designed to run much faster.
-	\item [qrng]  Sobol', Halton, and Korobov sequences in R and C~\cite{QRNG2020}. We have translated qrng to Python; see  \url{https://github.com/QMCSoftware/qrngpy}. In addition, the C source files in qrng can be compiled and accessed in QMCPy as one of the backends. In some cases, our version of qrng with its compiled code in QMCPy is more efficient than the original software in R \scnote{Why or how? By taking advantage of MRG63k3a?}; see the demo, \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/quasirandom_generators.html}{\emph{Quasi-Random Sequence Generator Comparison}}, in the QMCPy documentation~\cite{QMCPyDocs}. 
+	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}. Julia~\cite{bezanson2012julia} is an interpreted language similar to Python and R in terms of ease of use, but is designed to run much faster.
+	\item [qrng] Sobol', Halton, and Korobov sequences in R and C~\cite{QRNG2020}. We have translated qrng to Python; see  \url{https://github.com/QMCSoftware/qrngpy}. In addition, the C source files in qrng can be compiled and accessed in QMCPy as one of the backends. In some cases, our version of qrng with its compiled code in QMCPy is more efficient than the original software in R \scnote{Why or how? By taking advantage of MRG63k3a?}; see the demo, \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/quasirandom_generators.html}{\emph{Quasi-Random Sequence Generator Comparison}}, in the QMCPy documentation~\cite{QMCPyDocs}. 
 \end{description}
 Software focusing on QMC cubatures and applications includes
 \begin{description}[format=\textup,format=\textbf]
