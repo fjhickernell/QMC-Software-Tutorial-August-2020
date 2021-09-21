@@ -8,7 +8,9 @@
 \hoffset -0.7in
 \allowdisplaybreaks %allow equations to span multiple pages
 
-\input{FJHDef}
+\input{../FJHDef}
+
+\newcommand{\scnote}[1]{ {\textcolor{blue}  {\mbox{**SC:} #1}}}
 
 \begin{document}
 \title{QMCPy Authors' Feedback for Referee Report 1}
@@ -34,5 +36,19 @@ My recommendation is a minor revision, so that the authors can expand Section 2,
 
 %\bibliographystyle{amsplain}
 %\bibliography{FJH23,FJHown23}
+
+\vspace{10ex}
+
+\scnote{
+{\bf Response:} We thank the reviewer for the valid and helpful feedback especially for Section 2 of the manuscript. We have extended the section with the following changes: 
+\begin{enumerate}
+ \item added a few packages (SciPy, TF Quant Finance, and MultilevelEstimators.jl) that have come to our attention recently; 
+ \item for each software, 
+    \begin{enumerate}
+        \item described in more detail some of its best features;
+        \item specified if some or all of the best features are accessible and, if applicable, enhanced through QMCPy by various mechanisms (e.g., direct calls, wrapper functions, code compilation, or direct translation).
+    \end{enumerate}
+\end{enumerate}
+ }
 
 \end{document}
