@@ -67,7 +67,7 @@ Bottom of table 1: the 	 operator is not defined. What is it?
 
 From what we see in Section 4, it seems that the user cannot select the point sets (direction numbers, generating matrices, generating vectors for the lattices). A comment on this would be good. 
 
-\AGSComment{We have added a discussion in Under the Hood section discussing QMCPy's support for custom generating vectors for Lattice sequences and custom generating matrices for digital nets in base 2.}
+\AGSComment{We have added a discussion in Section 8, ``Under the Hood'',  regarding QMCPy's support for custom generating vectors for Lattice sequences and custom generating matrices for digital nets in base 2.}
 \vspace{1cm}
 
 In several places, a reader who is not already familiar with both Python and QMCPy (like me) may struggle to understand what goes on when reading the Python code. For example, on page 8, it would be good to recall quickly in the text what the parameters mean in \texttt{IIDStdUniform(2)}, \texttt{gen\_samples(1)}, and \texttt{gen\_samples(n min=1,n max=2)}.
@@ -117,17 +117,17 @@ Section 8.3, first paragraph: How are the IID Gaussian points obtained if it is 
 
 Second paragraph: Here you consider successive changes of measures and/or successive changes of variables. It is not clear why one would want to do that. In the end, the combined changes of variables corresponds to a single change of variable, no? We miss a motivation for this.
 
-\AGSComment{We built in support for successive changes of variables to help users easily construct complex variable transformations without having to work out all the math. This discussion has been added to the paper.}
+\AGSComment{We have built-in support for successive changes of variables to help users easily construct complex variable transformations without having to work out all the math. This discussion has been added to the paper.}
 \vspace{1cm}
 
 What is the Kumaraswamy distribution?
 
-\AGSComment{It is similar to the Beta distribution, but with closed form CDF and quantile functions. We have added a reference for this.}
+\AGSComment{It is similar to the Beta distribution, but with closed-form CDF and quantile functions. We have added a reference for this.}
 \vspace{1cm}
 
 Page 20: ``Successful importance sampling places more points where the original integrand $g$ varies more'' is not quite correct. Again, see [1] and [6] for the optimal choice.
 
-\AGSComment{We have replaced this sentance with ``Successful importance sampling makes the transformed integrand, $f$, more flat.''}
+\AGSComment{We have replaced this sentence with ``Successful importance sampling makes the transformed integrand, $f$, more flat.''}
 \vspace{1cm}
 
 Page 22: Automatic adaptive choice of IS: How?
