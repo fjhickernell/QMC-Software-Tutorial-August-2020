@@ -40,7 +40,11 @@ Page 4, Eq.(5): Replace the comma by a period.
 \vspace{1cm}
 
 Page 4, ``highly stratified sampling'': A key difference between RQMC and stratification is that in the latter, once the partition is defined, the positions of the points in the different pieces are conditionally independent. Because of that, the variance can never increase compared with Monte Carlo, which is not true for RQMC. See Section 2 of [2], for example. This independence property can make it easier to prove convergence rates for the variance; see
-[3], Proposition 6, for an example of this. \vspace{1cm}
+[3], Proposition 6, for an example of this. 
+
+\FJHComment{Thanks to the referee for pointing this out.  We have modified the wording to say that LD sampling is similar to stratified sampling without going into the details.}
+
+\vspace{1cm}
 
 Page 5, SSJ: You may add “in the hups package”.
 
@@ -51,7 +55,7 @@ The authors call an RQMC point set a discrete distribution, which I find a bit c
 RQMC points do not really follow a discrete distribution and there is no sampling from a discrete distribution. After they are randomized, conditional on their values, the n points form a deterministic set and one can think of a discrete uniform distribution over these n points, but one never generate points from this discrete distribution. A DiscreteDistribution object has a gen samples method that returns all the n points of the RQMC point set in a
 large two-dimensional array. It is probably too late to change the name, but a comment on this could be added.
 
-\FJHComment{Comment added in the first paragraph of Section 4.}
+\FJHComment{The intention in the name is that the finite points have an empirical distribution that has discrete support.  We might in the future add the possibility of unequal weights although we have not done so yet.  A comment added in the first paragraph of Section 4.}
 
 \vspace{1cm}
 
@@ -68,7 +72,8 @@ something more general is a bit confusing.
 
 \vspace{1cm}
 
-Bottom of table 1: the 	 operator is not defined. What is it?
+Bottom of table 1: the 	$\ominus$ operator is not defined. What is it?
+\FJHComment{The definition is given in the text where we diwscuss Table 1.}
 
 \vspace{1cm}
 

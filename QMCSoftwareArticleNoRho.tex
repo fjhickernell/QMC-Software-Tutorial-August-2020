@@ -240,13 +240,15 @@ The error in using the sample mean to approximate the integral can be bounded ac
 \begin{equation}
 	\QMCPYabs{\mu - \hmu} = \QMCPYbiggabs{\int_{\cube} f(\bsx) \, \D (F_\unif - F_{\{\bsX_i\}_{i=0}^{n-1}}) (\bsx)} \le D\bigl(\{\bsX_i\}_{i=0}^{n-1}\bigr) V(f).
 \end{equation} 
-The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as highly stratified sampling.  In the examples below, the reader will see the demonstrably smaller cubature errors arising from using LD points.
+The variation is a (semi-) norm of the integrand in a suitable Banach space.  The discrepancy corresponds to the norm of the error functional for that Banach space.  For typical Banach spaces, the discrepancy of LD points is $\calO(n^{-1+\epsilon})$, which is a higher convergence order than for IID points.  For details, the reader is referred to the references.  Here, we expect the reader to see in Figure \ref{fig:comparePts} that the LD points cover the integration domain more evenly than IID points.  LD sampling can be thought of as a more even distribution of the sampling sites than IID.  LD sampling is similar to stratified sampling.  In the examples below, the reader will see the demonstrably smaller cubature errors arising from using LD points.
 
-In the sections that follow, we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what the key components are and how they should interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}. \FJHComment{Fix link}
+In the sections that follow, we first overview available QMC software.  We next describe an architecture for good QMC software, i.e., what the key components are and how they should interact.  We then describe how we have implemented this architecture in QMCPy.  Finally, we summarize further directions that we hope QMCPy and other QMC software projects will take.  Those interested in following or contributing to the development of QMCPy are urged to visit the GitHub repository at \href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
 
 We have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in QMC software development will make this article somewhat obsolete in a good way in the next several years.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Available Software for QMC} \label{sec:available} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMC software spans  LD sequence generators, cubatures, and applications.  We review the better-known software collections, recognizing that some software overlaps multiple categories. Whenever applicable, we state each library's accessibility in QMCPy, or contrast its functionalities with QMCPy's --- where we lag behind in QMCPy, we strive to catch up in the near future.
 
 Software focusing on generating high-quality LD sequences and their generators includes the following, listed in alphabetical order of the names:
@@ -273,7 +275,7 @@ Software focusing on QMC cubatures and applications includes the following:
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks'N Statistics \cite{OpenTURNS} written in C++ and Python, leveraging R statistical packages, as well as LAPACK and BLAS for numerical linear algebra.
 	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients in Python \cite{KuoNuy16a}.
 	\item[SSJ] Stochastic Simulation with the \texttt{hups} package in Java \cite{SSJ}.
-	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.  The core of UQLab is closed source, but a large portion of the library is open source. Recently,  UQ[py]Lab, the beta release of UQLab with Python binding, is  available as Software as a Service (SaaS) via UQCloud~\cite{lataniotis2021uncertainty}. \FJHComment{SC please make this a cited reference} \scnote{DONE}
+	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.  The core of UQLab is closed source, but a large portion of the library is open source. Recently,  UQ[py]Lab, the beta release of UQLab with Python binding, is  available as Software as a Service (SaaS) via UQCloud~\cite{lataniotis2021uncertainty}.
 
 \end{description}
 
