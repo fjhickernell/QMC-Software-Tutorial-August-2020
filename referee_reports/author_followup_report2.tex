@@ -15,6 +15,7 @@
 %\author{}
 
 \newcommand{\AGSComment}[1]{{\color{cyan} Aleksei: #1}}
+\newcommand{\FJHComment}[1]{{\color{blue} Fred: #1}}
 
 \maketitle
 
@@ -50,14 +51,20 @@ The authors call an RQMC point set a discrete distribution, which I find a bit c
 RQMC points do not really follow a discrete distribution and there is no sampling from a discrete distribution. After they are randomized, conditional on their values, the n points form a deterministic set and one can think of a discrete uniform distribution over these n points, but one never generate points from this discrete distribution. A DiscreteDistribution object has a gen samples method that returns all the n points of the RQMC point set in a
 large two-dimensional array. It is probably too late to change the name, but a comment on this could be added.
 
+\FJHComment{Comment added in the first paragraph of Section 4.}
+
 \vspace{1cm}
 
 Page 6: The $\oplus$ sign is commonly used to denote the exclusive-or operation, so its use for
 something more general is a bit confusing.
 
+\FJHComment{An explanation has been added in the footnote.}
+
 \vspace{1cm}
 
-``lattices and digital sequences prefer n to be a power of 2'' should be better qualified. This is true for digital nets in base 2. For digital nets in prime base b > 2, we would prefer a power of b. For lattice rules, a prime n is sometimes better than a power of 2; see Figure 6 of [4], for example. I think the real reason for using a power of 2 for lattices in this paper is to have a sequence of embedded lattices. This should be clarified.
+``lattices and digital sequences prefer $n$ to be a power of 2'' should be better qualified. This is true for digital nets in base 2. For digital nets in prime base $b > 2$, we would prefer a power of $b$. For lattice rules, a prime $n$ is sometimes better than a power of 2; see Figure 6 of [4], for example. I think the real reason for using a power of 2 for lattices in this paper is to have a sequence of embedded lattices. This should be clarified.
+
+\FJHComment{Explanation and clarification added early in Section 4.  You are correct that we want embedded lattices or nets.}
 
 \vspace{1cm}
 
