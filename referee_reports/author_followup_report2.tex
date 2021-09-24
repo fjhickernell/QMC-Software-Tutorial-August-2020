@@ -73,7 +73,8 @@ something more general is a bit confusing.
 \vspace{1cm}
 
 Bottom of table 1: the 	$\ominus$ operator is not defined. What is it?
-\FJHComment{The definition is given in the text where we diwscuss Table 1.}
+
+\FJHComment{The definition is given in the text where we discuss Table 1.}
 
 \vspace{1cm}
 
@@ -92,13 +93,21 @@ On page 12, it would also be good to explain the code a bit. What is \texttt{Cus
 \AGSComment{We have added some discussion/keywords to try and make input parameters more transparent.}
 \vspace{1cm}
 
-The different ways of rewriting the integral shown on pages 12 and 13 are only remotely connected to the software itself. I suppose the software can take any reformulation as an integral over the unit hypercube. Of course, the MC and RQMC variances will depend on the reformulation. We also miss some insight about the specific choices of reformulations given here. For example, the optimal change of measure for the importance sampling is the one that makes the integrand completely flat and gives a variance of zero [1]. This zerovariance IS can often be well approximated [6]. Basically, we want $\lambda_\text{IS}$ to be approximately proportional to $g \cdot \lambda$. But the choice made in the paper seems arbitrary and is not really justified.
+The different ways of rewriting the integral shown on pages 12 and 13 are only remotely connected to the software itself. I suppose the software can take any reformulation as an integral over the unit hypercube. Of course, the MC and RQMC variances will depend on the reformulation. We also miss some insight about the specific choices of reformulations given here. For example, the optimal change of measure for the importance sampling is the one that makes the integrand completely flat and gives a variance of zero [1]. This zero variance IS can often be well approximated [6]. Basically, we want $\lambda_\text{IS}$ to be approximately proportional to $g \cdot \lambda$. But the choice made in the paper seems arbitrary and is not really justified.
+
+\FJHComment{You are correct that importance sampling can be difficult to do well.  It is an art.  QMCPy is not yet developed enough to do sophisticated importance sampling.  This is future work.}
+
+\vspace{1cm}
 
 The code on page 14: Say what \texttt{CubQMCSobolG} is doing exactly. How is the error or variance estimated? What randomization is used for the Sobol points?
+
+\FJHComment{\texttt{CubQMCSobolG} implements the stopping criterion of Hickernell and Jim\'enez Rugama in reference [18] as now explained in the text.  A more detailed description of the stopping criterion would be too long.  The randomization is linear matrix scrambling, but it is immaterial.  We are not using replications.}
 
 \vspace{1cm}
 
 Page 16: Why use a trapezoidal rule? I think Asian option payoffs in practice are already defined by a finite arithmetic average, no?
+
+\FJHComment{The continuous time Asian option is defined as an integral.  The trapezoidal rule gives a better approximation to the integral.}
 
 \vspace{1cm}
 
@@ -109,6 +118,8 @@ Page 16: Why use a trapezoidal rule? I think Asian option payoffs in practice ar
 
 Bottom of page 16: How did you select the upward drift? An optimal choice that would provide zero variance would have to be dynamic, as explained in [6] for the Markov chain
 setting.
+
+\FJHComment{Again, dynamic choice is beyond the scope of what we can do.}
 
 \vspace{1cm}
 
@@ -145,9 +156,14 @@ Page 20: ``Successful importance sampling places more points where the original 
 Page 22: Automatic adaptive choice of IS: How?
 
 \AGSComment{Not quite sure yet. Perhaps we can do some distribution-hyperparameter optimization? We need to think through this more, but initial computer experiments have shown some promise.}
+
+\AGSComment{TODO: Add references 1 and 6 from report.}
+
 \vspace{1cm}
 
 Reference 27 is not correct. There is the journal paper [5] on Lattice Builder. Then there is the LatNet Builder software at https://github.com/umontreal-simul/latnetbuilder, which has more contributors: L’Ecuyer, Munger, Marion, Godin, Puchhammer.
+
+\FJHComment{TODO}
 
 \vspace{1cm}
 
