@@ -1,4 +1,4 @@
->>> lattice = qp.Lattice(dimension=2,randomize=False)
+>>> lattice = qp.Lattice(dimension=2, randomize=False)
 >>> lattice.gen_samples(n=8)
 "ParameterWarning:
         Non-randomized lattice sequence includes the origin."

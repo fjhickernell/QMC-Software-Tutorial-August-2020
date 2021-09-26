@@ -166,7 +166,7 @@ Explain the Kumaraswamy distribution
 \begin{document}
 
 \title*{Quasi-Monte Carlo Software}
-\authorrunning{S.-C.\ T.\ Choi et al}
+\authorrunning{S.-C.\ T.\ Choi et al.}
 \author{Sou-Cheng T. Choi \and Fred J. Hickernell \and R. Jagadeeswaran \and Michael J. McCourt \and Aleksei G. Sorokin}
 \institute{Sou-Cheng T. Choi \at Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 10 W.\ 32$^{\text{nd}}$ St., Chicago, IL 60616; and Kamakura Corporation, 2222 Kalakaua Ave, Suite 1400, Honolulu, HI 96815 \email{schoi32@iit.edu}
 \and
@@ -252,7 +252,7 @@ QMC software spans  LD sequence generators, cubatures, and applications.  We rev
 Software focusing on generating high-quality LD sequences and their generators includes the following, listed in alphabetical order:
 \begin{description}[format=\textup,format=\textbf]
 % https://tex.stackexchange.com/questions/74279/how-to-add-bullets-to-description-lists
-	\item[BRODA] Commerical and non-commercial software developed jointly with I.M.~Sobol' in C++, MATLAB, and Excel~\cite{BRODA20a}. BRODA can generate Sobol' sequences up to 65,536 dimensions. In comparison, QMCPy supports Sobol' sequences in up to 21,201 dimensions.	
+	\item[BRODA] Commerical and non-commercial software developed jointly with I.M.~Sobol' in C++, MATLAB, and Excel~\cite{BRODA20a}. BRODA can generate Sobol' sequences up to 65,536 dimensions. In comparison, QMCPy supports Sobol' sequences up to 21,201 dimensions.	
 	\item[Burkhardt] Various QMC software for generating van der Corput, Faure, Halton, Hammersley,  Niederreiter, or Sobol' sequences in C, C++, Fortran, MATLAB, or Python~\cite{Bur20a}. In QMCPy, we have implemented digital net, lattice, and Halton generators.
 	\item[LatNet Builder] The successor to \emph{Lattice Builder}~\cite{LEcMun14a}, LatNet Builder is a C++ library with Python and Java interfaces (in SSJ below) for generating vectors/matrices for lattices and digital nets~\cite{LatNet,LEcEtal22a}. QMCPy contains a module to parse the matrices from LatNet Builder for compatibility with our LD point generators. %contains a \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/latnetbuilder.html}{demo for LatNet Builder}. 
 	\item[MATLAB] Commercial software \cite{MAT9.10}, which contains Sobol' and Halton sequences in the Statistics and Machine Learning Toolbox. Both generators can be applied in conjunction with MATLAB's Parallel Computing Toolbox to accelerate their execution speed. The maximum dimension of the Sobol' sequences is restricted to 1,111, which is relatively small, yet sufficient for most applications. 
@@ -262,12 +262,12 @@ Software focusing on generating high-quality LD sequences and their generators i
 	\item[QMC.jl] LD Sequences in Julia \cite{Rob20a}. Julia~\cite{bezanson2012julia} is an interpreted language similar to Python and R in terms of ease of use, but is designed to run much faster.
 	\item [qrng] Randomized Sobol', Halton, and Korobov sequences in R~\cite{QRNG2020}. The default Halton randomization in QMCPy utilizes the methods from qrng. 
 	%translated qrng to Python; see  \url{https://github.com/QMCSoftware/qrngpy}. The Halton randomization from qrng is also optionally available in QMCPy. \AGSComment{We don't really use qrng besides the QRNG Halton randomization.} In addition, the C source files in qrng can be compiled and accessed in QMCPy as one of the backends. In some cases, our version of qrng with its compiled code in QMCPy is more efficient than the original software in R \scnote{Why or how? By taking advantage of MRG63k3a?}; see the demo, \href{https://qmcpy.readthedocs.io/en/latest/demo_rst/quasirandom_generators.html}{\emph{Quasi-Random Sequence Generator Comparison}}, in the QMCPy documentation~\cite{QMCPyDocs}. 
-	\item[SciPy] Scientific computing library in Python with Latin Hypercube,  Halton, and Sobol' generators \cite{2020SciPy-NMeth}.
+	\item[SciPy] Scientific computing library in Python with Latin hypercube,  Halton, and Sobol' generators \cite{2020SciPy-NMeth}.
 	\item[TF Quant Finance] Google's Tensorflow  deep-learning library~\cite{tensorflow2015-whitepaper} specialized for financial modeling \cite{tfqf21}. The software contains lattice and Sobol' generators alongside algorithms accelerated useing GPUs, FGPAs, or Tensor Processing Units (TPUs).% as opposed to the Central Processing Units (CPUs).		
 \end{description}
 Software focusing on QMC cubatures and applications includes the following:
 \begin{description}[format=\textup,format=\textbf]
-	\item[GAIL] Guaranteed Automatic Integration Library  contains automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal21a}. These are iterative procedures for one- or high-dimensional integration that take a users' input error tolerance(s) and determine the number of (Q)MC sampling points necessary to achieve the desired accuracy (almost surely).  Most of GAIL's (Q)MC functions, some with enhancements, are implemented in Python in QMCPy.
+	\item[GAIL] Guaranteed Automatic Integration Library  contains automatic (Q)MC stopping criteria in MATLAB \cite{ChoEtal21a,HCJJ14}. These are iterative procedures for one- or high-dimensional integration that take a user's input error tolerance(s) and determine the number of (Q)MC sampling points necessary to achieve the desired accuracy (almost surely).  Most of GAIL's (Q)MC functions, some with enhancements, are implemented in Python in QMCPy.
 	\item[ML(Q)MC] Multi-Level (Q)MC routines in C, C++, MATLAB, Python, and R~\cite{GilesSoft}. We have ported ML(Q)MC functions to QMCPy.
 	\item[MultilevelEstimators.jl] ML(Q)MC methods in Julia \cite{Rob21}. The author, Pieterjan Robbe, has contributed cubature algorithms and use cases to QMCPy.
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks'N Statistics \cite{OpenTURNS} written in C++ and Python, leveraging R statistical packages, as well as LAPACK and BLAS for numerical linear algebra.
@@ -277,7 +277,7 @@ Software focusing on QMC cubatures and applications includes the following:
 
 \end{description}
 
-The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the tech industry.
+The sections that follow describe QMCPy \cite{QMCPy2020a}, which is our attempt to combine the best of the above software under a common user interface written in Python 3.  The choice of language was determined by the desire to make QMC software accessible to a broad audience, especially the technology industry.
 
 \section{Components of QMC Software}
 QMC cubature can be summarized as follows.  We want to approximate the expectation, $\mu$, well by the sample mean, $\hmu$, where \eqref{eq:integral}, \eqref{eq:fintegral}, and \eqref{eq:samplemean} combine to give
@@ -333,7 +333,7 @@ Integration lattices and digital sequences in base $2$ have an elegant group str
 %		 \\ \text{require } \begin{array}{l} \bsZ_1 = (1/2, \ldots, 1/2) \\
 %		 	\bsZ_{2^{m}} \oplus \bsZ_{2^{m}} = \bsZ_{2^{m-1}} \quad \forall m \in \bbN 
 %	 	\end{array}
-		\\
+		\\[.5ex]
 \toprule
 \multicolumn{2}{c}{\text{Then it follows that \ldots}} \\
 	\multicolumn{2}{c}{\left . \begin{array}{r}
@@ -494,7 +494,7 @@ Because LD samples mimic $\calU\cube$, choosing a different \texttt{sampler} is 
 \section{Stopping Criteria} \label{sec:stopping_crit}
 
 The \texttt{StoppingCriterion} object determines the number of samples $n$ that are required for the sample mean approximation $\hmu$ to be within error tolerance $\varepsilon$ of the true mean $\mu$.  Several QMC stopping criteria have been implemented in QMCPy, including replications, stopping criteria that track the decay of the Fourier complex exponential or Walsh coefficients of the integrand \cite{HicJim16a,HicEtal17a,JimHic16a}, and stopping criteria based on
-Bayesian-credible intervals \cite{RatHic19a,JagHic22a}.
+Bayesian-credible intervals \cite{RatHic19a,JagHic22a}. 
 
 The \texttt{CubQMCSobolG} stopping criterion used in the example below assumes the Walsh-Fourier coefficients of the integrand are absolutely convergent. The algorithm iteratively doubles the number of samples used in the integration and estimates the error using the decay of the Walsh coefficients \cite{HicJim16a}. When the estimated error is below the user-specified tolerance, it finishes the computation and returns the estimated integral.
 
@@ -598,10 +598,11 @@ The table below displays the variable transformations and the measures for these
 	\displaystyle g(\bsPsi_1(\cdot)) \frac{\lambda(\bsPsi_1(\cdot))}{\lambda_1(\bsPsi_1(\cdot))} \tabularnewline [2.5ex]
 	\texttt{K\_gauss\_kuma} & 2 & \Kum & \bsF^{-1}_\Kum & \calN(\bszero,\mI) &  \eqref{eq:exampleVarTransGauss} &
 	\displaystyle \frac{g(\bsPsi_2(\bsPsi_1(\cdot))) \lambda(\bsPsi_2(\bsPsi_1(\cdot))) }{\lambda_1(\bsPsi_1(\cdot)) \lambda_2(\bsPsi_2(\bsPsi_1(\cdot)))} 
+   \\ \bottomrule
 \end{array}
 \]
 
-Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent marginals, and $ \boldsymbol{F}^{-1}_\Kum$ denotes the element-wise inverse cumulative distribution function.  The following code evaluates the Keister integral \eqref{eq:KeisterIntegral} for $d=1$ and error tolerance $\varepsilon = 5\text{E}-8$.  The timings for each of these different integrands are displayed.
+Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent marginals, and $ \boldsymbol{F}^{-1}_\Kum$ denotes the element-wise inverse cumulative distribution function.  The following code evaluates the Keister integral \eqref{eq:KeisterIntegral} for $d=1$ and error tolerance $\varepsilon = 5 \times 10^{-8}$.  The timings for each of these different integrands are displayed.
 
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/composed_IS.txt}
 
