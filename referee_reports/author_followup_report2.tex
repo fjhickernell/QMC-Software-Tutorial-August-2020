@@ -26,6 +26,10 @@ This paper proposes and discusses a software tool named QMCPy, in the form of a 
 
 This is certainly a very useful tool, designed by knowledgeable people, which is likely to grow and spread. The paper is reasonably well written and should have its place in the MCQMC 2020 book. However, there are several pieces that would need clarification, as well as some additional explanations to make the paper more self-contained. I understand that one can also study the tutorial and the Colab notebooks to understand how things work, but it would be good if the paper can also be understood easily just by itself.
 
+\bigskip
+
+\FJHComment{We thank the referee for his or her careful reading of our manuscript and many helpful comments, including pointers to some of the literature that we were unfamiliar with.  We have tried to address them all.}
+
 \section{Details}
 
 Page 3: ``The measure of the difference...'' should be ``A measure of the difference...'' (not
@@ -135,12 +139,12 @@ Section 8.2: “better evenness for ... powers of 2” is because of the specifi
 
 Section 8.3, first paragraph: How are the IID Gaussian points obtained if it is not by inversion?
 
-\AGSComment{Good point, we are still using inversion for IID Standard Gaussian, so this does not avoid the computational overhead of the inverse normal. }
+\AGSComment{Good point, we are still using inversion for IID Standard Gaussian, so this does not avoid the computational overhead of the inverse normal.}
 \vspace{1cm}
 
 Second paragraph: Here you consider successive changes of measures and/or successive changes of variables. It is not clear why one would want to do that. In the end, the combined changes of variables corresponds to a single change of variable, no? We miss a motivation for this.
 
-\AGSComment{We have built-in support for successive changes of variables to help users easily construct complex variable transformations without having to work out all the math. This discussion has been added to the paper.}
+\AGSComment{We have built-in support for successive changes of variables to help users easily construct complex variable transformations without having to work out the math. This discussion has been added to the paper.}
 \vspace{1cm}
 
 What is the Kumaraswamy distribution?
@@ -157,13 +161,11 @@ Page 22: Automatic adaptive choice of IS: How?
 
 \AGSComment{Not quite sure yet. Perhaps we can do some distribution-hyperparameter optimization? We need to think through this more, but initial computer experiments have shown some promise.}
 
-\AGSComment{TODO: Add references 1 and 6 from report.}
-
 \vspace{1cm}
 
 Reference 27 is not correct. There is the journal paper [5] on Lattice Builder. Then there is the LatNet Builder software at https://github.com/umontreal-simul/latnetbuilder, which has more contributors: L’Ecuyer, Munger, Marion, Godin, Puchhammer.
 
-\FJHComment{TODO}
+\FJHComment{The references to Lattice Builder and LatNet Builder have been updated.}
 
 \vspace{1cm}
 
