@@ -413,9 +413,9 @@ Here the covariance decomposition $\mSigma = \mA \mA^T$ is done using principal 
 	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_uniform.png} 
 	%	\quad
 	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_gaussian.png}
-	\caption{Sobol' samples transformed to mimic a uniform $\calU\left( \begin{bmatrix} -2 \\ 0 \end{bmatrix},\begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$ 
+	\caption{Halton samples transformed to mimic a uniform $\calU\left( \begin{bmatrix} -2 \\ 0 \end{bmatrix},\begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$ 
 	%\frednote{This is not correct, we need the upper and lower endponts of a two dimensional interval.  Also, are these Sobol' or Halton as in the code?} 
-	(left) and  Gaussian $\calN\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$ (right) distribution.}
+	distribution (left) and Lattice samples transformed to mimic a Gaussian $\calN\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$ distribution (right).}
 	\label{fig:tm_ug}
 \end{figure}
 
@@ -632,7 +632,7 @@ We also plan to expand our library of digital net generating matrices. We wish t
 
 Our \texttt{DiscreteDistrution} places equal weights on each support point, $\bsX_i$.  In the future, we might generalize this to unequal weights.
 
-QMCPy already includes importance sampling, but the choice of sampling distribution must be chosen a priori.  We would like to see an automatic, adaptive choice following the developments of \cite{Asmussen2007StochasticS,approx_zero_variance_simulation} .
+QMCPy already includes importance sampling, but the choice of sampling distribution must be chosen a priori.  We would like to see an automatic, adaptive choice following the developments of \cite{AsmGly2007a}.
 
 Control variates can be useful for QMC as well as for IID MC \cite{HicEtal03}.  These should be incorporated into QMCPy in a seamless way.
 
