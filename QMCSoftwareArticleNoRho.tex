@@ -225,9 +225,9 @@ When IID points are used to approximate $\mu$ by the sample mean, the root mean 
 
 
 \begin{figure}[t]
-	\includegraphics[height=5.8cm]{QMCSoftwareArticle/figs/dd_iid_uniform_pts.png}
+	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_iid_uniform_pts.eps}
 	\quad
-	\includegraphics[height=5.8cm]{QMCSoftwareArticle/figs/dd_sobol_pts.png}
+	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_sobol_pts.eps}
 	\caption{IID points (left) contrasted with LD points (right).  The LD points cover the square more evenly.}
 	\label{fig:comparePts}
 \end{figure}
@@ -387,9 +387,9 @@ Here we allow the randomization so that the first point in the sequence is not t
 Figure \ref{fig:increase_n} shows how increasing the number of lattice and Sobol' LD points through powers of two fills in the gaps in an even way.
 
 \begin{figure}[t]
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_lattice_successive.png}
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_lattice_successive.eps}
 	\qquad
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/dd_sobol_successive.png}
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_sobol_successive.eps}
 	\caption{Randomized lattice and Sobol' points mimicking a $\calU[0,1]^2$ measure for $n = 64, 128,$ and 256. Note how increasing the number of points evenly fills in the gaps between the points.}
 	\label{fig:increase_n}
 \end{figure}
@@ -414,9 +414,9 @@ whereas for Gaussian points based on a lattice sequence, we have:
 Here the covariance decomposition $\mSigma = \mA \mA^T$ is done using principal component analysis. The Cholesky decomposition is also available.
 
 \begin{figure}[t]
-	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_uniform.png} 
+	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_uniform.eps} 
 	%	\quad
-	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/figs/tm_gaussian.png}
+	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_gaussian.eps}
 	\caption{Halton samples transformed to mimic a uniform $\calU\left( \begin{bmatrix} -2 \\ 0 \end{bmatrix},\begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$ 
 	%\frednote{This is not correct, we need the upper and lower endponts of a two dimensional interval.  Also, are these Sobol' or Halton as in the code?} 
 	distribution (left) and lattice samples transformed to mimic a Gaussian $\calN\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$ distribution (right).}
@@ -432,7 +432,7 @@ and mean $\bsa$, which  is proportional to the times $(\tau/d)(1, 2, \ldots, d)^
 Figure \ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
 \begin{figure}[t]
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/figs/tm_bm.png} 
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/tm_bm.eps} 
 	\caption{Sobol' samples transformed to mimic a 52-dimensional Brownian Motion without drift (left) and with drift coefficient 2 (right).}
 	\label{fig:tm_bm}
 \end{figure}
@@ -465,7 +465,7 @@ The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{Cust
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}[t]
-	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/i_keister_contours.png}
+	\includegraphics[height=5cm]{QMCSoftwareArticle/vfigs/i_keister_contours.eps}
 	\caption{Right: Sampling the transformed Keister integrand $f$ at Halton points $\bsX_i \LDsim \calU[0,1]^2$. Left: Sampling the original Keister integrand $g$ at $\bsT_i = \bsPsi(\bsX_i) \Msim \calN(\bszero,\mI/2)$ where $\bsPsi$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
 \end{figure}
 
@@ -510,7 +510,7 @@ QMC, which uses LD sequences, is touted as providing substantially greater compu
 Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\calO(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\calO(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\calO(n^{-1+\epsilon})$, which implies $\calO(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples than MC methods to achieve the same error tolerance.
 
 \begin{figure}[t]
-	\includegraphics[height=6cm]{QMCSoftwareArticle/figs/sc_comp.png}
+	\includegraphics[height=6cm]{QMCSoftwareArticle/vfigs/sc_comp.eps}
 	\caption{Comparison of run times and sample sizes for computing the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID and LD lattice sequences for a variety of absolute error tolerances. The respective stopping criteria are  \texttt{qp.CubMCG} \cite{HicEtal14a} and  \texttt{qp.CubQMCLatticeG} \cite{JimHic16a}. The LD sequences provide the desired answer much more efficiently.}
 	\label{fig:sc_comp}
 \end{figure}
@@ -614,7 +614,7 @@ Here $\Kum$ denotes the multivariate Kumaraswamy distribution with independent m
 Successful importance sampling makes the transformed integrand, $f$, more flat. The shorter cubature times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}; however, the same example works for arbitrary dimensions.
 \begin{figure}[t]
     \centering
-	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/figs/multiple_IS.png}
+	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/vfigs/multiple_IS.eps}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
 \end{figure}
 
