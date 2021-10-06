@@ -1,4 +1,4 @@
 >>> iid = qp.IIDStdUniform(2); iid.gen_samples(1)
-array([[0.17496884 0.56612647]])
+array([[0.40538109, 0.12255759]])
 >>> iid.gen_samples(1)
-array([[0.82314635 0.26919205]])
+array([[0.50913741, 0.11312201]])

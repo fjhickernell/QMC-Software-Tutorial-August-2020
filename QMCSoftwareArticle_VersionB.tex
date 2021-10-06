@@ -44,7 +44,8 @@
 	alsoletter = {>,.} ,
     morekeywords = [2]{>>>,...},
     keywordstyle = [2]\color{cyan}\bfseries}
-    
+
+% work reproducible from https://tinyurl.com/QMCPyArticle2021
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
@@ -78,7 +79,7 @@ Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent 
 
 Practitioners might wish to test whether QMC would speed up their computation; doing so would be made easier with access the best QMC algorithms available.  Theoreticians or algorithm developers might want to demonstrate their ideas on various use cases to show their practical value.  
 
-This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}\footnote{QMCPy is in active development. This article is based on version 1.0.1 on PyPI.}, which is crafted to be a community-owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
+This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}\footnote{QMCPy is in active development. This article is based on version 1.1 on PyPI.}, which is crafted to be a community-owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
 The model problem for QMC is approximating a multivariate integral,
 \begin{equation} \label{eq:integral}
@@ -390,7 +391,7 @@ The \texttt{CubQMCSobolG} stopping criterion used in the example below assumes t
 
 Let us return to the Keister example from the previous section.  After setting up  a default \texttt{Keister} instance via a Sobol' \texttt{DiscreteDistribution}, we choose a \texttt{StoppingCriterion} object that matches the \texttt{DiscreteDistribution} and input our desired tolerance.  Calling the  \texttt{integrate} method returns the approximate integral plus some useful information about the computation.
 \lstinputlisting[style=Python]{QMCSoftwareArticle/python/sc_keister_qmc.txt}
-The second output of the stopping criterion provides helpful diagnostic information.  This computation requires $n=2^{13}$ Sobol' points and $0.009$ seconds to complete.  The error bound is $0.000637$, which falls below the absolute tolerance.
+The second output of the stopping criterion provides helpful diagnostic information.  This computation requires $n=2^{13}$ Sobol' points and $0.008$ seconds to complete.  The error bound is $0.000606$, which falls below the absolute tolerance.
 
 QMC, which uses LD sequences, is touted as providing substantially greater computational efficiency compared to IID MC.
 Figure \ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\mathcal{O}(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\mathcal{O}(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\mathcal{O}(n^{-1+\epsilon})$, which implies $\mathcal{O}(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples than MC methods to achieve the same error tolerance.
