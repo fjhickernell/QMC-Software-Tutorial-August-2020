@@ -352,7 +352,7 @@ The code below sets up an \texttt{Integrand} instance using QMCPy's \texttt{Cust
 We have no indication yet of how accurate our approximation is.  That topic is treated in the next section.  Figure \ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}[t]
-	\includegraphics[height=5cm]{QMCSoftwareArticle/vfigs/i_keister_contours.eps}
+	\includegraphics[height=7cm]{QMCSoftwareArticle/vfigs/i_keister_contours.eps}
 	\caption{Right: Sampling the transformed Keister integrand $f$ at Halton points $\boldsymbol{X}_i \overset{\textup{LD}}{\sim} \mathcal{U}[0,1]^2$. Left: Sampling the original Keister integrand $g$ at $\boldsymbol{T}_i = \boldsymbol{\Psi}(\boldsymbol{X}_i) \overset{\textup{M}}{\sim} \mathcal{N}(\boldsymbol{0},\mathsf{I}/2)$ where $\boldsymbol{\Psi}$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
 \end{figure}
 
