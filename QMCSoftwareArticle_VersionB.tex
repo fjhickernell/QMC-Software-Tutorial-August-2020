@@ -77,7 +77,7 @@ Department of Applied Mathematics, Illinois Institute of Technology,\\ RE 220, 1
 
 Quasi-Monte Carlo (QMC) methods promise great efficiency gains over independent and identically distributed (IID) Monte Carlo (MC) methods.  In some cases, QMC  achieves one hundredth of the error of IID MC in the same amount of time (see Figure \ref{fig:sc_comp}). Often, these efficiency gains are obtained simply by replacing IID sampling with low discrepancy (LD) sampling, which is the heart of QMC. 
 
-Practitioners might wish to test whether QMC would speed up their computation; doing so would be made easier with access the best QMC algorithms available.  Theoreticians or algorithm developers might want to demonstrate their ideas on various use cases to show their practical value.  
+Practitioners might wish to test whether QMC would speed up their computation.  Access to the best QMC algorithms available would make that easier.  Theoreticians or algorithm developers might want to demonstrate their ideas on various use cases to show their practical value.  
 
 This tutorial points to some of the best QMC software available.  Then we describe  QMCPy \cite{QMCPy2020a}\footnote{QMCPy is in active development. This article is based on version 1.2 on PyPI.}, which is crafted to be a community-owned Python library that combines the best QMC algorithms and interesting use cases from various authors under a common user interface.
 
@@ -133,7 +133,7 @@ In the sections that follow, we first overview available QMC software.  We next 
 
 %\href{https://github.com/QMCSoftware/QMCSoftware}{\nolinkurl{https://github.com/QMCSoftware/QMCSoftware}}.
 
-We have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in QMC software development will make this article obsolete in a good way in the coming years.
+We have endeavored to be as accurate as possible at the time of writing this article.  We hope that progress in QMC software development will make this article happily obsolete in the coming years.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Available Software for QMC} \label{sec:available} 
@@ -503,7 +503,7 @@ Here $\textup{Kum}$ denotes the multivariate Kumaraswamy distribution with indep
 Successful importance sampling makes the transformed integrand, $f$, more flat. The shorter cubature times correspond to flatter integrands, as  illustrated in Figure \ref{fig:mIS}. The above example uses $d=1$ to facilitate the plot in Figure \ref{fig:mIS}; however, the same example works for arbitrary dimensions.
 \begin{figure}[t]
     \centering
-	\includegraphics[width=.8\textwidth]{QMCSoftwareArticle/vfigs/multiple_IS.eps}
+	\includegraphics[width=.75\textwidth]{QMCSoftwareArticle/vfigs/multiple_IS.eps}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
 \end{figure}
 
