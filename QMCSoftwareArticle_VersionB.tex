@@ -112,9 +112,9 @@ When IID points are used to approximate $\mu$ by the sample mean, the root mean 
 
 
 \begin{figure}[t]
-	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_iid_uniform_pts.eps}
+	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_iid_uniform_pts.pdf}
 	\quad
-	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_sobol_pts.eps}
+	\includegraphics[height=5.8cm]{QMCSoftwareArticle/vfigs/dd_sobol_pts.pdf}
 	\caption{IID points (left) contrasted with LD points (right).  The LD points cover the square more evenly.}
 	\label{fig:comparePts}
 \end{figure}
@@ -276,9 +276,9 @@ Here we allow the randomization so that the first point in the sequence is not t
 Fig.~\ref{fig:increase_n} shows how increasing the number of lattice and Sobol' LD points through powers of two fills in the gaps in an even way.
 
 \begin{figure}[t]
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_lattice_successive.eps}
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_lattice_successive.pdf}
 	\qquad
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_sobol_successive.eps}
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/dd_sobol_successive.pdf}
 	\caption{Randomized lattice and Sobol' points mimicking a $\mathcal{U}[0,1]^2$ measure for $n = 64, 128,$ and 256. Note how increasing the number of points evenly fills in the gaps between the points.}
 	\label{fig:increase_n}
 \end{figure}
@@ -303,9 +303,9 @@ whereas for Gaussian points based on a lattice sequence, we have:
 Here the covariance decomposition $\Sigma = \mathsf{A} \mathsf{A}^T$ is done using principal component analysis. The Cholesky decomposition is also available.
 
 \begin{figure}[t]
-	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_uniform.eps} 
+	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_uniform.pdf} 
 	%	\quad
-	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_gaussian.eps}
+	\includegraphics[width=.45\textwidth]{QMCSoftwareArticle/vfigs/tm_gaussian.pdf}
 	\caption{Halton samples transformed to mimic a uniform $\mathcal{U}\left( \begin{bmatrix} -2 \\ 0 \end{bmatrix},\begin{bmatrix} 2 \\ 4 \end{bmatrix} \right)$ 
 	%\frednote{This is not correct, we need the upper and lower endponts of a two dimensional interval.  Also, are these Sobol' or Halton as in the code?} 
 	distribution (left) and lattice samples transformed to mimic a Gaussian $\mathcal{N}\left(\begin{bmatrix} 3 \\ 2 \end{bmatrix}, \begin{bmatrix} 9 & 5 \\ 5 & 4 \end{bmatrix} \right)$ distribution (right).}
@@ -321,7 +321,7 @@ and mean $\boldsymbol{a}$, which  is proportional to the times $(\tau/d)(1, 2, \
 Fig.~\ref{fig:tm_bm} displays a Brownian motion based on Sobol' sequence with and without a drift.
 
 \begin{figure}[t]
-	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/tm_bm.eps} 
+	\includegraphics[width=1\textwidth]{QMCSoftwareArticle/vfigs/tm_bm.pdf} 
 	\caption{Sobol' samples transformed to mimic a 52-dimensional Brownian Motion without drift (left) and with drift coefficient 2 (right).}
 	\label{fig:tm_bm}
 \end{figure}
@@ -355,7 +355,7 @@ We have no indication yet of how accurate our approximation is.  That topic is t
 Fig.~\ref{fig:ikc} visualizes sampling on the original integrand, $g$, and sampling on the transformed integrand, $f$. 
 
 \begin{figure}[t]
-	\includegraphics[height=7cm]{QMCSoftwareArticle/vfigs/i_keister_contours.eps}
+	\includegraphics[height=7cm]{QMCSoftwareArticle/vfigs/i_keister_contours.pdf}
 	\caption{Right: Sampling the transformed Keister integrand $f$ at Halton points $\boldsymbol{X}_i \overset{\textup{LD}}{\sim} \mathcal{U}[0,1]^2$. Left: Sampling the original Keister integrand $g$ at $\boldsymbol{T}_i = \boldsymbol{\Psi}(\boldsymbol{X}_i) \overset{\textup{M}}{\sim} \mathcal{N}(\boldsymbol{0},\mathsf{I}/2)$ where $\boldsymbol{\Psi}$ is defined in \eqref{eq:exampleVarTransGauss}.  } \label{fig:ikc}
 \end{figure}
 
@@ -400,7 +400,7 @@ QMC, which uses LD sequences, is touted as providing substantially greater compu
 Fig.~\ref{fig:sc_comp} compares the time and sample sizes needed to compute the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID sequences and LD lattice sequences. Consistent with what is stated in Section \ref{sec:intro}, the error of IID MC is $\mathcal{O}(n^{-1/2})$, which means that the time and sample size to obtain an absolute error tolerance of $\varepsilon$ is $\mathcal{O}(\varepsilon^{-2})$.  By contrast, the  error of QMC using LD sequences is $\mathcal{O}(n^{-1+\epsilon})$, which implies $\mathcal{O}(\varepsilon^{-1-\epsilon})$ times and sample sizes.  We see that QMC methods often require orders of magnitude fewer samples than MC methods to achieve the same error tolerance.
 
 \begin{figure}[t]
-	\includegraphics[height=6cm]{QMCSoftwareArticle/vfigs/sc_comp.eps}
+	\includegraphics[height=6cm]{QMCSoftwareArticle/vfigs/sc_comp.pdf}
 	\caption{Comparison of run times and sample sizes for computing the $5$-dimensional Keister integral \eqref{eq:KeisterIntegral} using IID and LD lattice sequences for a variety of absolute error tolerances. The respective stopping criteria are  \texttt{qp.CubMCG} \cite{HicEtal14a} and  \texttt{qp.CubQMCLatticeG} \cite{JimHic16a}. The LD sequences provide the desired answer much more efficiently.}
 	\label{fig:sc_comp}
 \end{figure}
@@ -507,7 +507,7 @@ Successful importance sampling makes the transformed integrand, $f$, more flat. 
 Fig.~\ref{fig:mIS}; however, the same example works for arbitrary dimensions.
 \begin{figure}[t]
     \centering
-	\includegraphics[width=.75\textwidth]{QMCSoftwareArticle/vfigs/multiple_IS.eps}
+	\includegraphics[width=.75\textwidth]{QMCSoftwareArticle/vfigs/multiple_IS.pdf}
 	\caption{Keister functions with and without importance sampling (\texttt{IS}). Note that the Keister functions using importance sampling are generally less variable and therefore easier to integrate, as evidenced by the faster integration times.} \label{fig:mIS}
 \end{figure}
 
